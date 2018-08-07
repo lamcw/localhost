@@ -1,0 +1,8 @@
+# Week 2
+
+Group formed with the other three undergraduates in the lab. Adopted the
+role of scrum master. I created the Slack workspace, Trello team and project
+board, and BitBucket repository. Managed each of the tasks on Trello and
+assigned them to respective team members. Organised a second meeting to be
+held on Wednesdays. Drafted the abstract, and project methodology sections of
+the proposal document.
