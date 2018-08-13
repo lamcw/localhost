@@ -1,0 +1,191 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \includegraphics[width=0.4\textwidth]{unsw.png}\par\vspace{1cm}
+  {\scshape\LARGE University of New South Wales \par}
+  \vspace{0.5cm}
+  {\scshape\Large COMP3900 \par}
+  \vspace{0.5cm}
+  {\huge\bfseries Project Proposal: Topic 3 \par}
+  \vspace{1cm}
+  {\Large Group Name:\itshape Undergrads \par}
+  \vspace{2cm}
+  \begin{center}
+    \begin{tabular}{c c c c}
+      Edward Dai & \href{mailto:z3415169@unsw.edu.au}{z3415169@unsw.edu.au} &
+      z3415169 & Developer \\
+      Jasper Lowell & \href{mailto:z5180332@unsw.edu.au}{z5180332@unsw.edu.au} &
+      z5180332 & Scrum Master, Developer \\
+      Steven Tudo & \href{mailto:z3466724@unsw.edu.au}{z3466724@unsw.edu.au} &
+      z3466724 & Developer \\
+      Thomas Lam & \href{mailto:z5136612@unsw.edu.au}{z5136612@unsw.edu.au} &
+      z5136612 & Developer
+    \end{tabular}
+  \end{center}
+  \vfill
+  {\large \today\par}
+\end{titlepage}
+
+\newpage
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\baselineskip}
+
+\begin{abstract}
+  An easy to use and intuitive web application that aims to connect clients and providers of accommodations in New South Wales, Australia based on preferences such as location, local utilities, ratings, and price.
+\end{abstract}
+\bigskip
+\bigskip
+
+\section*{Background}
+
+\smallskip
+\begin{quote}
+  ``Sydney has 600,000 bedrooms not being used according to data
+compiled by EY from 2016 Census estimates.'' \\
+  \hspace*{\fill}\emph{Michael Cranston, Australian Financial Review}
+\end{quote}
+
+The rapidly growing number of unused bedrooms, not just in Sydney and the wider New South Wales area but internationally, has spawned a number of new and innovative platforms that capitalise on this resource with hopes to optimise occupation with income for the provider. If the cost of staying is too high there won't be any tenants and if the cost of staying is too low it won't be financially viable or attractive enough for the owner to provide the property or room.
+
+One of these platforms is the popular \emph{Airbnb} start-up which, in the space
+of a decade, revolutionised the hospitality sector by providing a convenient and
+affordable platform for travellers to find lodgings in another's home --- an arguably more authentic and homely experience compared to staying at a traditional hotel. By providing an easy to use service for owners to list their spare rooms and properties on, the barrier for entry in the hospitality market, previously dominated by hotels, was significantly lowered. Providers are able to benefit from a supplemented income while tenants are able to benefit financially from the increased and constantly growing competition. Furthermore, by having an independent and centralised system that hosts these accommodations, it becomes possible to verify the authenticity of reviews and present them to prospective tenants in an unbiased way, something that is unheard of in the hotel sector where, generally, each hotel operates independently. Much of the success behind the start-up is in the way it serves both providers and their prospective tenants, ensuring that there is both supply and demand.
+
+In the same vein as \emph{Airbnb}, the \emph{CouchSurfing} hospitality and social networking site aims to pair prospective tenants such as tourists with locals living in the area with the promise of the same homely experience. The difference, however, is that \emph{CouchSurfing} prevents providers from charging a fee, with the incentive instead being altruism and social contact instead of financial compensation. Due to the lack financial incentive, it can be much harder to find a place to stay when compared to other services.
+
+Another relevant platform, from a different problem domain, is \emph{Trivago}. \emph{Trivago} is a metasearch engine for hotel accommodations that sources advertisements from other platforms and corroborates the results so that users of the platform can select the best deal for them without having to visit each of numerous advertising platforms individually. While \emph{Airbnb} exists to serve both providers and their prospective tenants, \emph{Trivago} focusses on serving only prospective tenants. The success of this platform lies in the convenience that it provides for its users, and in contrast with \emph{Airbnb}, helps users find deals. However, due to the fact that it is a metasearch engine, reviews cannot be verified and their authenticity remains in question.
+
+One of the major downsides of the model behind \emph{Airbnb} and others, is that the price for the property or room is static and doesn’t change regardless of demand or lack thereof. If there are no tenants that want to book on a particular night for the set price but would if the price was lower, the property will remain vacant. This is a loss for both the provider and the prospective tenants.
+
+\section*{Aim}
+The objective of the project is to design and implement a simple, convenient and user friendly platform to match prospective tenants with providers while structuring tenancy fees to be dynamic in order to successfully optimise accommodation with financial compensation for both the tenant and the provider.
+
+Existing services in this domain have achieved success by providing a platform of convenience but also have bloated interfaces that overwhelm users with information. These same services allow providers to list their property or room for a set rate, however, this is far from perfect and further optimisations to the model can be made by having a dynamic rate that is dependent on market interest. The project aims to address the following issues:
+
+\begin{itemize}
+  \item \textbf{Information overload} \\
+        Current services allow too much information to be included in their listings, making searching difficult for tenants and driving them away. This project addresses this problem by limiting the amount of free text that a provider can include on their listing.
+  \item \textbf{Local services} \\
+        When searching for accommodation, users are often forced to rotate between different web platforms to check the surrounding area for local services such as transport stops. By displaying a map which indicates where the nearest public transport stops are and major points of interest in the local area, users can focus simply on finding accommodation.
+  \item \textbf{Vacant properties \& deals} \\
+        Properties can be left unoccupied for various reasons but instead of simply accepting the loss, this project proposes a model where, when vacant, a property or room can enter a bidding system a short time before the required check-in time. Not only does this generate interest in the platform for those users on the lookout for deals but also helps to ensure that the property or room generates at least some income for the night. It should be noted that up until the bidding system commences, the listing can be booked traditionally in advance for a set fee.
+  \item \textbf{Competition for properties in high demand} \\
+        As there are a number of factors to base a property’s nightly rate on, it can be difficult for a provider to find an optimal static fee in a dynamic market. The bidding system will allow the market to regulate the fee. In this proposed platform, providers will have the option to set a buyout price (recommended to be substantially above the average fee) so that during a bidding period, if a prospective tenant does not wish to wear the risk and uncertainty that comes with bidding and would rather secure the property immediately they will have the opportunity to do so.
+
+A major issue with the bidding process is that a minority of disruptive users may make bids which they have no intention to commit to, or invalid bids in order to inflate the price of certain listings. To combat this, this project proposes a credit system which acts as the user’s wallet when using the service, while also making bids a binding contract, meaning that if for whatever reason the tenant chooses to retract their bid or cancels upon winning an auction, a percentage of the bid will be sacrificed and sent to the provider in the form of a cancellation fee. To make a bid for a property, a user must have at least the minimum credit amount to cover the cancellation fee.
+\end{itemize}
+
+\section *{Epics}
+* 1 epic size unit = 2 hours.
+
+\subsection *{User profiles}
+
+All users will have a public user profile. Users must register an account and log into the platform in order to list or book a property. User profiles consist of an avatar, a brief description, property listings, user reviews, and user rating. User reviews and ratings are divided into either “host” or “guest” categories. Users can also view their own booking history or guest history for their properties but these are not made public.
+
+\textbf{Time estimate: 6 units}
+
+\subsection *{Messaging System}
+
+Guests are able to message hosts to enquire about listed accommodation. The messages will be end-to-end encrypted to protect each user’s privacy. To combat abuse, users can silently block other users.
+
+\textbf{Time estimate: 10 units}
+
+\subsection *{Accommodation Listing Module}
+
+Hosts can list their property by supplying photos, a short description, and information such as price, location, the number of other tenants, and available utilities. Users can view all the reviews for the listing on the same page as well. Owners will have a single web page to manage all their property listings, where they will have the ability to add, edit, or remove listings.
+
+\textbf{Time estimate: 8 units}
+
+\subsection *{Accommodation Search Module}
+
+Users can search for properties by entering a location, number of guests, and check-in and check-out dates. The results can then be filtered by price and available utilities. The results should be displayed alongside a map that has individual pins to visually depict their location. The list of results should show brief and necessary information about the property such as it’s fee per night.
+
+\textbf{Time estimate: 8 units}
+
+\subsection *{Accommodation Pre-Booking Module}
+
+Guests are able to pre-book a property up to a year in advance for a set fee. Each property listing has a calendar which shows the dates available for pre-booking. Guests can make a booking request, which must be approved by the host before the payment is made. Pre-booking will be closed 24 hours before the check-in time and replaced with the following module.
+
+\textbf{Time estimate: 6 units}
+
+\subsection *{Accommodation Bidding Module}
+
+If the property is not booked 24 hours before the specified check in time, the provider has the option to open the property up for bidding for that night. Hosts can set a starting price for the property as well as a buyout price. Bidding can occur over several stages. If the initial bidding stage ends with no bids, the host has the option to automatically relist the property multiple times for additional stages of bidding until a bid is made and the property is secured, or the allocated bidding period ends; whichever occurs first.
+
+\textbf{Time estimate: 10 units}
+
+\subsection *{Accommodation Review Module}
+
+Guests can rate and review the accommodation and the host after the stay. Hosts may also rate and review the guests. Users can leave a rating on scale of 5 stars and a short description. Reviews are visible to the public.
+
+\textbf{Time estimate: 5 units}
+
+\subsection *{Moderator Options}
+
+In the event that a user is reported for abuse or violates the set user policy of the website, moderators are required to ban them. Moderators also have the option to remove listings that violate site policy.
+
+\textbf{Time estimate: 4 units}
+
+\subsection *{Payment System}
+
+Users can add credit to their account to enable participation in bidding for accommodation. For pre-booking and buyout options the user can choose to pay the full amount upon confirmation either using their existing credits on their account or by credit card. Payees will receive the payers funds as credit in their account. Users can have their credits deposited into a nominated bank account at any time.
+
+\textbf{Time estimate: 8 units}
+
+\subsection *{Final Epics Selection}
+
+For the scope of this project, we have chosen to implement and deliver the modules as follows:
+
+\emph{Complete implementation:} Accommodation Search, Accommodation Listing, Accommodation Pre-Booking, Accommodation Bidding, Accommodation Review, User Profiles, Messaging System and Moderator Options
+
+\emph{Partial implementation:} Payment System
+
+The Accommodation Search, Listing, Pre-Booking, Bidding and Messaging System modules were selected as they comprise of the core functionalities of PlaceHolder and, most importantly, the distinguishing factor amongst other existing services. The Review and User Profile modules, while not part of the crux of the system, play a vital part in ensuring a safe and seamless user experience and as such, the importance of having these modules implemented outweighs the implementation cost.
+
+Of lower importance is the Moderator Options as it is currently not vital to the functionality of the project, however as the scale of the system increases it will become obvious that the importance of this module will also increase. In this regard, we have deemed it necessary to implement this module due to its small time impact and will be open to extension.
+
+Lastly, we made a decision to only partially implement the Payment System as the complexity and cost for implementation will be too high for the purposes of this project. A simple, stripped down version of the payment system with limited functionality will be implemented to demonstrate the feasibility and effectiveness of the credit system, however APIs for payment gateways and bank transfers will not be supported at this time.
+
+\section *{Project Methodology}
+
+The team will employ the \emph{Agile Software Development Methodology} with fortnightly sprints and two in-person \emph{Stand-ups} during each week.
+
+\subsection *{Meetings}
+
+Official in-person meetings are set to take place weekly at the following times and locations:
+
+\begin{description}
+  \item \textbf{10am - 12pm} Wednesday @ \emph{K14-LG18 Piano Lab} \\
+      Fortnightly, on the final day of a sprint, this meeting is used as a \emph{Sprint Retrospective Meeting} where the team analyses the concluding sprint and determines what changes are necessary to ensure that the next sprint is successful. On alternative weeks, it's a \emph{Stand-up} meeting.
+  \item \textbf{11am - 1pm} Thursday @ \emph{K17-B08 Drum Lab} \\
+      Fortnightly, this meeting is used as a \emph{Sprint Review Meeting} where the results of the previous sprint are demonstrated and the objectives for the next sprint determined. On alternative weeks it's a \emph{Stand-up} meeting.
+\end{description}
+
+\subsection *{Development Tools}
+
+\begin{description}
+  \item \emph{Project Management:}\hfill Trello
+  \item \emph{Communication:}\hfill Slack
+  \item \emph{Version Control System:}\hfill Git
+  \item \emph{Code Hosting Service:}\hfill BitBucket
+  \item \emph{Code Deployment Service:}\hfill Amazon Web Services
+  \item \emph{Programming Languages:}\hfill HTML, CSS, JavaScript, Python, SQL
+\end{description}
+
+\subsection *{Scrum Team}
+
+\smallskip
+\begin{description}
+  \item \emph{Scrum Master:}\hfill Jasper Lowell
+  \item \emph{Developers:}\hfill Edward Dai, Jasper Lowell, Steven Tudo, Thomas Lam
+\end{description}
+Sprint Commencement: Thursday 2nd August
+
+\end{document}
