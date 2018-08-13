@@ -6,3 +6,12 @@ board, and BitBucket repository. Managed each of the tasks on Trello and
 assigned them to respective team members. Organised a second meeting to be
 held on Wednesdays. Drafted the abstract, and project methodology sections of
 the proposal document.
+
+# Week 3
+
+The group finished the project proposal. Compiled each of the sections for
+the shared google docs page into a latex file and submitted for the group. Had
+our first out of class meeting on Wednesday to discuss the direction of the
+project. Further disussed what platforms and technologies to use and we decided
+on the bootstrap and django frameworks with AWS for hosting. Everyone committed
+to complete certain tasks within the next two weeks.
