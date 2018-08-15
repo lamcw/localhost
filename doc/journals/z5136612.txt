@@ -4,3 +4,8 @@ Group formed. We all agreed on doing topic 3. We brainstormed on what features
 are going to be implemented for the web app. Tasks were assigned to each person
 in the team. I am responsible for the backend of the project. Made a use case
 diagram for the proposal. Helped write the epics in the proposal.
+
+Week 3
+
+We finalized and submitted the proposal. I started setting up the project with
+Django framework and PostgreSQL.
