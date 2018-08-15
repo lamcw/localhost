@@ -1,0 +1,15 @@
+// Week 2
+Formed our team of 4 - 'Undergrads'. We all decided to do project 3 and went
+over some basic ideas on how the website would be structured, development
+tools and also delegated roles and who would be focusing on which areas. I 
+agreed to work on the front end with Jasper and while also being responsible
+for tying the front and back ends together once they are both functional.
+For the proposal I was delegated with the Aim and also assisting with Epics
+and Project Methodology.
+
+// Week 3
+Completed the Aim for the proposal and wrote up the Final Epics selection 
+after discussions with the team. Further refinement of our vision for our 
+project, we are proceeding with a bidding concept and a minimalist UI design.
+
+// Week 4
