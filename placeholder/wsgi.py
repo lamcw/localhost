@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'placeholder.settings')
+SETTINGS = 'placeholder.settings' if os.environ.get(
+    'SECRET_KEY') else 'placeholder.settings_dev'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS)
 
 application = get_wsgi_application()

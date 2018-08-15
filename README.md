@@ -34,7 +34,13 @@ placeholder_db=# ALTER ROLE admin SET default_transaction_isolation TO 'read com
 Enter `\q` to exit the session.
 ```sh
 python manage.py migrate
-python manage.py runserver
+python manage.py runserver --settings=placeholder.settings_dev
+```
+
+# Development
+To use development settings
+```sh
+python manage.py runserver --settings=placeholder.settings_dev
 ```
 
 # Tests
