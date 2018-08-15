@@ -11,3 +11,6 @@
 *.cb
 *.cb2
 .*.lb
+
+# Virtual Environment dir
+venv/
