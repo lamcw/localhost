@@ -19,11 +19,6 @@ input {
 	height: 80%;
 }
 
-.search-bar {
-	margin: 0;
-	width: 100%;
-}
-
 #search-card {
 	box-shadow: 0 16px 40px rgba(0,0,0,0.5);
 	border-radius: 2.5px;
