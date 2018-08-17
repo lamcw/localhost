@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'placeholder.core',
-    'placeholder.auth',
+    'placeholder.authentication',
     'placeholder.messaging',
     'placeholder.report',
     'django.contrib.admin',
