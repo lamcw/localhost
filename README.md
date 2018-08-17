@@ -18,23 +18,24 @@ pip install -r requirements.txt
 ```
 
 ## 2. Create database
+[follow this guide](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04)
 ```sh
 sudo su - postgres
 createdb placeholder_db
-exit
-psql palceholder_db
 ```
 In `psql` session:
 ```
-placeholder_db=# CREATE USER admin WITH PASSWORD 'admin_password';
-placeholder_db=# GRANT ALL PRIVILEGES ON DATABASE placeholder_db TO admin;
-placeholder_db=# ALTER ROLE admin SET client_encoding TO 'utf8';
-placeholder_db=# ALTER ROLE admin SET default_transaction_isolation TO 'read committed';
+placeholder_db=# CREATE USER {your_username} WITH PASSWORD '{your_password}';
+placeholder_db=# GRANT ALL PRIVILEGES ON DATABASE placeholder_db TO {your_username};
+placeholder_db=# ALTER ROLE {your_username} SET client_encoding TO 'utf8';
+placeholder_db=# ALTER ROLE {your_username} SET default_transaction_isolation TO 'read committed';
+placeholder_db=# \q
+exit
 ```
-Enter `\q` to exit the session.
+Running the server
 ```sh
-python manage.py migrate
-python manage.py runserver --settings=placeholder.settings_dev
+DB_USER={your_username} DB_PW={your_password} python manage.py migrate
+DB_USER={your_username} DB_PW={your_password} python manage.py runserver --settings=placeholder.settings_dev
 ```
 
 # Development
