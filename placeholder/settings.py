@@ -31,7 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'core.apps.CoreConfig',
+    'placeholder.core',
+    'placeholder.auth',
+    'placeholder.messaging',
+    'placeholder.report',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
