@@ -13,3 +13,11 @@ after discussions with the team. Further refinement of our vision for our
 project, we are proceeding with a bidding concept and a minimalist UI design.
 
 // Week 4
+Started drawing up storyboards for each page with Jasper, some concerns over 
+how we would resolve multiple listings for multiple rooms in one property - 
+ultimately decided on having a single listing for a property with sub-listings
+within. Found some images which are suitable as a background for the homepage.
+Pair programmed with Jasper for the homepage which is now almost complete; the
+text colour needs to be adjusted and search autocomplete needs to be done. I 
+will need to look into obtaining a Google Maps API key which will then allow us
+to integrate location autocomplete into our search bar. 
