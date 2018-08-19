@@ -15,3 +15,16 @@ our first out of class meeting on Wednesday to discuss the direction of the
 project. Further disussed what platforms and technologies to use and we decided
 on the bootstrap and django frameworks with AWS for hosting. Everyone committed
 to complete certain tasks within the next two weeks.
+
+# Week 4
+
+Official meetings ran successfully on Wednesday and Thursday. I organised
+another unofficial meeting on Friday night that hopes to run weekly. This
+week the team spent several hours discussing the different conceptual problems
+with the current model and the model was changed accordingly with unanimously
+agreed upon solutions. Steven and I focussed primarly on designing the user
+interfaces and together we sketched a proposed design for each of the website
+pages and presented them to the group for feedback. Together we implemented the
+first version of the website homepage incorporating a search bar and researched
+different APIs that can be used for the location autocomplete the project
+requires.
