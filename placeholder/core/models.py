@@ -25,7 +25,7 @@ class PropertyItem(models.Model):
         (ROOM, 'Room'),
         (PROPERTY, 'Entire Property'),
     )
-    ttb_type = models.CharField(
+    item_type = models.CharField(
         max_length=1, choices=TYPE_CHOICES, default=ROOM)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     buyout_price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -51,7 +51,7 @@ class Image(models.Model):
         abstract = True
 
 
-class TTBImage(Image):
+class PropertyItemImage(Image):
     property_item = models.OneToOneField(
         PropertyItem, on_delete=models.CASCADE)
 
@@ -74,3 +74,20 @@ class Booking(models.Model):
     )
     status = models.CharField(
         max_length=1, choices=STATUS_CHOCIE, default=CART)
+
+
+class Review(models.Model):
+    rating = models.IntegerField(choices=[(i, i) for i in range(6)])
+    description = models.TextField()
+
+    class Meta:
+        abstract = True
+
+
+class PropertyItemReview(Review):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+
+
+class UserReview(Review):
+    reviewer = models.OneToOneField(User, on_delete=models.CASCADE, related_name='reviews')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
