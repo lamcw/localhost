@@ -5,7 +5,7 @@ from placeholder.core.models import PropertyItem
 
 
 class Report(models.Model):
-    from_user = models.OneToOneField(User, on_delete=models.CASCADE)
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
     time = models.DateTimeField()
 
@@ -14,10 +14,10 @@ class Report(models.Model):
 
 
 class UserReport(Report):
-    reported_user = models.OneToOneField(
+    reported_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='report')
 
 
 class PropertyReport(Report):
-    property_item = models.OneToOneField(
+    property_item = models.ForeignKey(
         PropertyItem, on_delete=models.PROTECT)

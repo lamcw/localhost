@@ -7,8 +7,8 @@ class Property(models.Model):
     host = models.ForeignKey(User, on_delete=models.PROTECT)
     title = models.CharField(max_length=70)
     description = models.TextField(max_length=200)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(max_digits=10, decimal_places=7)
+    longitude = models.DecimalField(max_digits=10, decimal_places=7)
 
     def __str__(self):
         return f"Listing: {self.title} by {self.host}"
@@ -51,16 +51,15 @@ class Image(models.Model):
 
 
 class PropertyItemImage(Image):
-    property_item = models.OneToOneField(
-        PropertyItem, on_delete=models.CASCADE)
+    property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
 
 
 class ListingImage(Image):
-    listing = models.OneToOneField(Property, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Property, on_delete=models.CASCADE)
 
 
 class Booking(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     checkin_date = models.DateField()
@@ -84,10 +83,10 @@ class Review(models.Model):
 
 
 class PropertyItemReview(Review):
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
 
 
 class UserReview(Review):
-    reviewer = models.OneToOneField(
+    reviewer = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
