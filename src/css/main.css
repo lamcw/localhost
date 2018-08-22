@@ -45,6 +45,15 @@ input {
 
 .card {
     float: left;
-    padding: 1%;
     margin: 2%;
+    border: none;
+}
+
+.card-body {
+    padding: 0;
+    padding-top: 2%;
+}
+
+.card-bid-active {
+    border-left: 2em black solid;
 }
