@@ -1,0 +1,5 @@
+peru: #D8845E
+light blue: #A5D0E9
+dark olive green: #353729
+dim gray: #817C56
+sienna: #833D36
