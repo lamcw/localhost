@@ -1,0 +1,31 @@
+{% extends "core/default.html" %}
+
+{% block body %}
+  <!-- Content -->
+  <div id="content-container" class="container">
+    <div class="flex-container d-flex content h-100 align-item-center">
+      <div id="search-card" class="d-flex flex-column align-self-center">
+	<div class="">
+	  <div class="input-group stylish-input-group">
+	    <input id="search-criteria" type="text" class="form-control border-right-0" placeholder="Where would you like to stay?">
+	    <span class="input-group-append">
+	      <div class="input-group-text bg-white" style="padding-right: 30px;"><i class="fa fa-search"></i></div>
+	    </span>
+	  </div>
+	</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function activatePlacesSearch(){
+      var input = document.getElementById('search-criteria');
+      var options = {
+	types: ['(cities)'],
+	componentRestrictions: {country: 'au'}
+      };
+
+      var autocomplete = new google.maps.places.Autocomplete(input, options);
+    }
+  </script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50&libraries=places&callback=activatePlacesSearch"></script>
+{% endblock %}
