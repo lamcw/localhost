@@ -15,10 +15,6 @@ input {
     font-weight: bold;
 }
 
-#content-container {
-    height: 80%;
-}
-
 #search-card {
     box-shadow: 0 16px 40px rgba(0,0,0,0.5);
     border-radius: 2.5px;
@@ -54,6 +50,13 @@ input {
     padding-top: 2%;
 }
 
+.card {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
 .card-bid-active {
+    padding-left: 0;
+    padding-right: 0;
     border-left: 2em black solid;
 }
