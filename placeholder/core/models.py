@@ -3,7 +3,7 @@ from django.db import models
 from placeholder.authentication.models import User
 
 
-class Listing(models.Model):
+class Property(models.Model):
     host = models.ForeignKey(User, on_delete=models.PROTECT)
     title = models.CharField(max_length=70)
     description = models.TextField(max_length=200)
@@ -16,7 +16,7 @@ class Listing(models.Model):
 
 
 class PropertyItem(models.Model):
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Property, on_delete=models.CASCADE)
     BED = 'B'
     ROOM = 'R'
     PROPERTY = 'P'
@@ -57,7 +57,7 @@ class PropertyItemImage(Image):
 
 
 class ListingImage(Image):
-    listing = models.OneToOneField(Listing, on_delete=models.CASCADE)
+    listing = models.OneToOneField(Property, on_delete=models.CASCADE)
 
 
 class Booking(models.Model):
