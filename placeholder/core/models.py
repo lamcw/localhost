@@ -7,9 +7,8 @@ class Property(models.Model):
     host = models.ForeignKey(User, on_delete=models.PROTECT)
     title = models.CharField(max_length=70)
     description = models.TextField(max_length=200)
-
-    # latitude = TODO
-    # longitude = TODO
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
 
     def __str__(self):
         return f"Listing: {self.title} by {self.host}"
@@ -89,5 +88,6 @@ class PropertyItemReview(Review):
 
 
 class UserReview(Review):
-    reviewer = models.OneToOneField(User, on_delete=models.CASCADE, related_name='reviews')
+    reviewer = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='reviews')
     user = models.OneToOneField(User, on_delete=models.CASCADE)

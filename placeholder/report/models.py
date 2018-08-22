@@ -14,8 +14,10 @@ class Report(models.Model):
 
 
 class UserReport(Report):
-    reported_user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='report')
+    reported_user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='report')
 
 
 class PropertyReport(Report):
-    property_item = models.OneToOneField(PropertyItem, on_delete=models.PROTECT)
+    property_item = models.OneToOneField(
+        PropertyItem, on_delete=models.PROTECT)
