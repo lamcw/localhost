@@ -50,6 +50,13 @@ input {
     padding-top: 2%;
 }
 
+.card {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
 .card-bid-active {
+    padding-left: 0;
+    padding-right: 0;
     border-left: 2em black solid;
 }
