@@ -7,5 +7,5 @@ class Message(models.Model):
     sender = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name='sent_msg')
     recipient = models.ForeignKey(User, on_delete=models.PROTECT)
-    time = models.DateTimeField()
+    time = models.DateTimeField(auto_now_add=True)
     msg = models.TextField()

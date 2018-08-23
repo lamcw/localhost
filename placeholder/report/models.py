@@ -7,7 +7,7 @@ from placeholder.core.models import PropertyItem
 class Report(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
-    time = models.DateTimeField()
+    time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
