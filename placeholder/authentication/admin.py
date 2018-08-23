@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from placeholder.authentication.models import User as CustomUser
 
 
-# Define an inline admin descriptor for Employee model
+# Define an inline admin descriptor for User model
 # which acts a bit like a singleton
 class UserInline(admin.StackedInline):
     model = CustomUser
