@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
 {% block content %}
   <!-- Header / Navbar -->
@@ -14,7 +14,7 @@
 	    <a class="nav-link" href="#">Sign Up</a>
 	  </li>
 	  <li class="nav-item">
-	    <a class="nav-link" href="#">Log in</a>
+	    <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
 	  </li>
 	</ul>
       </div>

@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
 {% block content %}
   {% if form.errors %}
@@ -14,7 +14,7 @@
     {% endif %}
   {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
+  <form method="post" action="{% url 'authentication:login' %}">
     {% csrf_token %}
     <div class="form-group">
       {{ form.username.label_tag }}"
@@ -30,5 +30,5 @@
   </form>
 
   {# Assumes you setup the password_reset view in your URLconf #}
-  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+  <p><a href="{% url 'authentication:password_reset' %}">Lost password?</a></p>
 {% endblock %}
