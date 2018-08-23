@@ -33,6 +33,7 @@ class PropertyItem(models.Model):
     description = models.TextField(max_length=200)
     highest_bidder = models.OneToOneField(
         User, null=True, on_delete=models.SET_NULL)
+    open_for_auction = models.BooleanField(default=False)
 
 
 class Amenity(models.Model):
