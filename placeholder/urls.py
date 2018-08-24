@@ -20,6 +20,6 @@ from placeholder.core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
+    path('', include('placeholder.core.urls')),
     path('', include('placeholder.authentication.urls')),
 ]
