@@ -1,43 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from polymorphic.models import PolymorphicModel
 
 
-class Property(models.Model):
-    host = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    title = models.CharField(
-        _('title'),
-        max_length=70,
-        help_text=_('Title of the property will be shown on search results')
-    )
-    description = models.TextField(
-        _('description'),
-        max_length=200,
-        help_text=_('Short description of the property. 200 characters limit')
-    )
-    latitude = models.DecimalField(max_digits=10, decimal_places=7)
-    longitude = models.DecimalField(max_digits=10, decimal_places=7)
-
-    def __str__(self):
-        return f"Listing: {self.title} by {self.host}"
-
-
-class PropertyItem(models.Model):
-    listing = models.ForeignKey(Property, on_delete=models.CASCADE)
-    BED = 'B'
-    ROOM = 'R'
-    PROPERTY = 'P'
-    TYPE_CHOICES = (
-        (BED, 'Bed'),
-        (ROOM, 'Room'),
-        (PROPERTY, 'Entire Property'),
-    )
-    item_type = models.CharField(
-        _('item type'),
-        max_length=1,
-        choices=TYPE_CHOICES,
-        default=ROOM
-    )
+class PropertyItem(PolymorphicModel):
     price = models.DecimalField(_('price'), max_digits=8, decimal_places=2)
     buyout_price = models.DecimalField(
         _('buyout price'),
@@ -45,7 +12,6 @@ class PropertyItem(models.Model):
         decimal_places=2,
         help_text=_('buyout price during auction')
     )
-    rating = models.IntegerField(choices=[(i, i) for i in range(6)], default=1)
     title = models.CharField(_('title'), max_length=40)
     description = models.TextField(_('description'), max_length=200)
     highest_bidder = models.OneToOneField(
@@ -56,27 +22,38 @@ class PropertyItem(models.Model):
     open_for_auction = models.BooleanField(default=False)
 
 
+class Property(PropertyItem):
+    host = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.PROTECT,
+        related_name='%(class)s'
+    )
+    latitude = models.DecimalField(max_digits=10, decimal_places=7)
+    longitude = models.DecimalField(max_digits=10, decimal_places=7)
+
+    def __str__(self):
+        return f"Listing: {self.title} by {self.host}"
+
+
+class Room(PropertyItem):
+    property_ptr = models.ForeignKey(Property, on_delete=models.CASCADE)
+
+
+class Bed(PropertyItem):
+    room_ptr = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+
 class Amenity(models.Model):
-    property_item = models.ManyToManyField(PropertyItem)
+    property_item = models.ManyToManyField(Room)
     item = models.CharField(max_length=15)
 
     def __str__(self):
         return f"Amenity: {self.items}"
 
 
-class Image(models.Model):
-    img = models.ImageField()
-
-    class Meta:
-        abstract = True
-
-
-class PropertyItemImage(Image):
+class PropertyItemImage(models.Model):
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
-
-
-class ListingImage(Image):
-    listing = models.ForeignKey(Property, on_delete=models.CASCADE)
+    img = models.ImageField()
 
 
 class Booking(models.Model):
