@@ -20,7 +20,7 @@ class User(AbstractUser):
         max_length=100,
         null=True,
         blank=True,
-        help_text=_('Biography')
+        help_text=_('Short description of yourself')
     )
     dob = models.DateField(_('date of birth'), null=True)
     gender = models.CharField(
