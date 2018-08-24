@@ -1,10 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
-
-from placeholder.authentication.models import User
 
 
 class Property(models.Model):
-    host = models.ForeignKey(User, on_delete=models.PROTECT)
+    host = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     title = models.CharField(max_length=70)
     description = models.TextField(max_length=200)
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
@@ -32,7 +31,7 @@ class PropertyItem(models.Model):
     title = models.CharField(max_length=40)
     description = models.TextField(max_length=200)
     highest_bidder = models.OneToOneField(
-        User, null=True, on_delete=models.SET_NULL)
+        get_user_model(), null=True, on_delete=models.SET_NULL)
     open_for_auction = models.BooleanField(default=False)
 
 
@@ -60,7 +59,7 @@ class ListingImage(Image):
 
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     checkin_date = models.DateField()
@@ -89,5 +88,5 @@ class PropertyItemReview(Review):
 
 class UserReview(Review):
     reviewer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+        get_user_model(), on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
