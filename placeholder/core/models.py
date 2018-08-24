@@ -1,11 +1,20 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Property(models.Model):
     host = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    title = models.CharField(max_length=70)
-    description = models.TextField(max_length=200)
+    title = models.CharField(
+        _('title'),
+        max_length=70,
+        help_text=_('Title of the property will be shown on search results')
+    )
+    description = models.TextField(
+        _('description'),
+        max_length=200,
+        help_text=_('Short description of the property. 200 characters limit')
+    )
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
 
@@ -24,14 +33,26 @@ class PropertyItem(models.Model):
         (PROPERTY, 'Entire Property'),
     )
     item_type = models.CharField(
-        max_length=1, choices=TYPE_CHOICES, default=ROOM)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    buyout_price = models.DecimalField(max_digits=8, decimal_places=2)
+        _('item type'),
+        max_length=1,
+        choices=TYPE_CHOICES,
+        default=ROOM
+    )
+    price = models.DecimalField(_('price'), max_digits=8, decimal_places=2)
+    buyout_price = models.DecimalField(
+        _('buyout price'),
+        max_digits=8,
+        decimal_places=2,
+        help_text=_('buyout price during auction')
+    )
     rating = models.IntegerField(choices=[(i, i) for i in range(6)])
-    title = models.CharField(max_length=40)
-    description = models.TextField(max_length=200)
-    highest_bidder = models.ForeignKey(
-        get_user_model(), null=True, on_delete=models.SET_NULL)
+    title = models.CharField(_('title'), max_length=40)
+    description = models.TextField(_('description'), max_length=200)
+    highest_bidder = models.OneToOneField(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
     open_for_auction = models.BooleanField(default=False)
 
 
@@ -76,7 +97,7 @@ class Booking(models.Model):
 
 class Review(models.Model):
     rating = models.IntegerField(choices=[(i, i) for i in range(6)])
-    description = models.TextField()
+    description = models.TextField(_('description'))
 
     class Meta:
         abstract = True
@@ -88,5 +109,8 @@ class PropertyItemReview(Review):
 
 class UserReview(Review):
     reviewer = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name='reviews')
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

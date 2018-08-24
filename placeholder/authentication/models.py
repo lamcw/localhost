@@ -1,28 +1,36 @@
 from decimal import Decimal
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
-class User(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+class User(AbstractUser):
+    first_name = models.CharField(_('first name'), max_length=30, blank=False)
+    last_name = models.CharField(_('last name'), max_length=150, blank=False)
+    email = models.EmailField(_('email address'), blank=False)
     MALE = 'M'
     FEMALE = 'F'
     GENDER_CHOICES = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
     )
-    description = models.CharField(max_length=100, null=True, blank=True)
-    dob = models.DateField()
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    bio = models.CharField(
+        _('bio'),
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=_('Short description of yourself')
+    )
+    dob = models.DateField(_('date of birth'), null=True)
+    gender = models.CharField(
+        _('gender'),
+        max_length=1,
+        choices=GENDER_CHOICES
+    )
     credits = models.DecimalField(
-        max_digits=8, decimal_places=2, default=Decimal('0.0'))
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            try:
-                user = User.objects.get(user=self.user)
-                self.pk = user.pk
-            except User.DoesNotExist:
-                pass
-        super().save(*args, **kwargs)
+        _('credits'),
+        max_digits=8,
+        decimal_places=2,
+        default=Decimal('0.0')
+    )
