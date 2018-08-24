@@ -45,7 +45,7 @@ class PropertyItem(models.Model):
         decimal_places=2,
         help_text=_('buyout price during auction')
     )
-    rating = models.IntegerField(choices=[(i, i) for i in range(6)])
+    rating = models.IntegerField(choices=[(i, i) for i in range(6)], default=1)
     title = models.CharField(_('title'), max_length=40)
     description = models.TextField(_('description'), max_length=200)
     highest_bidder = models.OneToOneField(
