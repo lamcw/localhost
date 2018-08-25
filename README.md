@@ -34,16 +34,14 @@ exit
 ```
 Running the server
 ```sh
-DB_USER={your_username} DB_PW={your_password} python manage.py migrate
-DB_USER={your_username} DB_PW={your_password} python manage.py runserver --settings=placeholder.settings_dev
-```
-
-# Development
-To use development settings
-```sh
-python manage.py runserver --settings=placeholder.settings_dev
+DB_USER={your_username} DB_PW={your_password} ./manage.py migrate
+DB_USER={your_username} DB_PW={your_password} ./manage.py runserver
 ```
 
 # Tests
 
 # Deploy
+Use production settings
+```sh
+DB_USER={username} DB_PW={password} ./manage.py runserver --settings=placeholder.settings_production
+```
