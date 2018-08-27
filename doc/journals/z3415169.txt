@@ -13,3 +13,8 @@ Week 4
 Setup my working environment. Finished designing the database with Tom. 
 Began coding the backend on Friday night hack sesh. Began implementing our database design into Django. 
 
+Week5
+Changed database design to incorporate a Property->Room->Bed hierarchy. Tried different implementations of this design using abstraction and inheritance. 
+
+
+
