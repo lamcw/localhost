@@ -17,28 +17,29 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 2. Create database
-[follow this guide](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04)
+## 2. Create database for development
+`username` = your Linux username
 ```sh
-sudo su - postgres
 createdb placeholder_db
-```
-In `psql` session:
-```
-placeholder_db=# CREATE USER {your_username} WITH PASSWORD '{your_password}';
-placeholder_db=# GRANT ALL PRIVILEGES ON DATABASE placeholder_db TO {your_username};
-placeholder_db=# ALTER ROLE {your_username} SET client_encoding TO 'utf8';
-placeholder_db=# ALTER ROLE {your_username} SET default_transaction_isolation TO 'read committed';
+sudo su - postgres
+psql
+placeholder_db=# GRANT ALL PRIVILEGES ON DATABASE placeholder_db TO {username};
+placeholder_db=# ALTER ROLE {username} SET client_encoding TO 'utf8';
+placeholder_db=# ALTER ROLE {username} SET default_transaction_isolation TO 'read committed';
 placeholder_db=# \q
 exit
 ```
 Running the server
 ```sh
-DB_USER={your_username} DB_PW={your_password} ./manage.py migrate
-DB_USER={your_username} DB_PW={your_password} ./manage.py runserver
+./manage.py makemigrations # you may have to specify app label in order to generate all migration files
+./manage.py migrate
+./manage.py runserver
 ```
 
 # Tests
+```sh
+./manage.py test [test_label]
+```
 
 # Deploy
 Use production settings
