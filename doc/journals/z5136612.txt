@@ -16,3 +16,9 @@ Had meetings on Wednesday and Thursday. Discussed about problems with our
 current design and how to improve them. We then have a hack night on Friday
 which we have finalized system design and started implementing them. Me and
 Edward created ER model of our system and then mapped them to Django models.
+
+Week 5
+
+Finished backend for user sign up, log in, log out, reset password. Modified
+models to reflect property hierachy, i.e. Property -> Room -> Bed. User can now
+create listings.
