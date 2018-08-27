@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import DateRangeField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
@@ -18,6 +19,7 @@ class PropertyItem(ShowFieldType, PolymorphicModel):
     highest_bidder = models.OneToOneField(
         get_user_model(),
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
     open_for_auction = models.BooleanField(default=False)
@@ -62,9 +64,8 @@ class PropertyItemImage(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    checkin_date = models.DateField()
-    checkout_date = models.DateField()
+    price = models.DecimalField(_('price'), max_digits=8, decimal_places=2)
+    period = DateRangeField(_('period'), help_text=_('booking period.'))
     CART = 'C'
     PAID = 'P'
     STATUS_CHOCIE = (
@@ -73,6 +74,9 @@ class Booking(models.Model):
     )
     status = models.CharField(
         max_length=1, choices=STATUS_CHOCIE, default=CART)
+
+    def __str__(self):
+        return f"{self.user} booked {self.property_item}"
 
 
 class Review(PolymorphicModel):
