@@ -21,3 +21,10 @@ Pair programmed with Jasper for the homepage which is now almost complete; the
 text colour needs to be adjusted and search autocomplete needs to be done. I 
 will need to look into obtaining a Google Maps API key which will then allow us
 to integrate location autocomplete into our search bar. 
+
+// Week 5
+Continued working on homepage with Jasper - MVP is completed and it is up to
+the refinement stages now. Started working on the dashboard page but that has
+been put on hold due to the back-end moving ahead of schedule and more issues 
+with the design of the listing page. Started working on the property listing 
+page which is about 60% complete for the MVP.
