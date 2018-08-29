@@ -13,7 +13,7 @@ class Amenity(models.Model):
         verbose_name_plural = 'amenities'
 
     def __str__(self):
-        return f"Amenity {self.item}"
+        return f"{self.item}"
 
 
 class PropertyItem(ShowFieldType, PolymorphicModel):
