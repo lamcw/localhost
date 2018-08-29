@@ -6,14 +6,23 @@ from polymorphic.models import PolymorphicModel
 from polymorphic.showfields import ShowFieldType
 
 
+class Amenity(models.Model):
+    item = models.CharField(max_length=15)
+
+    class Meta:
+        verbose_name_plural = 'amenities'
+
+    def __str__(self):
+        return f"Amenity {self.item}"
+
+
 class PropertyItem(ShowFieldType, PolymorphicModel):
     price = models.DecimalField(_('price'), max_digits=8, decimal_places=2)
     buyout_price = models.DecimalField(
         _('buyout price'),
         max_digits=8,
         decimal_places=2,
-        help_text=_('buyout price during auction.')
-    )
+        help_text=_('buyout price during auction.'))
     title = models.CharField(_('title'), max_length=40)
     description = models.TextField(_('description'), max_length=200)
     highest_bidder = models.OneToOneField(
@@ -23,12 +32,16 @@ class PropertyItem(ShowFieldType, PolymorphicModel):
         on_delete=models.SET_NULL,
     )
     open_for_auction = models.BooleanField(default=False)
+    amenities = models.ManyToManyField(Amenity)
 
 
 class Property(PropertyItem):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
+
+    class Meta:
+        verbose_name_plural = 'properties'
 
     def __str__(self):
         return f"Property: {self.title} owned by {self.host}"
@@ -46,14 +59,6 @@ class Bed(PropertyItem):
 
     def __str__(self):
         return f"Bed in {self.room_ptr}"
-
-
-class Amenity(models.Model):
-    property_item = models.ManyToManyField(PropertyItem)
-    item = models.CharField(max_length=15)
-
-    def __str__(self):
-        return f"Amenity {self.items}"
 
 
 class PropertyItemImage(models.Model):
@@ -93,8 +98,5 @@ class PropertyItemReview(Review):
 
 class UserReview(Review):
     reviewer = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
+        get_user_model(), on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
