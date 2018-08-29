@@ -28,3 +28,11 @@ pages and presented them to the group for feedback. Together we implemented the
 first version of the website homepage incorporating a search bar and researched
 different APIs that can be used for the location autocomplete the project
 requires.
+
+# Week 5
+
+Official meetings ran successfully on Wednesday and Thursday. The unofficial
+friday night meetings are now running weekly. I worked on the homepage and
+refactored much of the existing code so that the codebase is more modular. I
+added features such as randomly generated search bar placeholder text and
+randomly chosen wallpapers.
