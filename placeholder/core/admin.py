@@ -2,10 +2,10 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.postgres.forms import RangeWidget
+from placeholder.core.models import (Amenity, Bed, Booking, Property,
+                                     PropertyItem, Room)
 from polymorphic.admin import (PolymorphicChildModelAdmin,
                                PolymorphicParentModelAdmin)
-
-from placeholder.core.models import Bed, Booking, Property, PropertyItem, Room
 
 
 class PropertyItemChildAdmin(PolymorphicChildModelAdmin):
@@ -43,3 +43,8 @@ class BookingAdminForm(forms.ModelForm):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     form = BookingAdminForm
+
+
+@admin.register(Amenity)
+class AmenityAdmin(admin.ModelAdmin):
+    pass
