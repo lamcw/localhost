@@ -46,10 +46,11 @@
 <div id="content-container" class="flex-grow-1 container d-flex align-item-center">
     <div id="search-component" class="align-self-center">
         <div class="input-group stylish-input-group">
-            <input id="search" type="text" class="form-control border-right-0" placeholder="">
+            <input id="search" type="text" class="form-control border-right-0" placeholder="" onsubmit="get_geometry()">
             <div class="input-group-append">
                 <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
             </div>
+            <a href="#"><button type="button" class="btn btn-primary" onclick="get_geometry()">Primary</button></a>
         </div>
     </div>
 </div>
@@ -87,7 +88,17 @@
             componentRestrictions: {country: 'au'}
         };
 
-        var autocomplete = new google.maps.places.Autocomplete(input, options);
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+        console.log(autocomplete);
+
+        autocomplete.addListener("place_changed", function() {
+            var place = autocomplete.getPlace();
+            console.log(place);
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            console.log(lat);
+            console.log(lng);
+        });
     }
 </script>
 
