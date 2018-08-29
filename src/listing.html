@@ -136,7 +136,15 @@
             <h4>Amenities</h4>
         </div>
     </div>
-    <div class="col-md-4 payment-col">
+    <div class="col-md-4">
+    <div class="calendar"></div>
+        <script>
+            $(function() {
+                $('.calendar').pignoseCalendar({
+                    multiple: true
+                });
+            });
+        </script>
         <div class="row payment-module">
             <div class="card">
                 <div class="card-body">
@@ -159,17 +167,6 @@
     </div>
 </div>
 </div>
-
-<div class="calendar"></div>
-<script>
-
-
-    $(function() {
-        $('.calendar').pignoseCalendar();
-    });
-
-
-</script>
 
 <!-- Footer / Navbar -->
 <div class="container">

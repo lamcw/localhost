@@ -18,6 +18,10 @@
     transform: translateX(50%);
 }
 
+.calendar {
+    font-size: 12px !important;
+}
+
 /*@media (max-width: 48em) {*/
 @media (max-width: 767.98px) {
     .payment-col {
