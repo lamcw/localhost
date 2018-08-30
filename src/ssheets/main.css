@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+html, body {
+    min-height: 100vh;
+    font-family: 'Raleway', sans-serif;
+}
+
+body {
+    background-size: cover;
+}
+
+.navbar {
+    padding-top: 1em;
+}
+
+.nav-link {
+    color: gainsboro !important;
+    text-shadow: 1px 1px 1px black;
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+.nav-item {
+    padding-right: 1em;
+}
+
+footer {
+    padding-bottom: 1.5%;
+}
+
+footer .navbar-nav {
+    flex-direction: row !important;
+}
