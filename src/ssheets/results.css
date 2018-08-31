@@ -1,0 +1,10 @@
+.card-group .card {
+    margin: 2.5% 2.5% 0 2.5%;
+    /* For flex reasons just "width" isn't enough */
+    min-width: 20em !important;
+    max-width: 20em !important;
+}
+
+.card-group .card:last-child {
+    margin-bottom: 2.5%;
+}
