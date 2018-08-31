@@ -5,10 +5,11 @@
 <head>
     <!-- Metadata -->
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="undergrads">
     <meta name="description" content="Find somewhere to spend the night!">
     <meta name="keywords" content="travel,accommodation,booking">
-    <meta name="author" content="undergrads">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -20,88 +21,53 @@
     <title>PlaceHolder</title>
 </head>
 
-<body class="d-flex flex-column">
+<body class="bg-light">
+    <div id="main-flex-wrapper" class="d-flex flex-column">
+        <!-- Header -->
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="#">PlaceHolder</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-<!-- Header / Navbar -->
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#"><h2>PlaceHolder</h2></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sign Up</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Log in</a>
-                </li>
-            </ul>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Log In</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-    </nav>
-</div>
 
-<!-- Content -->
-<div id="content-container" class="flex-grow-1 container d-flex align-item-center">
-    <div id="search-component" class="align-self-center">
-        <div class="input-group stylish-input-group">
-            <input id="search" type="text" class="form-control border-right-0" placeholder="" onsubmit="get_geometry()">
-            <div class="input-group-append">
-                <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+        <!-- Content -->
+        <div class="container d-flex flex-column flex-grow-1 justify-content-center">
+            <div id="search-component">
+                <div class="input-group stylish-input-group">
+                    <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
+                    <div class="input-group-append">
+                        <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="container">
+            <ul class="d-flex flex-row justify-content-end">
+                <li><a href="#">LICENSE</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </footer>
+
+        <!-- JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     </div>
-</div>
-
-<!-- Footer / Navbar -->
-<footer class="container">
-    <nav class="navbar navbar-expand-sm navbar-expand- navbar-dark">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#">About Us</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact Us</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">License</a>
-            </li>
-        </ul>
-    </nav>
-</footer>
-
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
-<script type="text/javascript" src="jscript/util.js"></script>
-<script type="text/javascript" src="jscript/main.js"></script>
-
-<script>
-    function activatePlacesSearch(){
-        var input = document.getElementById('search');
-        var options = {
-            types: ['(cities)'],
-            componentRestrictions: {country: 'au'}
-        };
-
-        autocomplete = new google.maps.places.Autocomplete(input, options);
-        console.log(autocomplete);
-
-        autocomplete.addListener("place_changed", function() {
-            var place = autocomplete.getPlace();
-            console.log(place);
-            var lat = place.geometry.location.lat();
-            var lng = place.geometry.location.lng();
-            console.log(lat);
-            console.log(lng);
-        });
-    }
-</script>
-
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50&libraries=places&callback=activatePlacesSearch"></script>
-
 </body>
-</html>

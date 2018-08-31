@@ -1,35 +1,31 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway');
-
-html, body {
-    min-height: 100vh;
-    font-family: 'Raleway', sans-serif;
-}
-
 body {
-    background-size: cover;
 }
 
-.navbar {
-    padding-top: 1em;
+#main-flex-wrapper {
+    min-height: 100vh;
+    background: #f7f7f7;
 }
 
-.nav-link {
-    color: gainsboro !important;
-    text-shadow: 1px 1px 1px black;
+footer li {
+    list-style-type: none;
+    padding: 0.25em 1.5em;
 }
 
-.nav-link:hover {
-    color: white !important;
+footer li a {
+    color: rgba(0, 0, 0, 0.5);
 }
 
-.nav-item {
-    padding-right: 1em;
+footer li a:hover {
+    text-decoration: none;
+    color: black; /* TODO: fix */
 }
 
-footer {
-    padding-bottom: 1.5%;
-}
-
-footer .navbar-nav {
-    flex-direction: row !important;
+@media (max-width: 760px) {
+    /* Allowing the footer to collapse and present each
+       entry as a row */
+    footer .flex-row {
+        padding-left: 0;
+        text-align: center;
+        flex-direction: column !important;
+    }
 }

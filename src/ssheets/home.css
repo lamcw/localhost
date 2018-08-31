@@ -1,42 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway');
-
 .form-control:focus {
     box-shadow: none;
-    -webkit-box-shadow: none;
     border-color: #cccccc;
 }
 
-#search-component {
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-    border-radius: 2em;
-    width: 65%;
+#search {
+    padding: 1.5em 0 1.5em 1.5em;
 }
 
-#search-component input {
-    padding: 2em 0 2em 2em !important;
-    font-weight: bold;
-}
-
-#search-component .input-group-text {
+.input-group-text {
     padding: 0 1.5em;
-}
-
-::-webkit-input-placeholder {
-    color: #a8a8a8 !important;
-}
-
-.pac-container {
-    width: 65%;
-}
-
-@media (max-width: 750px) {
-    #search-component {
-        width: 100%;
-    }
-    #search-component input {
-        padding: 1.5em 0 1.5em 1em !important;
-    }
-    #search-component .input-group-text {
-        padding: 0 1em;
-    }
 }
