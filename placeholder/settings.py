@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'dev-only'
+GMAPS_KEY = os.environ.get('GMAPS_KEY', 'AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,10 +33,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'polymorphic',
+    'widget_tweaks',
     'placeholder.core',
     'placeholder.authentication',
     'placeholder.messaging',
     'placeholder.report',
+    'placeholder.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,6 +66,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'placeholder.core.context_processors.gmaps_key',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',

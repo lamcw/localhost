@@ -17,14 +17,14 @@ class Amenity(models.Model):
 
 
 class PropertyItem(ShowFieldType, PolymorphicModel):
+    title = models.CharField(_('title'), max_length=40)
+    description = models.TextField(_('description'), max_length=200)
     price = models.DecimalField(_('price'), max_digits=8, decimal_places=2)
     buyout_price = models.DecimalField(
         _('buyout price'),
         max_digits=8,
         decimal_places=2,
         help_text=_('buyout price during auction.'))
-    title = models.CharField(_('title'), max_length=40)
-    description = models.TextField(_('description'), max_length=200)
     highest_bidder = models.OneToOneField(
         get_user_model(),
         null=True,
@@ -32,11 +32,16 @@ class PropertyItem(ShowFieldType, PolymorphicModel):
         on_delete=models.SET_NULL,
     )
     open_for_auction = models.BooleanField(default=False)
-    amenities = models.ManyToManyField(Amenity)
+    amenities = models.ManyToManyField(Amenity, blank=True)
+
+    def __str__(self):
+        return f"{self.title}"
 
 
 class Property(PropertyItem):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    address = models.CharField(
+        _('address'), max_length=150, help_text=_('address of this property.'))
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
 
@@ -61,9 +66,17 @@ class Bed(PropertyItem):
         return f"Bed in {self.room_ptr}"
 
 
+def user_directory_path(instance, filename):
+    """
+    File will be uploaded to
+    MEDIA_ROOT/user_<id>/property_item_<property_item_id>/<filename>
+    """
+    return f"user_{instance.user.id}/property_item_{instance.property_item.id}/{filename}"
+
+
 class PropertyItemImage(models.Model):
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
-    img = models.ImageField()
+    img = models.ImageField(upload_to=user_directory_path)
 
 
 class Booking(models.Model):

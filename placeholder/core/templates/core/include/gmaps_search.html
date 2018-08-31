@@ -1,0 +1,12 @@
+<script>
+  function activatePlacesSearch(){
+    var input = document.getElementById('{{ address_field_id }}');
+    var options = {
+      types: ['(cities)'],
+      componentRestrictions: {country: 'au'}
+    };
+
+    var autocomplete = new google.maps.places.Autocomplete(input, options);
+  }
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
