@@ -33,4 +33,12 @@ footer li a:hover {
         text-align: center;
         flex-direction: column !important;
     }
+
+    #post-navbar {
+        max-width: 100% !important;
+    }
+}
+
+#post-navbar {
+    max-width: 60%;
 }
