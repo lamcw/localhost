@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="ssheets/main.css">
-    <link rel="stylesheet" type="text/css" href="ssheets/home.css">
+    <link rel="stylesheet" type="text/css" href="ssheets/register.css">
 
     <title>PlaceHolder</title>
 </head>
@@ -46,14 +46,38 @@
 
         <!-- Content -->
         <div class="container d-flex flex-column flex-grow-1 justify-content-center">
-            <div id="search-component">
-                <div class="input-group stylish-input-group">
-                    <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
-                    <div class="input-group-append">
-                        <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
-                    </div>
+            <form class="form-login">
+                <h3 class="">Register</h3>
+
+                <label for="inputFirstName" class="sr-only"></label>
+                <input type="text" id="inputFirstName" class="form-control" placeholder="First name" required>
+
+                <label for="inputSurname" class="sr-only"></label>
+                <input type="text" id="inputSurname" class="form-control" placeholder="Surname" required>
+
+                <label for="inputDOB" class="sr-only"></label>
+                <input type="date" id="inputDOB" class="form-control" required>
+
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+                <label for="inputPasswordConfirm" class="sr-only">Confirm Password</label>
+                <input type="password" id="inputPasswordConfirm" class="form-control" placeholder="Confirm Password" required>
+
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-primary">
+                        <input type="radio" name="options" id="option1" autocomplete="off" required>Male
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="options" id="option2" autocomplete="off" required>Female
+                    </label>
                 </div>
-            </div>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+            </form>
         </div>
 
         <!-- Footer -->
