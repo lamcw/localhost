@@ -1,27 +1,29 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
 
 from placeholder.authentication.forms import SignUpForm
 
 
-def logged_in_check(user):
-    return not user.is_authenticated
+class SignUpView(UserPassesTestMixin, FormView):
+    template_name = 'registration/signup.html'
+    form_class = SignUpForm
+    success_url = reverse_lazy('core:index')
+
+    def test_func(self):
+        return not self.request.user.is_authenticated
+
+    def form_valid(self, form):
+        form.save()
+        username = form.cleaned_data.get('username')
+        raw_password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=raw_password)
+        login(self.request, user)
+        return super().form_valid(form)
 
 
-@user_passes_test(
-    logged_in_check, login_url='core:index', redirect_field_name=None)
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('core:index')
-    else:
-        form = SignUpForm()
-    context = {'form': form}
-    return render(request, 'registration/signup.html', context)
+class LoginView(UserPassesTestMixin, LoginView):
+    def test_func(self):
+        return not self.request.user.is_authenticated
