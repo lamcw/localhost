@@ -12,6 +12,6 @@ urlpatterns = [
         name='index'),
     path(
         'listing/<int:pk>',
-        views.PropertyItemDetail.as_view(),
-        name='listing_details')
+        views.PropertyItemDetailView.as_view(),
+        name='listing-details')
 ]
