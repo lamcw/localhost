@@ -5,40 +5,39 @@
 
 {% block body %}
   <div class="container d-flex flex-column flex-grow-1 justify-content-center">
-    {{ form.non_field_errors }}
-    {% for hidden in form.hidden_fields %}
-    {{ hidden }}
+    {% for error in form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
     {% endfor %}
 
     {% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-      please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
+      <div class="alert alert-warning" role="alert">
+      {% if user.is_authenticated %}
+        Your account doesn't have access to this page. To proceed,
+          please login with an account that has access.
+      {% else %}
+        Please login to see this page.
+      {% endif %}
+      </div>
     {% endif %}
 
-    <form class="form-login" method="post" action="{% url 'authentication:login' %}">
+    <form class="form-login" method="post" action="{% url 'authentication:login' %}" novalidate>
       {% csrf_token %}
       <h3 class="">Placeholder</h3>
-      <div class="form-group">
-	<label for="{{ form.username.id_for_label }}" class="sr-only">{{ form.username.label }}</label>
-	{% render_field form.username class+="form-control" %}
-	{{ form.username.errors }}
-      </div>
-      <div class="form-group">
-	<label for="{{ form.password.id_for_label }}" class="sr-only">{{ form.password.label }}</label>
-	{% render_field form.password class+="form-control" %}
-	{{ form.password.errors }}
-      </div>
+      {% for field in form.visible_fields %}
+        {% include 'core/include/form_field.html' with form=form field=field %}
+      {% endfor %}
 
       <button type="submit" class="btn btn-primary btn-lg btn-block" value="login">Sign in</button>
       <input type="hidden" name="next" value="{{ next }}"></input>
 
       <a href="{% url 'authentication:password_reset' %}">
-	<p>Forgot password?</p>
+        <p>Forgot password?</p>
       </a>
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
     </form>
   </div>
 {% endblock %}
