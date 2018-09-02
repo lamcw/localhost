@@ -8,7 +8,7 @@ Context args:
 {% load widget_tweaks %}
 
 <div class="form-group">
-  {{ field.label_tag }}
+  <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
   {% if form.is_bound %}
     {% if field.errors %}
       {% render_field field class="form-control is-invalid" %}
