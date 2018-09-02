@@ -1,0 +1,59 @@
+.form-login input {
+    margin-bottom: 1em;
+}
+
+.form-login .btn {
+    margin-bottom: 0.5em;
+}
+
+.form-login a {
+    text-decoration-color: #3d494c;
+}
+
+.form-login a p {
+    text-align: right;
+    color: #3d494c;
+}
+
+.btn-primary {
+    /* http://color.romanuke.com/tsvetovaya-palitra-1859 */
+    background-color: #c7d3da;
+    border: none;
+}
+
+.btn-primary, .btn-primary:hover {
+    background-color: #77888f;
+}
+
+@media (min-width: 760px) {
+    /* Custom css for desktop */
+    .form-login {
+        padding: 2.5%;
+        background: white;
+        text-align: center;
+        border: 1px solid lightgrey;
+        align-self: center;
+    }
+
+    .form-login h3 {
+        margin-bottom: 1em;
+        /* Ensuring that the log in box isn't super small
+           A little hacky and needs checking */
+        min-width: 12em;
+    }
+
+    .form-login input {
+        margin-bottom: 1.5em;
+    }
+
+    .btn-primary {
+        background-color: #c7d3da;
+    }
+}
+
+@media (max-width: 760px) {
+    /* Custom css for mobile */
+    .form-login h3 {
+        display: none;
+    }
+}

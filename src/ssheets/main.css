@@ -6,6 +6,11 @@ body {
     background: #f7f7f7;
 }
 
+.form-control:focus {
+    box-shadow: none;
+    border-color: #cccccc;
+}
+
 footer li {
     list-style-type: none;
     padding: 0.25em 1.5em;
