@@ -9,8 +9,8 @@
     max-width: 360px;
 }
 
-.calendar {
-    font-size: 12px !important; /*kind of hacky*/
+.pignose-calendar {
+    font-size: 12px; /*kind of hacky*/
 }
 
 .pignose-calendar .pignose-calendar-unit {

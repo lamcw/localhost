@@ -8,3 +8,11 @@
 .card-group .card:last-child {
     margin-bottom: 2.5%;
 }
+
+.pignose-calendar {
+    font-size: 12px;
+}
+
+.pignose-calendar .pignose-calendar-unit {
+    height: 2.7em !important;
+}
