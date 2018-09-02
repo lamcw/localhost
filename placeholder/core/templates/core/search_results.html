@@ -256,25 +256,13 @@
     </div>
   </div>
 
-  <script>
-    function activatePlacesSearch(){
-      var input = document.getElementById('search-criteria');
-      var options = {
-	types: ['(cities)'],
-	componentRestrictions: {country: 'au'}
-      };
+{% endblock %}
 
-      var autocomplete = new google.maps.places.Autocomplete(input, options);
-      console.log(autocomplete);
-    }
-  </script>
-
+{% block js %}
   <script>
     $('.carousel').carousel({
       interval: false
     });
   </script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50&libraries=places&callback=activatePlacesSearch"></script>
-  </body>
-  </html>
+  {% include 'core/include/gmaps_search.html' with address_field_id='search-criteria' %}
 {% endblock %}
