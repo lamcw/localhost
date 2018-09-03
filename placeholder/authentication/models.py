@@ -26,7 +26,8 @@ class User(AbstractUser):
     gender = models.CharField(
         _('gender'),
         max_length=1,
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
+        default=MALE,
     )
     credits = models.DecimalField(
         _('credits'),

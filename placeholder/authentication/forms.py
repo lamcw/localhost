@@ -9,11 +9,6 @@ class DatePicker(forms.DateInput):
 
 
 class SignUpForm(UserCreationForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self:
-            field.field.widget.attrs['class'] = 'form-control'
-
     class Meta:
         model = User
         fields = (
@@ -23,10 +18,10 @@ class SignUpForm(UserCreationForm):
             'email',
             'password1',
             'password2',
-            'bio',
             'dob',
             'gender',
         )
         widgets = {
             'dob': DatePicker(),
+            'gender': forms.RadioSelect(),
         }
