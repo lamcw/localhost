@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class User(AbstractUser):
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, blank=False)
-    email = models.EmailField(_('email address'), blank=False)
+    email = models.EmailField(_('email address'), unique=True, blank=False)
     MALE = 'M'
     FEMALE = 'F'
     GENDER_CHOICES = (
@@ -27,7 +27,7 @@ class User(AbstractUser):
         _('gender'),
         max_length=1,
         choices=GENDER_CHOICES,
-        default=MALE,
+        default=None
     )
     credits = models.DecimalField(
         _('credits'),
