@@ -19,7 +19,10 @@ class SignUpView(UserPassesTestMixin, FormView):
         form.save()
         email = form.cleaned_data.get('email')
         raw_password = form.cleaned_data.get('password1')
-        user = authenticate(email=email, password=raw_password)
+        user = authenticate(self.request, email=email, password=raw_password)
+        if user is None:
+            # error has occured, though this should not happen
+            return self.render_to_response(self.get_context_data(form=form))
         login(self.request, user)
         return super().form_valid(form)
 
