@@ -17,9 +17,9 @@ class SignUpView(UserPassesTestMixin, FormView):
 
     def form_valid(self, form):
         form.save()
-        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
         raw_password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=raw_password)
+        user = authenticate(email=email, password=raw_password)
         login(self.request, user)
         return super().form_valid(form)
 

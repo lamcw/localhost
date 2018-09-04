@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from placeholder.authentication.models import User
+User = get_user_model()
 
 
 class DatePicker(forms.DateInput):
@@ -12,10 +13,9 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = (
-            'username',
+            'email',
             'first_name',
             'last_name',
-            'email',
             'password1',
             'password2',
             'dob',
