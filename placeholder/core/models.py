@@ -7,7 +7,7 @@ from polymorphic.showfields import ShowFieldType
 
 
 class Amenity(models.Model):
-    item = models.CharField(max_length=15)
+    item = models.CharField(max_length=15, unique=True)
 
     class Meta:
         verbose_name_plural = 'amenities'
