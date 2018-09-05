@@ -22,3 +22,9 @@ Week 5
 Finished backend for user sign up, log in, log out, reset password. Modified
 models to reflect property hierachy, i.e. Property -> Room -> Bed. User can now
 create listings.
+
+Week 6
+
+Listing creation page is completed. Integrated front-end stuff to django
+framework. Wrote extensive tests for models. Modified user model so that we uses
+email to authenticate users.
