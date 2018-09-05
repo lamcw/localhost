@@ -11,20 +11,21 @@ class SettingsTest(TestCase):
 
 
 class UserTest(TestCase):
-    def setUp(self):
-        self.email = "testuser@testbase.com"
-        self.first_name = "Test"
-        self.last_name = "User"
-        self.password = "z"
-        self.dob = '1990-01-01'
-        self.gender = 'M'
+    @classmethod
+    def setUpTestData(cls):
+        cls.email = 'testuser@testbase.com'
+        cls.first_name = 'Test'
+        cls.last_name = 'User'
+        cls.password = 'z'
+        cls.dob = '1990-01-01'
+        cls.gender = 'M'
 
-        self.test_user = User.objects.create_user(
-            email=self.email,
-            first_name=self.first_name,
-            last_name=self.last_name,
-            dob=self.dob,
-            gender=self.gender,
+        cls.test_user = User.objects.create_user(
+            email=cls.email,
+            first_name=cls.first_name,
+            last_name=cls.last_name,
+            dob=cls.dob,
+            gender=cls.gender,
         )
 
     def test_create_user(self):
