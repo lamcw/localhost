@@ -28,3 +28,9 @@ the refinement stages now. Started working on the dashboard page but that has
 been put on hold due to the back-end moving ahead of schedule and more issues 
 with the design of the listing page. Started working on the property listing 
 page which is about 60% complete for the MVP.
+
+// Week 6
+Continued progress on the property listing page. Refactored a large portion of
+the code for clarity and consistency with the other pages due to a decision to
+restyle the visuals. Started working on search page to add the search bar at
+the top and also to have filters working. 
