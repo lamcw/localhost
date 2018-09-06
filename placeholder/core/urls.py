@@ -1,11 +1,17 @@
 from django.urls import path
+from django.views.generic import TemplateView
 
 from . import views
-
 
 app_name = 'core'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('property/<int:pk>', views.property_details, name='property_details')
+    path(
+        '',
+        TemplateView.as_view(template_name='core/index.html'),
+        name='index'),
+    path(
+        'listing/<int:pk>',
+        views.PropertyItemDetailView.as_view(),
+        name='listing-details')
 ]

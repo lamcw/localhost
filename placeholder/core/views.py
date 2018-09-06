@@ -1,15 +1,8 @@
-from django.shortcuts import render
 from django.views.generic import DetailView
-from django.conf import settings
 
-from placeholder.core.models import Property
-
-
-def index(request):
-    return render(request, 'core/index.html')
+from placeholder.core.models import PropertyItem
 
 
-def property_details(request, pk):
-    p = Property.objects.get(pk=pk)
-    context = {'property': p}
-    return render(request, 'core/property_details.html', context)
+class PropertyItemDetailView(DetailView):
+    model = PropertyItem
+    template_name = 'core/listing_details.html'

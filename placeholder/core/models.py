@@ -53,14 +53,16 @@ class Property(PropertyItem):
 
 
 class Room(PropertyItem):
-    property_ptr = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property_ptr = models.ForeignKey(
+        Property, on_delete=models.CASCADE, related_name='room')
 
     def __str__(self):
         return f"Room in {self.property_ptr}"
 
 
 class Bed(PropertyItem):
-    room_ptr = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room_ptr = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name='bed')
 
     def __str__(self):
         return f"Bed in {self.room_ptr}"
