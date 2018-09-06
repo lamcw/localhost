@@ -7,7 +7,7 @@ Context args:
 {% endcomment %}
 {% load widget_tweaks %}
 
-<div class="form-group">
+<div class="form-group {{ field_extra_css }}">
   <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
   {% if form.is_bound %}
     {% if field.errors %}

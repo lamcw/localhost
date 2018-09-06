@@ -8,8 +8,6 @@
       <h1>{% block property_title %}Property{% endblock %}</h1>
       <div class="dynamic-form">
         {% include 'dashboard/listing/property_item_form.html' with form=form %}
-        {% include 'core/include/form_field.html' with form=form field=form.latitude %}
-        {% include 'core/include/form_field.html' with form=form field=form.longitude %}
         {% include 'core/include/form_field.html' with form=form field=form.address %}
         {{ image_formset.management_form }}
         {{ image_formset.non_form_errors }}
