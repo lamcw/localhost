@@ -5,7 +5,7 @@ from django.contrib.postgres.forms import RangeWidget
 from polymorphic.admin import (PolymorphicChildModelAdmin,
                                PolymorphicParentModelAdmin)
 
-from placeholder.core.models import (Amenity, Bed, Booking, Property,
+from localhost.core.models import (Amenity, Bed, Booking, Property,
                                      PropertyItem, Room, PropertyItemImage)
 
 

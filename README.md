@@ -20,13 +20,13 @@ pip install -r requirements.txt
 ## 2. Create database for development
 `username` = your Linux username
 ```sh
-createdb placeholder_db
+createdb localhost_db
 sudo su - postgres
 psql
-placeholder_db=# GRANT ALL PRIVILEGES ON DATABASE placeholder_db TO {username};
-placeholder_db=# ALTER ROLE {username} SET client_encoding TO 'utf8';
-placeholder_db=# ALTER ROLE {username} SET default_transaction_isolation TO 'read committed';
-placeholder_db=# \q
+localhost_db=# GRANT ALL PRIVILEGES ON DATABASE localhost_db TO {username};
+localhost_db=# ALTER ROLE {username} SET client_encoding TO 'utf8';
+localhost_db=# ALTER ROLE {username} SET default_transaction_isolation TO 'read committed';
+localhost_db=# \q
 exit
 ```
 Running the server
@@ -44,5 +44,5 @@ Running the server
 # Deploy
 Use production settings
 ```sh
-DB_USER={username} DB_PW={password} ./manage.py runserver --settings=placeholder.settings_production
+DB_USER={username} DB_PW={password} ./manage.py runserver --settings=localhost.settings_production
 ```

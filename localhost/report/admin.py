@@ -2,7 +2,7 @@ from django.contrib import admin
 from polymorphic.admin import (PolymorphicChildModelAdmin,
                                PolymorphicParentModelAdmin)
 
-from placeholder.report.models import PropertyReport, Report, UserReport
+from localhost.report.models import PropertyReport, Report, UserReport
 
 
 class ReportChildAdmin(PolymorphicChildModelAdmin):

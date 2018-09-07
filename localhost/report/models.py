@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 
-from placeholder.core.models import PropertyItem
+from localhost.core.models import PropertyItem
 
 
 class Report(PolymorphicModel):

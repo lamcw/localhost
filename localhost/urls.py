@@ -1,4 +1,4 @@
-"""placeholder URL Configuration
+"""localhost URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from placeholder.core import views
+from localhost.core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('placeholder.core.urls')),
-    path('', include('placeholder.authentication.urls')),
-    path('dashboard/', include('placeholder.dashboard.urls')),
+    path('', include('localhost.core.urls')),
+    path('', include('localhost.authentication.urls')),
+    path('dashboard/', include('localhost.dashboard.urls')),
 ]

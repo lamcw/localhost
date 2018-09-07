@@ -1,5 +1,5 @@
 """
-WSGI config for placeholder project.
+WSGI config for localhost project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,8 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-SETTINGS = 'placeholder.settings' if os.environ.get(
-    'SECRET_KEY') else 'placeholder.settings_dev'
+SETTINGS = 'localhost.settings' if os.environ.get(
+    'SECRET_KEY') else 'localhost.settings_dev'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS)
 
 application = get_wsgi_application()

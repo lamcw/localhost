@@ -5,8 +5,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from placeholder.core.models import Property
-from placeholder.dashboard.forms import (PropertyForm,
+from localhost.core.models import Property
+from localhost.dashboard.forms import (PropertyForm,
                                          PropertyItemImageFormSet, RoomFormSet)
 
 

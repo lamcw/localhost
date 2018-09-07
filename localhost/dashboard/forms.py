@@ -4,7 +4,7 @@ from django import forms
 from django.forms.models import (BaseInlineFormSet, ModelForm,
                                  inlineformset_factory)
 
-from placeholder.core.models import (Bed, Property, PropertyItem,
+from localhost.core.models import (Bed, Property, PropertyItem,
                                      PropertyItemImage, Room)
 
 

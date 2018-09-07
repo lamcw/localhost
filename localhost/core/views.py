@@ -1,6 +1,6 @@
 from django.views.generic import DetailView
 
-from placeholder.core.models import PropertyItem
+from localhost.core.models import PropertyItem
 
 
 class PropertyItemDetailView(DetailView):

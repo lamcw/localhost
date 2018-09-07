@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
-from placeholder.authentication.forms import SignUpForm
+from localhost.authentication.forms import SignUpForm
 
 
 class SignUpView(UserPassesTestMixin, FormView):

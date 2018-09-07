@@ -24,7 +24,7 @@
 
     <form class="form-login" method="post" action="{% url 'authentication:login' %}" novalidate>
       {% csrf_token %}
-      <h3 class="">Placeholder</h3>
+      <h3 class="">LocalHost</h3>
       {% for field in form.visible_fields %}
         {% include 'core/include/form_field.html' with form=form field=field %}
       {% endfor %}
