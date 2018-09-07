@@ -1,0 +1,17 @@
+{% extends 'core/default.html' %}
+{% block title %} {{ block.super }} - {{ property.title }} {% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h1>{{ property.title }}</h1>
+    <p>{{ property.description }}</p>
+    <p>{{ property.latitude }}</p>
+    <p>{{ property.longitude }}</p>
+    {% for room in property.room.all %}
+      <h2>{{ room.title }}</h2>
+      {% for bed in room.bed.all %}
+	<h3>{{ bed.title }}<h3>
+      {% endfor %}
+    {% endfor %}
+  </div>
+{% endblock %}

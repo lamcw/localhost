@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+  <!-- Header / Navbar -->
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="{% url 'core:index' %}">LocalHost</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'authentication:signup' %}">Sign Up</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+            <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
+            {% else %}
+            <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  {% block body %}{% endblock %}
+
+  <!-- Footer -->
+  <footer class="container">
+    <ul class="d-flex flex-row justify-content-end">
+      <li><a href="#">LICENSE</a></li>
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+  </footer>
+{% endblock %}

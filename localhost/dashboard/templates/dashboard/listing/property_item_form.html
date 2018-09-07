@@ -1,0 +1,42 @@
+{% load widget_tweaks %}
+
+{% for hidden_field in form.hidden_fields %}
+  {{ hidden_field }}
+{% endfor %}
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    {% for error in form.non_field_errors %}
+      {{ error }}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% include 'core/include/form_field.html' with form=form field=form.title %}
+{% include 'core/include/form_field.html' with form=form field=form.description %}
+<div class="form-row">
+  {% include 'core/include/form_field.html' with form=form field=form.price field_extra_css='col-md-4' %}
+  {% include 'core/include/form_field.html' with form=form field=form.buyout_price field_extra_css='col-md-4' %}
+  {% include 'core/include/form_field.html' with form=form field=form.capacity field_extra_css='col-md-4' %}
+</div>
+<div class="form-group">
+  {{ form.amenities.label_tag }}
+  {% if form.is_bound %}
+    {% if form.amenities.errors %}
+      {% render_field form.amenities class="form-control is-invalid" %}
+      {% for error in form.amenities.errors %}
+        <div class="invalid-feedback">
+          {{ error|escape }}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% render_field form.amenities class="form-control is-valid" %}
+    {% endif %}
+  {% else %}
+    {% render_field form.amenities class="form-control" %}
+  {% endif %}
+
+  {% if form.amenities.help_text %}
+    <small class="form-text text-muted">{{ form.amenities.help_text|safe }}</small>
+  {% endif %}
+</div>

@@ -1,0 +1,43 @@
+{% extends 'core/default.html' %}
+{% load widget_tweaks %}
+
+{% block title %} {{ block.super }} - Login {% endblock %}
+
+{% block body %}
+  <div class="container d-flex flex-column flex-grow-1 justify-content-center">
+    {% for error in form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+    {% endfor %}
+
+    {% if next %}
+      <div class="alert alert-warning" role="alert">
+      {% if user.is_authenticated %}
+        Your account doesn't have access to this page. To proceed,
+          please login with an account that has access.
+      {% else %}
+        Please login to see this page.
+      {% endif %}
+      </div>
+    {% endif %}
+
+    <form class="form-login" method="post" action="{% url 'authentication:login' %}" novalidate>
+      {% csrf_token %}
+      <h3 class="">LocalHost</h3>
+      {% for field in form.visible_fields %}
+        {% include 'core/include/form_field.html' with form=form field=field %}
+      {% endfor %}
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block" value="login">Sign in</button>
+      <input type="hidden" name="next" value="{{ next }}"></input>
+
+      <a href="{% url 'authentication:password_reset' %}">
+        <p>Forgot password?</p>
+      </a>
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
+    </form>
+  </div>
+{% endblock %}
