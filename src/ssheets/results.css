@@ -16,3 +16,7 @@
 .pignose-calendar .pignose-calendar-unit {
     height: 2.7em !important;
 }
+
+.btn {
+	text-align-last: center;
+}

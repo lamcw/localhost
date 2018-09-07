@@ -39,12 +39,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div id="post-navbar" class="input-group stylish-input-group">
+                <form id="post-navbar" class="form-inline input-group stylish-input-group">
                     <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
                     <div class="input-group-append">
                         <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
                     </div>
-                </div>
+                </form>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
@@ -59,28 +59,31 @@
             </nav>
         </div>
         <div class="container">
-                <button id="booking-dates" type="button" class="calendar btn">Dates</button>
+            <form>
+                <input id="booking-dates" type="button" class="calendar btn" placeholder="Dates">
                 <script>
                     $(function() {
-                        $('button.calendar').pignoseCalendar({
-                            format: 'YYYY-MM-DD', // date format string. (2017-02-02)
+                        $('input.calendar').pignoseCalendar({
+                            format: 'D MMM',
                             modal: true,
                             buttons: true,
                             multiple: true,
-                                apply: function(date) {
-                                    if (date[0] != null && date[1] != null)
-                                        document.getElementById('booking-dates').innerHTML = date[0].format("D MMM") + ' - ' + date[1].format("D MMM");
-                                    else if (date[0] != null)
-                                        document.getElementById('booking-dates').innerHTML = date[0].format("D MMM") + ' - ';
-                                    else if (date[1] != null)
-                                        document.getElementById('booking-dates').innerHTML = ' - ' + date[1].format("D MMM");
-                                    else
-                                        document.getElementById('booking-dates').innerHTML = 'Dates';
-                                }
+                            minDate: '2018-09-01',
+                            init: function() {
+                                document.getElementById('booking-dates').value = moment().format("D MMM");
+                            }
                         });
                     });
                 </script>
-                <button type="button" class="btn">Guests</button>
+                <select class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" value="Guests">
+                    <option selected>Guests</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5+</option>
+                </select>
+            </form>
         </div>
 
         <!-- Content -->
@@ -108,11 +111,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -136,11 +140,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -164,11 +169,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -192,11 +198,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -220,11 +227,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -248,11 +256,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
                 <div class="card align-self-start">
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -276,11 +285,12 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#">
+                        <div class="card-body">
+                            <h5 class="card-title">A cozy cottage in the eastern suburbs</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -297,5 +307,19 @@
         <!-- JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script>
+            function activatePlacesSearch(){
+                var input = document.getElementById('search');
+                var options = {
+                    types: ['(cities)'],
+                    componentRestrictions: {country: 'au'}
+                };
+
+                var autocomplete = new google.maps.places.Autocomplete(input, options);
+                // console.log(autocomplete);
+            }
+        </script>
+
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50&libraries=places&callback=activatePlacesSearch"></script>
     </div>
 </body>

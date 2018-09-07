@@ -38,12 +38,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div id="post-navbar" class="input-group stylish-input-group">
+                <form id="post-navbar" class="form-inline input-group stylish-input-group">
                     <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
                     <div class="input-group-append">
                         <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
                     </div>
-                </div>
+                </form>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
@@ -133,6 +133,11 @@
                     </div>
                     <div class="p-2">
                         <h4>Amenities</h4>
+                        <i class="fas fa-swimming-pool"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-wheelchair"></i>
+                        <i class="fas fa-tv"></i>
+                        <i class="fas fa-hot-tub"></i>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -194,14 +199,14 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script>
     function activatePlacesSearch(){
-        var input = document.getElementById('search-criteria');
+        var input = document.getElementById('search');
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'au'}
         };
 
         var autocomplete = new google.maps.places.Autocomplete(input, options);
-        console.log(autocomplete);
+        // console.log(autocomplete);
     }
 </script>
 
