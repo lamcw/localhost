@@ -21,6 +21,7 @@ class SearchResultsView(ListView):
         latitude = -33.96667  #hurstville
         longitude = 151.1
         search_range = 14
+        guests = 5
 
         # "Box" range filter to narrow queries
         latitude_offset = units.degrees(arcminutes=units.nautical(kilometers=search_range))
@@ -30,13 +31,17 @@ class SearchResultsView(ListView):
             longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
         )
 
-        # Geodesic range filter
         properties = []
         for p in queryset:
+            # TODO session filter
             geodesic_distance = distance.distance(
                 (latitude, longitude), (p.latitude, p.longitude)
             ).kilometers
             if geodesic_distance < search_range:
-                properties.append(p)
+                property_item_list = PropertyItem.objects.filter(property__id=p.id)
+                for property_item in property_item_list:
+                    if property_item.available & (property_item.capacity >= guests):
+                        properties.append(p)
+                        break
 
         return queryset.filter(id__in=[p.id for p in properties])

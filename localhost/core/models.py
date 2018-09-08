@@ -32,7 +32,7 @@ class Property(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
     earliest_checkin_time = models.TimeField()
     latest_checkin_time = models.TimeField()
-    session = models.ManyToManyField(Session)
+    session = models.ManyToManyField(Session, blank=True, null= True)
 
     class Meta:
         verbose_name_plural = 'properties'
@@ -59,6 +59,7 @@ class PropertyItem(models.Model):
     amenities = models.ManyToManyField(Amenity, blank=True)
     capacity = models.PositiveIntegerField()
     bindable = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.title}"
