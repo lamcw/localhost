@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from localhost.core.models import (Amenity, Booking, Property, PropertyImage,
-                                   PropertyItem, PropertyItemImage)
+from localhost.core.models import (Amenity, BiddingSession, Booking, Property,
+                                   PropertyImage, PropertyItem,
+                                   PropertyItemImage)
 
 
 class PropertyItemImageInline(admin.StackedInline):
@@ -16,15 +17,15 @@ class PropertyImageInline(admin.StackedInline):
 class PropertyItemInline(admin.StackedInline):
     model = PropertyItem
     extra = 1
+    readonly_fields = [
+        'highest_bidder',
+    ]
     # TODO nested inline with image
 
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    inlines = [
-        PropertyItemInline,
-        PropertyImageInline
-    ]
+    inlines = [PropertyItemInline, PropertyImageInline]
 
 
 @admin.register(Booking)
@@ -34,4 +35,9 @@ class BookingAdmin(admin.ModelAdmin):
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(BiddingSession)
+class BiddingSessionAdmin(admin.ModelAdmin):
     pass

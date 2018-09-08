@@ -1,7 +1,9 @@
 import googlemaps
 from django.conf import settings
+from django.forms import ValidationError
 from django.forms.models import (BaseInlineFormSet, ModelForm,
                                  inlineformset_factory)
+from django.utils.translation import gettext_lazy as _
 
 from localhost.core.models import (Property, PropertyImage, PropertyItem,
                                    PropertyItemImage)
@@ -22,6 +24,20 @@ class PropertyForm(PropertyItemForm):
             'latitude',
             'longitude',
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        earliest_checkin_time = cleaned_data.get('earliest_checkin_time')
+        latest_checkin_time = cleaned_data.get('latest_checkin_time')
+        if (earliest_checkin_time and latest_checkin_time
+                and earliest_checkin_time > latest_checkin_time):
+            raise ValidationError(
+                _('Invalid check-in time: %(earliest)s > %(latest)s'),
+                code='invalid-time',
+                params={
+                    'earliest': earliest_checkin_time,
+                    'latest': latest_checkin_time
+                })
 
     def save(self, commit=True):
         new_property = super().save(commit=False)

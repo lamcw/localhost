@@ -15,7 +15,7 @@ class Amenity(models.Model):
         return f"{self.item}"
 
 
-class Session(models.Model):
+class BiddingSession(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
 
@@ -23,16 +23,16 @@ class Session(models.Model):
 class Property(models.Model):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(
-        _('title'), max_length=40, help_text=_('character limit: 40'))
+        _('title'), max_length=40, help_text=_('Character limit: 40'))
     description = models.TextField(
-        _('description'), max_length=200, help_text=_('character limit: 200'))
+        _('description'), max_length=200, help_text=_('Character limit: 200'))
     address = models.CharField(
-        _('address'), max_length=150, help_text=_('address of this property.'))
+        _('address'), max_length=150, help_text=_('Address of this property.'))
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
-    earliest_checkin_time = models.TimeField()
-    latest_checkin_time = models.TimeField()
-    session = models.ManyToManyField(Session)
+    earliest_checkin_time = models.TimeField(_('earliest check-in time'))
+    latest_checkin_time = models.TimeField(_('latest check-in time'))
+    session = models.ManyToManyField(BiddingSession, blank=True)
 
     class Meta:
         verbose_name_plural = 'properties'
@@ -44,12 +44,13 @@ class Property(models.Model):
 class PropertyItem(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     title = models.CharField(
-        _('title'), max_length=40, help_text=_('character limit: 40'))
+        _('title'), max_length=40, help_text=_('Character limit: 40'))
     description = models.TextField(
-        _('description'), max_length=200, help_text=_('character limit: 200'))
-    min_price = models.PositiveIntegerField(_('min price'))
+        _('description'), max_length=200, help_text=_('Character limit: 200'))
+    min_price = models.PositiveIntegerField(
+        _('min price'), help_text=_('Starting price of the auction.'))
     buyout_price = models.PositiveIntegerField(
-        _('buyout price'), help_text=_('buyout price during auction.'))
+        _('buyout price'), help_text=_('Buyout price during auction.'))
     highest_bidder = models.ForeignKey(
         get_user_model(),
         null=True,

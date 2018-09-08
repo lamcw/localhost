@@ -22,8 +22,7 @@ class ListingCreate(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context['image_formset'] = PropertyImageFormSet(
-                self.request.POST)
+            context['image_formset'] = PropertyImageFormSet(self.request.POST)
             context['property_item_formset'] = PropertyItemFormSet(
                 self.request.POST)
         else:
@@ -35,6 +34,26 @@ class ListingCreate(LoginRequiredMixin, CreateView):
         context = self.get_context_data()
         property_image_formset = context.get('image_formset')
         property_item_formset = context.get('property_item_formset')
+        if all([
+                form.is_valid(),
+                property_image_formset.is_valid(),
+                property_item_formset.is_valid()
+        ]):
+            form.instance.host = self.request.user
+            self.object = form.save()
+            for form in property_image_formset:
+                image = form.save(commit=False)
+                image.property = self.object
+                form.save()
+            for form in property_item_formset:
+                property_item = form.save(commit=False)
+                property_item.property = self.object
+                property_item = form.save()
+                form.save_m2m()
+                for image_form in form.nested:
+                    image = image_form.save(commit=False)
+                    image_form.property_item = property_item
+                    image_form.save()
         return super().form_valid(form)
 
 
