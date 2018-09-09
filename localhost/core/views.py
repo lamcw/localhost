@@ -52,8 +52,8 @@ class SearchResultsView(ListView):
             queryset = queryset.filter(
                 session__end_time__gt=time,
                 session__start_time__lt=time,
-                propertyitem__available=True,
-                propertyitem__capacity__gte=guests).distinct()
+                property_item__available=True,
+                property_item__capacity__gte=guests).distinct()
 
         properties = []
         for p in queryset:
