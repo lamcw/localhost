@@ -20,12 +20,13 @@ class SearchResultsView(ListView):
         queryset = super(SearchResultsView, self).get_queryset()
 
         # time = datetime.datetime.now()
-        time = '21:00:00'
+        time = '1:00:00'
         latitude = -33.96667  #hurstville
         longitude = 151.1
         search_range = 20
         guests = 1
         bid_now = True
+        checkin = '2:00:00'
 
         # "Box" range filter to narrow queries
         latitude_offset = units.degrees(arcminutes=units.nautical(kilometers=search_range))
@@ -38,6 +39,8 @@ class SearchResultsView(ListView):
 
         if bid_now:
             queryset = queryset.filter(
+                earliest_checkin_time__lt = checkin,
+                latest_checkin_time__gt = checkin,
                 session__end_time__gt = time,
                 session__start_time__lt = time,
                 propertyitem__available = True,
