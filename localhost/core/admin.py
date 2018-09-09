@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from localhost.core.models import (Amenity, Booking, Property, PropertyImage,
+from localhost.core.models import (Amenity, Booking, Property, PropertyImage, Session,
                                    PropertyItem, PropertyItemImage)
 
 
@@ -34,4 +34,8 @@ class BookingAdmin(admin.ModelAdmin):
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
     pass
