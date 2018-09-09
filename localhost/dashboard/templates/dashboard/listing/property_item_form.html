@@ -40,6 +40,15 @@
     <small class="form-text text-muted">{{ form.amenities.help_text|safe }}</small>
   {% endif %}
 </div>
+<div class="form-check">
+  {% render_field form.bindable class="form-check-input" %}
+  <label class="form-check-label" for="{{ form.bindable.id_for_label }}">
+    {{ form.bindable.label }}
+  </label>
+  {% if form.bindable.help_text %}
+    <small class="form-text text-muted">{{ form.bindable.help_text|safe }}</small>
+  {% endif %}
+</div>
 
 {{ form.image_formset.management_form }}
 {% for error in image_formset.non_form_errors %}

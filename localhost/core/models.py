@@ -27,16 +27,24 @@ class BiddingSession(models.Model):
 class Property(models.Model):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(
-        _('title'), max_length=40, help_text=_('Character limit: 40'))
+        _('title'), max_length=100, help_text=_('Character limit: 100'))
     description = models.TextField(
-        _('description'), max_length=200, help_text=_('Character limit: 200'))
+        _('description'), max_length=600, help_text=_('Character limit: 600'))
     address = models.CharField(
-        _('address'), max_length=150, help_text=_('Address of this property.'))
+        _('address'), max_length=200, help_text=_('Address of this property.'))
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
-    earliest_checkin_time = models.TimeField(_('earliest check-in time'))
-    latest_checkin_time = models.TimeField(_('latest check-in time'))
-    session = models.ManyToManyField(BiddingSession, blank=True)
+    earliest_checkin_time = models.TimeField(
+        _('earliest check-in time'),
+        help_text=_('Earliest time a guest can check-in.'))
+    latest_checkin_time = models.TimeField(
+        _('latest check-in time'),
+        help_text=_('Latest time a guest can check-in.'))
+    session = models.ManyToManyField(
+        BiddingSession,
+        verbose_name=_('bidding session'),
+        blank=True,
+        help_text=_('Choose a session to enable bidding during those times.'))
 
     class Meta:
         verbose_name_plural = 'properties'
@@ -48,9 +56,9 @@ class Property(models.Model):
 class PropertyItem(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     title = models.CharField(
-        _('title'), max_length=40, help_text=_('Character limit: 40'))
+        _('title'), max_length=100, help_text=_('Character limit: 100'))
     description = models.TextField(
-        _('description'), max_length=200, help_text=_('Character limit: 200'))
+        _('description'), max_length=600, help_text=_('Character limit: 600'))
     min_price = models.PositiveIntegerField(
         _('min price'), help_text=_('Starting price of the auction.'))
     buyout_price = models.PositiveIntegerField(
@@ -61,9 +69,11 @@ class PropertyItem(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    amenities = models.ManyToManyField(Amenity, blank=True)
+    amenities = models.ManyToManyField(
+        Amenity, blank=True, help_text=_('Amenities in this place.'))
     capacity = models.PositiveIntegerField()
-    bindable = models.BooleanField(default=True)
+    bindable = models.BooleanField(
+        default=True, help_text=_('Enable binding bids.'))
 
     def __str__(self):
         return f"{self.title}"
