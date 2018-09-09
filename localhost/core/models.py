@@ -54,7 +54,8 @@ class Property(models.Model):
 
 
 class PropertyItem(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(
+        Property, on_delete=models.CASCADE, related_name='property_item')
     title = models.CharField(
         _('title'), max_length=100, help_text=_('Character limit: 100'))
     description = models.TextField(
