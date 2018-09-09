@@ -12,7 +12,7 @@ urlpatterns = [
         name='index'),
     path(
         'listing/<int:pk>',
-        views.PropertyItemDetailView.as_view(),
+        views.PropertyDetailView.as_view(),
         name='listing-details'),
-    path('search/', views.SearchResultsView.as_view(), name='search_results'),
+    path('search/', views.SearchResultsView.as_view(), name='search_results')
 ]
