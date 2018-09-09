@@ -74,6 +74,7 @@ class PropertyItem(models.Model):
     capacity = models.PositiveIntegerField()
     bindable = models.BooleanField(
         default=True, help_text=_('Enable binding bids.'))
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.title}"

@@ -13,5 +13,6 @@ urlpatterns = [
     path(
         'listing/<int:pk>',
         views.PropertyItemDetailView.as_view(),
-        name='listing-details')
+        name='listing-details'),
+    path('search/', views.SearchResultsView.as_view(), name='search_results'),
 ]

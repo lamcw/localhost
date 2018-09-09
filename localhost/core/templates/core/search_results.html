@@ -1,6 +1,9 @@
 {% extends 'core/default.html' %}
 
 {% block body %}
+{% for property in property_list %}
+  {{ property.title }}
+{% endfor %}
   <div id="content-container" class="container-fluid">
     <div class="card card-bid-active" style="width: 18rem;">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
