@@ -3,7 +3,7 @@ import datetime
 
 from django.views.generic import DetailView, ListView
 from geopy import distance, units
-
+from django.db.models import F, Q
 from localhost.core.models import PropertyItem, Property
 
 
@@ -20,14 +20,14 @@ class SearchResultsView(ListView):
         queryset = super(SearchResultsView, self).get_queryset()
 
         # time = datetime.datetime.now()
-        time = '1:00:00'
-        latitude = -33.96667  #hurstville
-        longitude = 151.1
-        search_range = 20
-        guests = 1
-        bid_now = True
-        checkin = '2:00:00'
-
+        time = '14:00:00'
+        latitude = float(self.request.GET.get('lat'))
+        longitude = float(self.request.GET.get('long'))
+        search_range = float(self.request.GET.get('range', 10))
+        guests = int(self.request.GET.get('guests', 1))
+        bid_now = int(self.request.GET.get('bidnow',0))
+        checkin = self.request.GET.get('checkin', time)
+        print(checkin)
         # "Box" range filter to narrow queries
         latitude_offset = units.degrees(arcminutes=units.nautical(kilometers=search_range))
         longitude_offset = latitude_offset / math.cos(math.radians(latitude))
@@ -38,9 +38,19 @@ class SearchResultsView(ListView):
 
 
         if bid_now:
+            q1 = queryset.filter(
+                Q(earliest_checkin_time__lt = F('latest_checkin_time')),
+                Q(earliest_checkin_time__lt = checkin),
+                latest_checkin_time__gt = checkin
+            )
+
+            q2 = queryset.filter(
+                Q(earliest_checkin_time__gt = F('latest_checkin_time')),
+                Q(earliest_checkin_time__lt = checkin) | Q(latest_checkin_time__gt = checkin)
+            )
+            queryset = q1 | q2
+
             queryset = queryset.filter(
-                earliest_checkin_time__lt = checkin,
-                latest_checkin_time__gt = checkin,
                 session__end_time__gt = time,
                 session__start_time__lt = time,
                 propertyitem__available = True,
