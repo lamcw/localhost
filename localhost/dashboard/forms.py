@@ -78,8 +78,7 @@ class BasePropertyItemFormSet(BaseInlineFormSet):
             data=form.data if form.is_bound else None,
             files=form.files if form.is_bound else None,
             prefix=
-            f"image-{form.prefix}-{PropertyItemImageFormSet.get_default_prefix()}"
-        )
+            f"{form.prefix}-{PropertyItemImageFormSet.get_default_prefix()}")
 
     def is_valid(self):
         """

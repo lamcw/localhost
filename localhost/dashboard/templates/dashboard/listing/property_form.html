@@ -5,11 +5,11 @@
 {% endfor %}
 
 {% if form.non_field_errors %}
-  <div class="alert alert-danger" role="alert">
-    {% for error in form.non_field_errors %}
+  {% for error in form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
       {{ error }}
-    {% endfor %}
-  </div>
+    </div>
+  {% endfor %}
 {% endif %}
 
 {% include 'core/include/form_field.html' with form=form field=form.title %}
@@ -47,7 +47,11 @@
 </div>
 
 {{ image_formset.management_form }}
-{{ image_formset.non_form_errors }}
+{% for error in image_formset.non_form_errors %}
+  <div class="alert alert-danger">
+    {{ error }}
+  </div>
+{% endfor %}
 {% for form in image_formset %}
   {{ form.as_p }}
 {% endfor %}

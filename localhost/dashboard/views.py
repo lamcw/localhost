@@ -1,12 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from localhost.core.models import Property
-from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
-                                       PropertyImageFormSet)
+from localhost.dashboard.forms import (PropertyForm, PropertyImageFormSet,
+                                       PropertyItemFormSet)
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -39,8 +38,10 @@ class ListingCreate(LoginRequiredMixin, CreateView):
                 property_image_formset.is_valid(),
                 property_item_formset.is_valid()
         ]):
-            form.instance.host = self.request.user
-            self.object = form.save()
+            self.object = form.save(commit=False)
+            self.object.host = self.request.user
+            form.save()
+            form.save_m2m()
             for form in property_image_formset:
                 image = form.save(commit=False)
                 image.property = self.object
@@ -50,9 +51,9 @@ class ListingCreate(LoginRequiredMixin, CreateView):
                 property_item.property = self.object
                 property_item = form.save()
                 form.save_m2m()
-                for image_form in form.nested:
+                for image_form in form.image_formset:
                     image = image_form.save(commit=False)
-                    image_form.property_item = property_item
+                    image.property_item = property_item
                     image_form.save()
         return super().form_valid(form)
 
