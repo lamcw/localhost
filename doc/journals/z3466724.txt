@@ -34,3 +34,10 @@ Continued progress on the property listing page. Refactored a large portion of
 the code for clarity and consistency with the other pages due to a decision to
 restyle the visuals. Started working on search page to add the search bar at
 the top and also to have filters working. 
+
+// Week 7
+Results page just about complete with mobile responsive filters, few more minor
+tweaks to reposition elements and it can be finalised. Removed the calendar 
+from all the pages as date is no longer to be used. Results and listing pages
+will need to be finalised ASAP for backend integration and work to start on the
+dashboard next week.
