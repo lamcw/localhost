@@ -1,4 +1,4 @@
-{% extends 'core/default.html' %}
+{% extends "core/default.html" %}
 
 {% block body %}
   <div class="container d-flex flex-column flex-grow-1 justify-content-center">
@@ -14,5 +14,5 @@
 {% endblock %}
 
 {% block js %}
-  {% include 'core/include/gmaps_search.html' with address_field_id='search' %}
+  {% include "core/include/gmaps_search.html" with address_field_id='search' %}
 {% endblock %}

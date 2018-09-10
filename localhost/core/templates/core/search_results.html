@@ -1,6 +1,6 @@
-{% extends 'core/default.html' %}
+{% extends "core/default.html" %}
 
-{% block search_bar %}{% include 'core/include/search_bar.html' %}{% endblock %}
+{% block search_bar %}{% include "core/include/search_bar.html" %}{% endblock %}
 
 {% block body %}
  <div class="container-fluid d-flex flex-row flex-grow-1">
@@ -218,5 +218,5 @@
       interval: false
     });
   </script>
-  {% include 'core/include/gmaps_search.html' with address_field_id='search-criteria' %}
+  {% include "core/include/gmaps_search.html" with address_field_id='search-criteria' %}
 {% endblock %}

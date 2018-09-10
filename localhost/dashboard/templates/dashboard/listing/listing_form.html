@@ -1,4 +1,4 @@
-{% extends 'core/default.html' %}
+{% extends "core/default.html" %}
 
 {% block body %}
   <div class="container">
@@ -6,7 +6,7 @@
     <form method="post" novalidate>
       {% csrf_token %}
       <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
-      {% include 'dashboard/listing/property_form.html' with form=form image_formset=image_formset %}
+      {% include "dashboard/listing/property_form.html" with form=form image_formset=image_formset %}
 
       {{ property_item_formset.management_form }}
       {% for error in property_item_formset.non_form_errors %}
@@ -18,7 +18,7 @@
       {% for form in property_item_formset %}
         <div class="dynamic-form">
           <h2>{% block sub_item_title %}New Item{% endblock %}</h2>
-          {% include 'dashboard/listing/property_item_form.html' with form=form %}
+          {% include "dashboard/listing/property_item_form.html" with form=form %}
           <button class="btn btn-success add-form">+</button>
         </div>
       {% endfor %}
@@ -87,5 +87,5 @@
       return false;
     });
   </script>
-  {% include 'core/include/gmaps_search.html' with address_field_id=form.address.auto_id %}
+  {% include "core/include/gmaps_search.html" with address_field_id=form.address.auto_id %}
 {% endblock %}

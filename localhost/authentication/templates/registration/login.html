@@ -1,4 +1,4 @@
-{% extends 'core/default.html' %}
+{% extends "core/default.html" %}
 {% load widget_tweaks %}
 
 {% block title %} {{ block.super }} - Login {% endblock %}
@@ -26,7 +26,7 @@
       {% csrf_token %}
       <h3 class="">localhost</h3>
       {% for field in form.visible_fields %}
-        {% include 'core/include/form_field.html' with form=form field=field %}
+        {% include "core/include/form_field.html" with form=form field=field %}
       {% endfor %}
 
       <button type="submit" class="btn btn-primary btn-lg btn-block" value="login">Sign in</button>
