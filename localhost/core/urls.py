@@ -11,8 +11,8 @@ urlpatterns = [
         TemplateView.as_view(template_name='core/index.html'),
         name='index'),
     path(
-        'listing/<int:pk>',
+        'property/<int:pk>',
         views.PropertyDetailView.as_view(),
-        name='listing-details'),
+        name='property-detail'),
     path('search/', views.SearchResultsView.as_view(), name='search_results')
 ]

@@ -30,9 +30,9 @@
         </div>
         <div class="justify-content-center algin-items-center">
           <div class=" btn-group p-2">
-            <button type="button" class="btn btn-secondary">Property</button>
-            {% for item in property_item %}
-              <button type="button" class="btn btn-secondary">{{ item.title }}</button>
+            <a href="{% url 'core:property-detail' property.id %}" role="button" class="btn btn-secondary">Property</a>
+            {% for item in property.property_item.all %}
+              <a href="" role="button" class="btn btn-secondary">{{ item.title }}</a>
             {% endfor %}
           </div>
         </div>

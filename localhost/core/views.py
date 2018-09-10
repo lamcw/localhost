@@ -2,14 +2,13 @@ import math
 
 from django.db.models import F, Q
 from django.views.generic import DetailView, ListView
-
 from geopy import distance, units
+
 from localhost.core.models import Property
 
 
 class PropertyDetailView(DetailView):
-    model = Property
-    template_name = 'core/listing_details.html'
+    queryset = Property.objects.select_related()
 
 
 class SearchResultsView(ListView):
