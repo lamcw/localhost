@@ -28,3 +28,8 @@ Week 6
 Listing creation page is completed. Integrated front-end stuff to django
 framework. Wrote extensive tests for models. Modified user model so that we uses
 email to authenticate users.
+
+Week 7
+
+Redesigned most of the model in backend. Migrate changes in model to views and
+templates. Property details could be accessed through URL.
