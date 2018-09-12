@@ -1,0 +1,30 @@
+{% extends "core/default.html" %}
+{% block body %}
+  <div id="conversation-module" class="messaging-module container-fluid d-flex flex-column flex-grow-1 justify-content-center">
+    <div id="conversation-control-bar" class="d-flex flex-row">
+      <select class="selectpicker" data-show-subtext="true" data-live-search="true">
+        <option data-subtext="Rep California">Tom Foolery</option>
+        <option data-subtext="Sen California">Bill Gordon</option>
+        <option data-subtext="Sen Massacusetts">Elizabeth Warren</option>
+        <option data-subtext="Rep Alabama">Mario Flores</option>
+        <option data-subtext="Rep Alaska">Don Young</option>
+      </select>
+    </div>
+    <ul id="conversation-content" class="d-flex flex-column flex-grow-1">
+      <li class="message-sent align-self-end">
+        <p class="message">This is just a sending message</p>
+      </li>
+      <li class="message-recieved">
+        <p class="message">This is just a recieving message</p>
+      </li>
+    </ul>
+    <div id="conversation-input" class="d-flex flex-row">
+      <textarea class="d-flex flex-col flex-grow-1">
+      </textarea>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+{% endblock %}

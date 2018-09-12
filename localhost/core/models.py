@@ -54,7 +54,8 @@ class Property(models.Model):
 
 
 class PropertyItem(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(
+        Property, on_delete=models.CASCADE, related_name='property_item')
     title = models.CharField(
         _('title'), max_length=100, help_text=_('Character limit: 100'))
     description = models.TextField(
@@ -74,6 +75,7 @@ class PropertyItem(models.Model):
     capacity = models.PositiveIntegerField()
     bindable = models.BooleanField(
         default=True, help_text=_('Enable binding bids.'))
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.title}"
@@ -84,24 +86,26 @@ def property_item_img_path(instance, filename):
     File will be uploaded to
     MEDIA_ROOT/user_<id>/property_item_<property_item_id>/<filename>
     """
-    return f"user_{instance.user.id}/property_item_{instance.property_item.id}/{filename}"
+    return f"user_{instance.property_item.property.host.id}/property_item_{instance.property_item.id}/{filename}"
 
 
 def property_img_path(instance, filename):
     """
     File will be uploaded to
-    MEDIA_ROOT/user_<id>/property_item_<property_item_id>/<filename>
+    MEDIA_ROOT/user_<id>/property_<property_item_id>/<filename>
     """
-    return f"user_{instance.user.id}/property_{instance.property.id}/{filename}"
+    return f"user_{instance.property.host.id}/property_{instance.property.id}/{filename}"
 
 
 class PropertyImage(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(
+        Property, on_delete=models.CASCADE, related_name='images')
     img = models.ImageField(upload_to=property_img_path)
 
 
 class PropertyItemImage(models.Model):
-    property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    property_item = models.ForeignKey(
+        PropertyItem, on_delete=models.CASCADE, related_name='images')
     img = models.ImageField(upload_to=property_item_img_path)
 
 

@@ -1,4 +1,4 @@
-{% extends 'core/default.html' %}
+{% extends "core/default.html" %}
 
 {% block title %} {{ block.super }} - Sign-up {% endblock %}
 
@@ -9,7 +9,7 @@
       {% csrf_token %}
       {% for field in form %}
         {% if field.label != 'Gender' %}
-          {% include 'core/include/form_field.html' with form=form field=field %}
+          {% include "core/include/form_field.html" with form=form field=field %}
         {% endif %}
       {% endfor %}
       <div class="btn-group btn-group-toggle" data-toggle="buttons">

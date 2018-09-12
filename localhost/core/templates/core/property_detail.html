@@ -1,0 +1,79 @@
+{% extends "core/default.html" %}
+{% block title %} {{ block.super }} - {{ property.title }} {% endblock %}
+
+{% block search_bar %}{% include "core/include/search_bar.html" %}{% endblock %}
+
+{% block body %}
+  <div class="container d-flex flex-column flex-grow-1 justify-content-center">
+    <div class="row mt-3">
+      <div class="col-lg-8">
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            {% for image in property.images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img class="d-block w-100" src="{{ image.img.url }}">
+              </div>
+            {% endfor %}
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+        <div class="p-2">
+          <h2 class="m-0">{{ property.title }}</h2>
+          {{ property.address }}
+        </div>
+        <div class="justify-content-center algin-items-center">
+          <div class=" btn-group p-2">
+            <a href="{% url 'core:property-detail' property.id %}" role="button" class="btn btn-secondary">Property</a>
+            {% for item in property.property_item.all %}
+              <a href="" role="button" class="btn btn-secondary">{{ item.title }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="p-2">
+          <h4>Description</h4>
+          {{ property.description }}
+        </div>
+        <div class="p-2">
+          <h4>Amenities</h4>
+          <i class="fas fa-swimming-pool"></i>
+          <i class="fas fa-wifi"></i>
+          <i class="fas fa-wheelchair"></i>
+          <i class="fas fa-tv"></i>
+          <i class="fas fa-hot-tub"></i>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="row m-0 my-3 justify-content-center">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Bidding</h5>
+              <p class="card-text">Current bid: $150</p>
+              <button class="btn btn-primary">Bid! (+$5)</button>
+            </div>
+          </div>
+        </div>
+        <div class="row m-0 my-3 justify-content-center">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Book</h5>
+              <p id="check-in" class="card-text"><b>Check-in:</b></p>
+              <p id="check-out" class="card-text"><b>Check-out:</b></p>
+              <button class="btn btn-primary">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {% include "core/include/gmaps_search.html" with address_field_id='search' %}
+{% endblock %}

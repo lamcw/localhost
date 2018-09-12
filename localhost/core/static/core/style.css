@@ -186,6 +186,10 @@ footer li a:hover {
     font-size: 12px !important; /*kind of hacky*/
 }
 
+.pignose-calendar {
+    font-size: 12px; /*kind of hacky*/
+}
+
 .pignose-calendar .pignose-calendar-unit {
     height: 2.7em !important; /*kind of hacky*/
 }
@@ -197,4 +201,34 @@ p {
 h1 {
     color: rgba(0, 0, 0, 0.5);
     font-size: 10em;
+}
+
+#conversation-module {
+    margin: 0;
+    padding: 0;
+}
+
+#conversation-control-bar {
+    background: grey;
+}
+
+#conversation-control-bar .btn {
+    background: transparent;
+    border: none;
+}
+
+#conversation-content {
+    background-image: url(../assets/images/chat-tile.jpg);
+    list-style: none;
+    padding: 2em;
+}
+
+.message-sent {
+}
+
+.message-recieved {
+}
+
+#conversation-input {
+    background: blue;
 }
