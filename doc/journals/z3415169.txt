@@ -20,3 +20,7 @@ Week 6
 Setup a live messaging system using Django Channels. Working and integrated with backend.
 Messaging put on hold until more important tasks are completed. 
 Began working on filtering the search results by range.
+
+Week 7
+Search results done, sorts all properties by closest distance to search point.
+Filters properties by current session, checkin time, guests and host's earliest and latest checkin times
