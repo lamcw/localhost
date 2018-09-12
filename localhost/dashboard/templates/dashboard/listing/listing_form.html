@@ -16,12 +16,12 @@
       {% endfor %}
 
       {% for form in property_item_formset %}
-        <div class="dynamic-form">
+        <div id="property_item-0" class="dynamic-form">
           <h2>{% block sub_item_title %}New Item{% endblock %}</h2>
           {% include 'dashboard/listing/property_item_form.html' with form=form %}
-          <button type="button" class="btn btn-success add-form">+</button>
         </div>
       {% endfor %}
+      <button type="button" class="btn btn-success" onclick="listing_item_clone(); return false;">+</button>
       <button type="submit" class="btn btn-primary">Create</button>
     </form>
   {% endblock %}
@@ -30,22 +30,53 @@
 
 {% block js %}
   <script type="text/javascript">
-    $(document).on('click', '.add-form', function(e) {
-      var lastform = $('.dynamic-form:last');
-      var newid = lastform.attr('id').match(/\d+$/);
+    function update_element_name_id(elem, attr, new_id) {
+      var id_str = elem.prop(attr);
+      id_str = id_str.replace(/\d+/, new_id);
+      elem.prop(attr, id_str);
+    }
+
+    function listing_item_clone() {
+      /* Calculating the next id */
+      var latest_item = $('form .dynamic-form:last');
+      var newid = latest_item.attr('id').match(/\d+$/);
       newid++;
 
-      var cloned = $('.dynamic-form:last').clone();
-      cloned.prop('id', 'dynamic-form-' + newid);
+      /* Constructing the new item form */
+      var new_item = latest_item.clone();
+      new_item.children().each(function(i, elem) {
+        var tag = $(this).prop('tagName').toLowerCase();
+        switch (tag) {
+          case 'label':
+            update_element_name_id($(this), 'for', newid);
+            break;
+          case 'input':
+          case 'textarea':
+            update_element_name_id($(this), 'id', newid);
+            update_element_name_id($(this), 'name', newid);
+            break;
+        }
+      });
 
-      var temp = cloned.find('#id_property_item-0-property');
-      temp.prop('id', '#id_property_item-' + newid + '-property')
+      new_item.find('.form-group, .form-check').children().each(function() {
+        var tag = $(this).prop('tagName').toLowerCase();
+        switch (tag) {
+          case 'label':
+            update_element_name_id($(this), 'for', newid);
+            break;
+          case 'input':
+          case 'textarea':
+          case 'select':
+            update_element_name_id($(this), 'id', newid);
+            update_element_name_id($(this), 'name', newid);
+            break;
+        }
+      });
 
-      /* example showing how to update id of sub-id elements */
-      cloned.insertAfter('.dynamic-form:last');
-
-      return false;
-    });
+      /* Inserting the new item form into the page */
+      update_element_name_id(new_item, 'id', newid);
+      new_item.insertAfter(latest_item);
+    }
   </script>
   {% include "core/include/gmaps_search.html" with address_field_id=form.address.auto_id %}
 {% endblock %}
