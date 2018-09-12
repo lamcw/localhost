@@ -3,7 +3,7 @@
 {% block body %}
   <div class="container">
     {% block form %}
-    <form method="post" novalidate>
+    <form enctype="multipart/form-data" method="post" novalidate>
       {% csrf_token %}
       <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
       {% include 'dashboard/listing/property_form.html' with form=form image_formset=image_formset %}
@@ -19,7 +19,7 @@
         <div class="dynamic-form">
           <h2>{% block sub_item_title %}New Item{% endblock %}</h2>
           {% include 'dashboard/listing/property_item_form.html' with form=form %}
-          <button class="btn btn-success add-form">+</button>
+          <button type="button" class="btn btn-success add-form">+</button>
         </div>
       {% endfor %}
       <button type="submit" class="btn btn-primary">Create</button>
@@ -30,60 +30,20 @@
 
 {% block js %}
   <script type="text/javascript">
-    function updateElementIndex(el, prefix, ndx) {
-      var id_regex = new RegExp('(' + prefix + '-\\d+)');
-      var replacement = prefix + '-' + ndx;
-      if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-      if (el.id) el.id = el.id.replace(id_regex, replacement);
-      if (el.name) el.name = el.name.replace(id_regex, replacement);
-    }
+    $(document).on('click', '.add-form', function(e) {
+      var lastform = $('.dynamic-form:last');
+      var newid = lastform.attr('id').match(/\d+$/);
+      newid++;
 
-    function cloneMore(selector, prefix) {
-      var newElement = $(selector).clone(true);
-      var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-      newElement.find(':input').each(function() {
-        var name = $(this).attr('name')
-        if(name) {
-          name = name.replace('-' + (total-1) + '-', '-' + total + '-');
-          var id = 'id_' + name;
-          $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-        }
-      });
-      total++;
-      $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-      $(selector).after(newElement);
-      var conditionRow = $('.dynamic-form:not(:last)');
-      conditionRow.find('.btn.add-form')
-        .removeClass('btn-success').addClass('btn-danger')
-        .removeClass('add-form').addClass('remove-form')
-        .html('-');
-      return false;
-    }
+      var cloned = $('.dynamic-form:last').clone();
+      cloned.prop('id', 'dynamic-form-' + newid);
 
-    function deleteForm(prefix, btn) {
-      var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-      if (total > 1){
-        btn.closest('.dynamic-form').remove();
-        var forms = $('.dynamic-form');
-        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-        for (var i=0, formCount=forms.length; i<formCount; i++) {
-          $(forms.get(i)).find(':input').each(function() {
-            updateElementIndex(this, prefix, i);
-          });
-        }
-      }
-      return false;
-    }
+      var temp = cloned.find('#id_propertyitem_set-0-property');
+      temp.prop('id', '#id_propertyitem_set-' + newid + '-property')
 
-    $(document).on('click', '.add-form', function(e){
-      e.preventDefault();
-      cloneMore('.dynamic-form:last', 'propertyitem_set');
-      return false;
-    });
+      /* example showing how to update id of sub-id elements */
+      cloned.insertAfter('.dynamic-form:last');
 
-    $(document).on('click', '.remove-form', function(e){
-      e.preventDefault();
-      deleteForm('propertyitem_set', $(this));
       return false;
     });
   </script>

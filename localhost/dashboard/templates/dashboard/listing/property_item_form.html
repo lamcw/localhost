@@ -49,13 +49,4 @@
     <small class="form-text text-muted">{{ form.bindable.help_text|safe }}</small>
   {% endif %}
 </div>
-
-{{ form.image_formset.management_form }}
-{% for error in image_formset.non_form_errors %}
-  <div class="alert alert-danger">
-    {{ error }}
-  </div>
-{% endfor %}
-{% for form in form.image_formset %}
-  {{ form.as_p }}
-{% endfor %}
+{{ form.img }}
