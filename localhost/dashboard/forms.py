@@ -19,11 +19,7 @@ class PropertyItemForm(ModelForm):
 class PropertyForm(PropertyItemForm):
     class Meta:
         model = Property
-        exclude = (
-            'host',
-            'latitude',
-            'longitude',
-        )
+        exclude = ('host', )
 
     def clean(self):
         cleaned_data = super().clean()
