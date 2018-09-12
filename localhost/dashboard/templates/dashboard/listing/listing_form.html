@@ -38,8 +38,8 @@
       var cloned = $('.dynamic-form:last').clone();
       cloned.prop('id', 'dynamic-form-' + newid);
 
-      var temp = cloned.find('#id_propertyitem_set-0-property');
-      temp.prop('id', '#id_propertyitem_set-' + newid + '-property')
+      var temp = cloned.find('#id_property_item-0-property');
+      temp.prop('id', '#id_property_item-' + newid + '-property')
 
       /* example showing how to update id of sub-id elements */
       cloned.insertAfter('.dynamic-form:last');

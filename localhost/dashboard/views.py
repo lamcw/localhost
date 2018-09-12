@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -20,14 +21,14 @@ class ListingCreate(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['property_item_formset'] = PropertyItemFormSet(
-            self.request.POST or None)
+            self.request.POST or None, self.request.FILES or None)
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         property_item_formset = context.get('property_item_formset')
-        form.instance.host = self.request.user
         if form.is_valid() and property_item_formset.is_valid():
+            form.instance.host = self.request.user
             self.object = form.save()
             for img in self.request.FILES.getlist('property_img'):
                 PropertyImage.objects.create(property=self.object, img=img)
@@ -39,7 +40,9 @@ class ListingCreate(LoginRequiredMixin, CreateView):
                 for img in self.request.FILES.getlist(form.prefix + '-img'):
                     PropertyItemImage.objects.create(
                         property_item=property_item, img=img)
-        return super().form_valid(form)
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class ListingUpdate(LoginRequiredMixin, UpdateView):

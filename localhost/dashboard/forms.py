@@ -9,8 +9,9 @@ from localhost.core.models import Property, PropertyItem
 
 class PropertyItemForm(ModelForm):
     img = forms.ImageField(
-        widget=forms.ClearableFileInput(
-            attrs={'multiple': True}), label='Photos')
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        label='Photos',
+        required=False)
 
     class Meta:
         model = PropertyItem
@@ -20,8 +21,9 @@ class PropertyItemForm(ModelForm):
 
 class PropertyForm(ModelForm):
     img = forms.ImageField(
-        widget=forms.ClearableFileInput(
-            attrs={'multiple': True}), label='Photos')
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        label='Photos',
+        required=False)
 
     class Meta:
         model = Property
@@ -58,7 +60,4 @@ class PropertyForm(ModelForm):
 
 
 PropertyItemFormSet = inlineformset_factory(
-    Property,
-    PropertyItem,
-    form=PropertyItemForm,
-    extra=1)
+    Property, PropertyItem, form=PropertyItemForm, extra=1)
