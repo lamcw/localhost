@@ -1,5 +1,5 @@
 import math
-
+from datetime import date, datetime, time, timedelta
 from django.db.models import F, Q, Case, When
 from django.views.generic import DetailView, ListView
 from geopy import distance, units
@@ -18,38 +18,42 @@ class SearchResultsView(ListView):
 
     def get_queryset(self, **kwargs):
         queryset = super(SearchResultsView, self).get_queryset()
+        url_parameters = self.request.GET
 
-        # time = datetime.datetime.now()
-        time = '14:00:00'
-        latitude = float(self.request.GET.get('lat',-33.9666))
-        longitude = float(self.request.GET.get('long',151.1))
-        guests = int(self.request.GET.get('guests', 1))
-        bid_now = int(self.request.GET.get('bidnow', 0))
-        checkin = self.request.GET.get('checkin', time)
+        # time_now = datetime.datetime.now()
+        time_now = time(15,00)
+        latitude = float(url_parameters.get('lat',-33.8688))
+        longitude = float(url_parameters.get('long',151.2039))
+        guests = int(url_parameters.get('guests', 1))
+        bid_now = int(url_parameters.get('bidnow', 0))
+        # default checkin time is set half an hour from now
+        default_checkin = (datetime.combine(
+            date.today(), time_now) + timedelta(minutes=30)).strftime('%H%M')
+        checkin = datetime.strptime(
+            self.request.GET.get('checkin', default_checkin), "%H%M").time()
 
         if bid_now:
+            # filter if checkin times are on same day
             q1 = queryset.filter(
                 Q(earliest_checkin_time__lt=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lt=checkin),
-                latest_checkin_time__gt=checkin
-            )
-
+                Q(earliest_checkin_time__lte=checkin),
+                latest_checkin_time__gt=checkin)
+            # filter if checkin times cross midnight
             q2 = queryset.filter(
                 Q(earliest_checkin_time__gt=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lt=checkin)
-                | Q(latest_checkin_time__gt=checkin)
-            )
+                Q(earliest_checkin_time__lte=checkin)
+                | Q(latest_checkin_time__gt=checkin))
 
             queryset = q1 | q2
 
             queryset = queryset.filter(
-                session__end_time__gt=time,
-                session__start_time__lt=time,
+                property_item__session__end_time__gt=time_now,
+                property_item__session__start_time__lt=time_now,
                 property_item__available=True,
-                property_item__capacity__gte=guests
-            ).distinct()
+                property_item__capacity__gte=guests).distinct()
 
         properties = list()
+
         for p in queryset:
             geodesic_distance = distance.distance(
                 (latitude, longitude), (p.latitude, p.longitude)).kilometers
@@ -57,6 +61,8 @@ class SearchResultsView(ListView):
 
         sorted_properties = sorted(properties, key=lambda x: x[1])
         sorted_ids = list(i[0] for i in sorted_properties)
-        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(sorted_ids)])
+        preserved = Case(*[When(pk=pk, then=pos) \
+            for pos, pk in enumerate(sorted_ids)])
 
+        print(queryset.filter(pk__in=sorted_ids).order_by(preserved))
         return queryset.filter(pk__in=sorted_ids).order_by(preserved)
