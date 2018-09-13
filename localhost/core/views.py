@@ -23,7 +23,7 @@ class SearchResultsView(ListView):
         # time_now = datetime.datetime.now()
         time_now = time(15,00)
         latitude = float(url_parameters.get('lat',-33.8688))
-        longitude = float(url_parameters.get('long',151.2039))
+        longitude = float(url_parameters.get('lng',151.2039))
         guests = int(url_parameters.get('guests', 1))
         bid_now = int(url_parameters.get('bidnow', 0))
         # default checkin time is set half an hour from now
