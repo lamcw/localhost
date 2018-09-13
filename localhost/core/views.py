@@ -21,7 +21,7 @@ class SearchResultsView(ListView):
         url_parameters = self.request.GET
 
         # time_now = datetime.datetime.now()
-        time_now = time(15,00)
+        time_now = time(21,00)
         latitude = float(url_parameters.get('lat',-33.8688))
         longitude = float(url_parameters.get('lng',151.2039))
         guests = int(url_parameters.get('guests', 1))
@@ -32,7 +32,9 @@ class SearchResultsView(ListView):
         checkin = datetime.strptime(
             self.request.GET.get('checkin',default_checkin), "%H%M").time()
 
-        if bid_now is 'on':
+        print(bid_now)
+        if bid_now == 'on':
+            print(bid_now)
             # filter if checkin times are on same day
             q1 = queryset.filter(
                 Q(earliest_checkin_time__lt=F('latest_checkin_time')),
