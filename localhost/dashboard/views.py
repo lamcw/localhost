@@ -30,7 +30,7 @@ class ListingCreate(LoginRequiredMixin, CreateView):
         if form.is_valid() and property_item_formset.is_valid():
             form.instance.host = self.request.user
             self.object = form.save()
-            for img in self.request.FILES.getlist('property_img'):
+            for img in self.request.FILES.getlist('img'):
                 PropertyImage.objects.create(property=self.object, img=img)
             for form in property_item_formset:
                 property_item = form.save(commit=False)
