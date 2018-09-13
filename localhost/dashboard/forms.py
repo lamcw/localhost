@@ -1,29 +1,33 @@
 import googlemaps
+from django import forms
 from django.conf import settings
-from django.forms import ValidationError
-from django.forms.models import (BaseInlineFormSet, ModelForm,
-                                 inlineformset_factory)
+from django.forms.models import ModelForm, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from localhost.core.models import (Property, PropertyImage, PropertyItem,
-                                   PropertyItemImage)
+from localhost.core.models import Property, PropertyItem
 
 
 class PropertyItemForm(ModelForm):
+    img = forms.ImageField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        label='Photos',
+        required=False)
+
     class Meta:
         model = PropertyItem
         fields = '__all__'
         exclude = ('highest_bidder', )
 
 
-class PropertyForm(PropertyItemForm):
+class PropertyForm(ModelForm):
+    img = forms.ImageField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        label='Photos',
+        required=False)
+
     class Meta:
         model = Property
-        exclude = (
-            'host',
-            'latitude',
-            'longitude',
-        )
+        exclude = ('host', )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -31,7 +35,7 @@ class PropertyForm(PropertyItemForm):
         latest_checkin_time = cleaned_data.get('latest_checkin_time')
         if (earliest_checkin_time and latest_checkin_time
                 and earliest_checkin_time > latest_checkin_time):
-            raise ValidationError(
+            raise forms.ValidationError(
                 _('Invalid check-in time: %(earliest)s > %(latest)s'),
                 code='invalid-time',
                 params={
@@ -51,63 +55,5 @@ class PropertyForm(PropertyItemForm):
         return new_property
 
 
-PropertyItemImageFormSet = inlineformset_factory(
-    PropertyItem,
-    PropertyItemImage,
-    fields=('img', ),
-    labels={'img': 'photo'},
-    extra=1)
-
-PropertyImageFormSet = inlineformset_factory(
-    Property,
-    PropertyImage,
-    fields=('img', ),
-    labels={'img': 'photo'},
-    extra=1)
-
-
-class BasePropertyItemFormSet(BaseInlineFormSet):
-    def add_fields(self, form, index):
-        """
-        Add extra Image formset for each room.
-        """
-        super().add_fields(form, index)
-
-        form.image_formset = PropertyItemImageFormSet(
-            instance=form.instance,
-            data=form.data if form.is_bound else None,
-            files=form.files if form.is_bound else None,
-            prefix=
-            f"{form.prefix}-{PropertyItemImageFormSet.get_default_prefix()}")
-
-    def is_valid(self):
-        """
-        Validate image formsets.
-        """
-        result = super().is_valid()
-
-        if self.is_bound:
-            for form in self.forms:
-                if hasattr(form, 'image_formset'):
-                    result = result and form.image_formset.is_valid()
-        return result
-
-    def save(self, commit=True):
-        """
-        Save image formsets.
-        """
-        result = super().save(commit=commit)
-
-        for form in self.forms:
-            if hasattr(form, 'image_formset'):
-                if not self._should_delete_form(form):
-                    form.image_formset.save(commit=commit)
-        return result
-
-
 PropertyItemFormSet = inlineformset_factory(
-    Property,
-    PropertyItem,
-    form=PropertyItemForm,
-    formset=BasePropertyItemFormSet,
-    extra=1)
+    Property, PropertyItem, form=PropertyItemForm, extra=1)

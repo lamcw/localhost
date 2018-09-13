@@ -32,19 +32,16 @@ class Property(models.Model):
         _('description'), max_length=600, help_text=_('Character limit: 600'))
     address = models.CharField(
         _('address'), max_length=200, help_text=_('Address of this property.'))
-    latitude = models.DecimalField(max_digits=10, decimal_places=7)
-    longitude = models.DecimalField(max_digits=10, decimal_places=7)
+    latitude = models.DecimalField(
+        max_digits=10, decimal_places=7, editable=False)
+    longitude = models.DecimalField(
+        max_digits=10, decimal_places=7, editable=False)
     earliest_checkin_time = models.TimeField(
         _('earliest check-in time'),
         help_text=_('Earliest time a guest can check-in.'))
     latest_checkin_time = models.TimeField(
         _('latest check-in time'),
         help_text=_('Latest time a guest can check-in.'))
-    session = models.ManyToManyField(
-        BiddingSession,
-        verbose_name=_('bidding session'),
-        blank=True,
-        help_text=_('Choose a session to enable bidding during those times.'))
 
     class Meta:
         verbose_name_plural = 'properties'
@@ -68,8 +65,13 @@ class PropertyItem(models.Model):
         get_user_model(),
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-    )
+        editable=False,
+        on_delete=models.SET_NULL)
+    session = models.ManyToManyField(
+        BiddingSession,
+        verbose_name=_('bidding session'),
+        blank=True,
+        help_text=_('Choose a session to enable bidding during those times.'))
     amenities = models.ManyToManyField(
         Amenity, blank=True, help_text=_('Amenities in this place.'))
     capacity = models.PositiveIntegerField()

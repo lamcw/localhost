@@ -1,5 +1,3 @@
-{% load widget_tweaks %}
-
 {% for hidden_field in form.hidden_fields %}
   {{ hidden_field }}
 {% endfor %}
@@ -25,33 +23,9 @@
   {% include "core/include/form_field.html" with form=form field=form.latest_checkin_time field_extra_css='col-md-6' %}
 </div>
 <div class="form-group">
-  {{ form.session.label_tag }}
-  {% if form.is_bound %}
-    {% if form.session.errors %}
-      {% render_field form.session class="form-control is-invalid" %}
-      {% for error in form.session.errors %}
-        <div class="invalid-feedback">
-          {{ error|escape }}
-        </div>
-      {% endfor %}
-    {% else %}
-      {% render_field form.session class="form-control is-valid" %}
-    {% endif %}
-  {% else %}
-    {% render_field form.session class="form-control" %}
-  {% endif %}
-
-  {% if form.session.help_text %}
-    <small class="form-text text-muted">{{ form.session.help_text|safe }}</small>
+  {{ form.img.label_tag }}
+  {{ form.img }}
+  {% if form.img.help_text %}
+    <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
   {% endif %}
 </div>
-
-{{ image_formset.management_form }}
-{% for error in image_formset.non_form_errors %}
-  <div class="alert alert-danger">
-    {{ error }}
-  </div>
-{% endfor %}
-{% for form in image_formset %}
-  {{ form.as_p }}
-{% endfor %}

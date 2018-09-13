@@ -40,6 +40,27 @@
     <small class="form-text text-muted">{{ form.amenities.help_text|safe }}</small>
   {% endif %}
 </div>
+<div class="form-group">
+  {{ form.session.label_tag }}
+  {% if form.is_bound %}
+    {% if form.session.errors %}
+      {% render_field form.session class="form-control is-invalid" %}
+      {% for error in form.session.errors %}
+        <div class="invalid-feedback">
+          {{ error|escape }}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% render_field form.session class="form-control is-valid" %}
+    {% endif %}
+  {% else %}
+    {% render_field form.session class="form-control" %}
+  {% endif %}
+
+  {% if form.session.help_text %}
+    <small class="form-text text-muted">{{ form.session.help_text|safe }}</small>
+  {% endif %}
+</div>
 <div class="form-check">
   {% render_field form.bindable class="form-check-input" %}
   <label class="form-check-label" for="{{ form.bindable.id_for_label }}">
@@ -49,13 +70,10 @@
     <small class="form-text text-muted">{{ form.bindable.help_text|safe }}</small>
   {% endif %}
 </div>
-
-{{ form.image_formset.management_form }}
-{% for error in image_formset.non_form_errors %}
-  <div class="alert alert-danger">
-    {{ error }}
-  </div>
-{% endfor %}
-{% for form in form.image_formset %}
-  {{ form.as_p }}
-{% endfor %}
+<div class="form-group">
+  {{ form.img.label_tag }}
+  {{ form.img }}
+  {% if form.img.help_text %}
+    <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
+  {% endif %}
+</div>
