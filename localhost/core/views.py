@@ -32,7 +32,6 @@ class SearchResultsView(ListView):
         checkin = datetime.strptime(
             self.request.GET.get('checkin',default_checkin), "%H%M").time()
 
-        print(bid_now)
         if bid_now == 'on':
             print(bid_now)
             # filter if checkin times are on same day
