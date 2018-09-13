@@ -25,14 +25,14 @@ class SearchResultsView(ListView):
         latitude = float(url_parameters.get('lat',-33.8688))
         longitude = float(url_parameters.get('lng',151.2039))
         guests = int(url_parameters.get('guests', 1))
-        bid_now = int(url_parameters.get('bidnow', 0))
+        bid_now = url_parameters.get('bidding-active', 'false')
         # default checkin time is set half an hour from now
         default_checkin = (datetime.combine(
             date.today(), time_now) + timedelta(minutes=30)).strftime('%H%M')
         checkin = datetime.strptime(
-            self.request.GET.get('checkin', default_checkin), "%H%M").time()
+            self.request.GET.get('checkin',default_checkin), "%H%M").time()
 
-        if bid_now:
+        if bid_now is 'on':
             # filter if checkin times are on same day
             q1 = queryset.filter(
                 Q(earliest_checkin_time__lt=F('latest_checkin_time')),
