@@ -1,7 +1,11 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
 
-{% block body %}
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
 {% for booking in booking_list %}
 <p>{{ booking.user }} booked {{ booking.property_item }}</p>
 {% endfor %}
+
+{% include "core/include/footer.html" %}
 {% endblock %}
