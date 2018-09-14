@@ -3,8 +3,8 @@
 
 {% block css %}
 
-<link rel="stylesheet" type="text/css" href="{% static "core/home.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/home.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
 
 {% endblock %}
 
@@ -14,7 +14,7 @@
 <div class="container d-flex flex-column flex-grow-1 justify-content-center">
   <form id="form-search" method="get" action="{% url 'core:search_results' %}">
     <div class="input-group stylish-input-group">
-      <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
+      <input id="city_search_geolocation" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
       <div class="input-group-append">
         <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
       </div>
@@ -28,5 +28,8 @@
 {% endblock %}
 
 {% block js %}
-{% include "core/include/gmaps_search.html" with address_field_id='search' %}
+
+<script type="text/javascript" src="{% static "core/js/city_search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
+
 {% endblock %}
