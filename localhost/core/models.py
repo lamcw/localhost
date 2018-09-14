@@ -124,6 +124,7 @@ class Booking(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     price = models.PositiveIntegerField(_('price'))
+    date = models.DateField(_('date'))
 
     def __str__(self):
         return f"{self.user} booked {self.property_item}"
