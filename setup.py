@@ -10,6 +10,7 @@ setup(
         'django>=2.1.1', 'psycopg2-binary>=2.7.5', 'Pillow>=5.2.0',
         'django-polymorphic>=2.0.3', 'django-widget-tweaks>=1.4.2',
         'googlemaps>=3.0.2', 'geopy>=1.16.0', 'pyyaml>=3.13'
+        'channels>=2.1.3', 'channels-redis>=2.3.0'
     ],
     packages=find_packages(
         exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
