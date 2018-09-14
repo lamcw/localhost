@@ -51,11 +51,45 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Bidding</h5>
-              <p class="card-text">Current bid: $150</p>
-              <button class="btn btn-primary">Bid! (+$5)</button>
+              <p id="card-text" class="card-text" value="2">Current bid: $150</p>
+              <button id="bid" class="btn btn-primary">Bid! (+$5)</button>
             </div>
           </div>
         </div>
+        <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+        <script>
+    var roomName = {{ property_item.id }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/property-detail/' + roomName + '/');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#card-text').value = message + '\n';
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#bid').onclick = function(e) {
+        // var messageInputDom = document.querySelector('#card-text');
+        //console.log(messageInputDom);
+        //var message = messageInputDom.value;
+        //console.log(message);
+        var target = $('#card-text');
+        var message = target.text();
+        console.log(message);
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+    };
+        </script>
       </div>
     </div>
   </div>
