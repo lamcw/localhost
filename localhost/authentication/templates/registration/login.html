@@ -1,9 +1,10 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
 {% load widget_tweaks %}
 
 {% block title %} {{ block.super }} - Login {% endblock %}
 
-{% block body %}
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
   <div class="container d-flex flex-column flex-grow-1 justify-content-center">
     {% for error in form.non_field_errors %}
       <div class="alert alert-danger" role="alert">
@@ -40,4 +41,5 @@
       {% endfor %}
     </form>
   </div>
+{% include "core/include/footer.html" %}
 {% endblock %}
