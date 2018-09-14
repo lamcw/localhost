@@ -1,0 +1,7 @@
+{% extends "core/default.html" %}
+
+{% block body %}
+{% for booking in booking_list %}
+<p>{{ booking.user }} booked {{ booking.property_item }}</p>
+{% endfor %}
+{% endblock %}
