@@ -1,31 +1,37 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
 
-{% block body %}
-<!-- Content -->
-<div class="container-fluid d-flex flex-column flex-grow-1 justify-content-center">
-  <div class="d-flex flex-row flex-grow-1">
-    <div class="col-sm-2 p-0">
+{% block title %} {{ block.super }} - Dashboard {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<div class="container d-flex flex-column flex-grow-1 justify-content-center">
+  <div class="d-flex row flex-grow-1">
+    <div class="col-md-2 p-0">
       <div class="list-group">
         <a href="#" class="list-group-item list-group-item-action active">Profile</a>
+        <a href="#" class="list-group-item list-group-item-action">Settings</a>
         <a href="#" class="list-group-item list-group-item-action">Booking History</a>
         <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
         <a href="#" class="list-group-item list-group-item-action disabled">Wallet</a>
       </div>
     </div>
-    <div class="col-sm-10 bg-light">
-      <form>
-        <div class="form-group">
-          <label for="change-password"></label>
-          <input type="password" class="form-control" id="change-password" aria-label="Password" aria-describedby="basic-addon1">
-        </div>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Personal description</span>
+    <div class="col-md-10 bg-light px-0 py-2" style="border: 1px solid #bbb;">
+      <div class="col-md-5 p-2">
+        <a class="btn btn-secondary" href="#">View Public Profile</a>
+      </div>
+      <div class="col-md-7 p-2">
+        <form class="p-2 w-100" style="max-width: 500px;">
+          <div class="form-group">
+            <label for="description">Personal Description</label>
+            <textarea class="form-control" id="description" rows="3"></textarea>
           </div>
-          <textarea class="form-control" aria-label="With textarea"></textarea>
-        </div>
-      </form>
+          <div class="form-group">
+            <button class="btn btn-primary">Apply</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+{% include "core/include/footer.html" %}
 {% endblock %}
