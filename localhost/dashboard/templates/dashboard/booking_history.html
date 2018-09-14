@@ -1,0 +1,89 @@
+{% extends "core/base.html" %}
+
+{% block title %} {{ block.super }} - Dashboard {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
+  <div class="p-0">
+    <div class="list-group">
+      <a href="#" class="list-group-item list-group-item-action">Profile</a>
+      <a href="#" class="list-group-item list-group-item-action">Settings</a>
+      <a href="#" class="list-group-item list-group-item-action active">Booking History</a>
+      <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
+      <a href="#" class="list-group-item list-group-item-action">Wallet</a>
+    </div>
+  </div>
+  <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+    <ul class="list-group w-100 px-2">
+      <li class="list-group-item">
+        <a href="#" class="align-middle">A property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn">Review</button>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">Another property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn">Review</button>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">Anothernother property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn">Review</button>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">Anothernothernother property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn">Review</button>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">New property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn">Review</button>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">Newnew property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          $50
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          12/10/2018
+          <span class="mx-2" style="border-left: 1px solid rgba(0, 0, 0, 0.125)"></span>
+          <button class="btn" disabled>Review</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+{% include "core/include/footer.html" %}
+{% endblock %}
