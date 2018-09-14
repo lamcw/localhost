@@ -73,6 +73,8 @@
         }
       });
 
+      $('#id_property_item-TOTAL_FORMS').prop('value', newid+1);
+
       /* Inserting the new item form into the page */
       update_element_name_id(new_item, 'id', newid);
       new_item.insertAfter(latest_item);
