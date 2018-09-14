@@ -1,5 +1,5 @@
 function activatePlacesSearch() {
-  var input = document.getElementById('address_search');
+  var input = document.getElementById('id_address');
   var options = {
     types: ['address'],
     componentRestrictions: {country: 'au'}
