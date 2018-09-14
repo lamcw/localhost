@@ -1,13 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import View
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
+                                  View)
 
 from localhost.core.models import (Booking, Property, PropertyImage,
                                    PropertyItemImage)
-from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
+from localhost.core.views import FormListView
+from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
+                                       PropertyItemReviewForm)
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -57,8 +58,9 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('dashboard:dashboard')
 
 
-class BookingListView(LoginRequiredMixin, ListView):
+class BookingListView(LoginRequiredMixin, FormListView):
     model = Booking
+    form_class = PropertyItemReviewForm
     template_name = 'dashboard/booking_list.html'
 
     def get_queryset(self):

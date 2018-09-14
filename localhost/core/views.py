@@ -1,8 +1,11 @@
-import math
 from datetime import date, datetime, time, timedelta
-from django.db.models import F, Q, Case, When
+
+from django.db.models import Case, F, Q, When
+from django.http import Http404
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
-from geopy import distance, units
+from django.views.generic.edit import FormMixin
+from geopy import distance
 
 from localhost.core.models import Property
 
@@ -64,3 +67,25 @@ class SearchResultsView(ListView):
             *[When(pk=pk, then=pos) for pos, pk in enumerate(sorted_ids)])
 
         return queryset.filter(pk__in=sorted_ids).order_by(preserved)
+
+
+class FormListView(FormMixin, ListView):
+    def get(self, request, *args, **kwargs):
+        # From ProcessFormMixin
+        form_class = self.get_form_class()
+        self.form = self.get_form(form_class)
+
+        # From BaseListView
+        self.object_list = self.get_queryset()
+        allow_empty = self.get_allow_empty()
+        if not allow_empty and len(self.object_list) == 0:
+            raise Http404(
+                _(u"Empty list and '%(class_name)s.allow_empty' is False.") %
+                {'class_name': self.__class__.__name__})
+
+        context = self.get_context_data(
+            object_list=self.object_list, form=self.form)
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
