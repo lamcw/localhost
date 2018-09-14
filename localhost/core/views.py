@@ -1,14 +1,20 @@
-import math
 from datetime import date, datetime, time, timedelta
-from django.db.models import F, Q, Case, When
-from django.views.generic import DetailView, ListView
-from geopy import distance, units
 
-from localhost.core.models import Property
+from django.db.models import Case, F, Q, When
+from django.views.generic import DetailView, ListView
+from geopy import distance
+
+from localhost.core.models import Property, PropertyItem
 
 
 class PropertyDetailView(DetailView):
     queryset = Property.objects.prefetch_related()
+
+
+class PropertyItemDetailView(DetailView):
+    queryset = PropertyItem.objects.prefetch_related()
+    template_name = 'core/property_item_detail.html'
+    context_object_name = 'property_item'
 
 
 class SearchResultsView(ListView):
