@@ -1,11 +1,15 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
 
-{% block body %}
-  <div class="container d-flex flex-column flex-grow-1 justify-content-center">
-    {% include "core/include/search_bar.html" %}
-  </div>
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container d-flex flex-column flex-grow-1 justify-content-center">
+  {% include "core/include/search_bar.html" %}
+</div>
+
+{% include "core/include/footer.html" %}
 {% endblock %}
 
 {% block js %}
-  {% include "core/include/gmaps_search.html" with address_field_id='search' %}
+{% include "core/include/gmaps_search.html" with address_field_id='search' %}
 {% endblock %}

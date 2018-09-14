@@ -8,5 +8,5 @@ urlpatterns = [
     # override default view
     path('accounts/login/', views.LoginView.as_view(), name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/signup', views.SignUpView.as_view(), name='signup'),
+    path('accounts/register', views.SignUpView.as_view(), name='register'),
 ]

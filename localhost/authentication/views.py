@@ -8,7 +8,7 @@ from localhost.authentication.forms import SignUpForm
 
 
 class SignUpView(UserPassesTestMixin, FormView):
-    template_name = 'registration/signup.html'
+    template_name = 'registration/register.html'
     form_class = SignUpForm
     success_url = reverse_lazy('core:index')
 

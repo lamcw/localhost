@@ -1,9 +1,9 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
+
 {% block title %} {{ block.super }} - {{ property.title }} {% endblock %}
 
-{% block search_bar %}{% include "core/include/search_bar.html" %}{% endblock %}
-
-{% block body %}
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
   <div class="container d-flex flex-column flex-grow-1 justify-content-center">
     <div class="row mt-3">
       <div class="col-lg-8">
@@ -72,8 +72,5 @@
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block js %}
-  {% include "core/include/gmaps_search.html" with address_field_id='search' %}
+{% include "core/include/footer.html" %}
 {% endblock %}
