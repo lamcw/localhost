@@ -1,15 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from localhost.core.models import Property, PropertyImage, PropertyItemImage
 from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
 
 
-class DashboardView(LoginRequiredMixin, View):
-    pass
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard/dashboard.html'
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):
