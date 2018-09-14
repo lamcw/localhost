@@ -1,0 +1,16 @@
+.form-control {
+  border-radius: 0;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #cccccc;
+}
+
+.input-group-text {
+  padding: 0 1.5em;
+}
+
+#search {
+  padding: 1.5em 0 1.5em 1.5em;
+}
