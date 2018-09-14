@@ -1,10 +1,27 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/home.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/footer.css" %}">
+
+{% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 
 <div class="container d-flex flex-column flex-grow-1 justify-content-center">
-  {% include "core/include/search_bar.html" %}
+  <form id="form-search" method="get" action="{% url 'core:search_results' %}">
+    <div class="input-group stylish-input-group">
+      <input id="search" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
+      <div class="input-group-append">
+        <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+      </div>
+      <input type="hidden" id="lat" name="lat" value="1">
+      <input type="hidden" id="lng" name="lng" value="1">
+    </div>
+  </form>
 </div>
 
 {% include "core/include/footer.html" %}

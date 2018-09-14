@@ -1,0 +1,22 @@
+.card-deck .card {
+  /*margin: 2.5% 2.5% 0 2.5%;*/
+  /* For flex reasons just "width" isn't enough */
+  min-width: 20em !important;
+  max-width: 20em !important;
+  margin: .5em 1em;
+}
+
+.btn {
+  text-align-last: center;
+}
+
+.card > a, .card > a:hover {
+  text-decoration: none;
+  color: black; /* TODO: fix */
+}
+
+@media (max-width: 767.98px) {
+  .card-deck .card {
+    margin: .5em auto;
+  }
+}
