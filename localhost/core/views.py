@@ -8,7 +8,7 @@ from localhost.core.models import Property
 
 
 class PropertyDetailView(DetailView):
-    queryset = Property.objects.select_related()
+    queryset = Property.objects.prefetch_related()
 
 
 class SearchResultsView(ListView):
@@ -20,20 +20,18 @@ class SearchResultsView(ListView):
         queryset = super(SearchResultsView, self).get_queryset()
         url_parameters = self.request.GET
 
-        # time_now = datetime.datetime.now()
-        time_now = time(21,00)
-        latitude = float(url_parameters.get('lat',-33.8688))
-        longitude = float(url_parameters.get('lng',151.2039))
+        time_now = time(21, 0)
+        latitude = float(url_parameters.get('lat', -33.8688))
+        longitude = float(url_parameters.get('lng', 151.2039))
         guests = int(url_parameters.get('guests', 1))
         bid_now = url_parameters.get('bidding-active', 'false')
         # default checkin time is set half an hour from now
-        default_checkin = (datetime.combine(
-            date.today(), time_now) + timedelta(minutes=30)).strftime('%H%M')
+        default_checkin = (datetime.combine(date.today(), time_now) +
+                           timedelta(minutes=30)).strftime('%H%M')
         checkin = datetime.strptime(
-            self.request.GET.get('checkin',default_checkin), "%H%M").time()
+            self.request.GET.get('checkin', default_checkin), "%H%M").time()
 
         if bid_now == 'on':
-            print(bid_now)
             # filter if checkin times are on same day
             q1 = queryset.filter(
                 Q(earliest_checkin_time__lt=F('latest_checkin_time')),
@@ -62,8 +60,7 @@ class SearchResultsView(ListView):
 
         sorted_properties = sorted(properties, key=lambda x: x[1])
         sorted_ids = list(i[0] for i in sorted_properties)
-        preserved = Case(*[When(pk=pk, then=pos) \
-            for pos, pk in enumerate(sorted_ids)])
+        preserved = Case(
+            *[When(pk=pk, then=pos) for pos, pk in enumerate(sorted_ids)])
 
-        print(queryset.filter(pk__in=sorted_ids).order_by(preserved))
         return queryset.filter(pk__in=sorted_ids).order_by(preserved)

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
@@ -7,6 +8,14 @@ from polymorphic.showfields import ShowFieldType
 
 class Amenity(models.Model):
     item = models.CharField(max_length=15, unique=True)
+    icon = models.CharField(
+        max_length=30,
+        validators=[
+            RegexValidator(
+                regex=r'^fa-[\w]*',
+                message=_('Icon class must starts with \"fa-\"'))
+        ],
+        help_text=_('Font Awesome glyph class.'))
 
     class Meta:
         verbose_name_plural = 'amenities'
