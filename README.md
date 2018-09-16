@@ -3,7 +3,6 @@
 * postgreSQL>=10.4
 * psycopg2>=2.7.5
 
-
 # Development
 ## Setup
 Carefully follow these steps to set this project up:
