@@ -36,8 +36,6 @@ class BidConsumer(WebsocketConsumer):
             next_bid = Bid.objects.filter(
                 property_item=self.room_name).latest('bid_amount').bid_amount + 5
 
-        print(message)
-        print(next_bid)
         if message == next_bid:
             Bid.objects.create(
                 property_item=self.property_item,
