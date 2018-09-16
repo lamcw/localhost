@@ -48,3 +48,27 @@ help of Steven migrated all the previous pages to the new codebase.
 Additionally, I developed the log in, register and password reset pages.
 
 Progress is on track.
+
+# Week 7
+
+During the unofficial Friday meeting this week, the conceptual design and
+problem domain was made stricter to prioritise refined features over being
+feature rich. This was done in a way that still meets the proposal
+specifications but relieves pressure on the developers. I spent several hours
+working through this with the team. A project "codename" was finally decided.
+I also designed a prototype messaging page. Along with Tom, who is working on
+the back end of the project, we designed and implemented the page that allows
+users to create listings.
+
+# Week 8
+
+Official meetings ran on Wednesday and Thursday. The fortnightly demo happened
+the Thursday meeting. This week I merged the front end development branch into
+the primary development branch. In addition, I refactored a number of the pages
+to be significantly more modular and dependent on Django includes. Over the
+week, Ed and I researched different technologies and tools we could use for
+the real time bidding feature of the website. We settled on using Redis over
+Django channels and on Friday night we worked together on a prototype branch
+and implemented a proof of concept. At the end of the week I applied for AWS
+Educate so that we would have access to a server for development, testing and
+the final demonstration.
