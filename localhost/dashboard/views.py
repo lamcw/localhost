@@ -1,14 +1,36 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import datetime, timedelta, time
+
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
                                   View)
 
 from localhost.core.models import (Booking, Property, PropertyImage,
-                                   PropertyItemImage)
-from localhost.core.views import FormListView
-from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
-                                       PropertyItemReviewForm)
+                                   PropertyItemImage, PropertyItemReview)
+from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
+
+
+class PropertyItemReviewMixin(AccessMixin):
+    """
+    Allow access only if property item review does not exists,
+    and the date today is the day after booking.
+    """
+    raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            PropertyItemReview.objects.get(booking=kwargs.get('pk'))
+            return self.handle_no_permission()
+        except ObjectDoesNotExist:
+            booking = Booking.objects.get(pk=kwargs.get('pk'))
+            date_at_least = datetime.combine(booking.date,
+                                             time()) + timedelta(days=1)
+            if datetime.now() >= date_at_least:
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                return self.handle_no_permission()
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -58,10 +80,24 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('dashboard:dashboard')
 
 
-class BookingListView(LoginRequiredMixin, FormListView):
+class BookingListView(LoginRequiredMixin, ListView):
     model = Booking
-    form_class = PropertyItemReviewForm
     template_name = 'dashboard/booking_list.html'
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
+
+
+class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
+                        CreateView):
+    model = PropertyItemReview
+    success_url = reverse_lazy('dashboard:booking-history')
+    fields = (
+        'rating',
+        'description',
+    )
+    template_name = 'dashboard/property_item_review.html'
+
+    def form_valid(self, form):
+        form.instance.booking = Booking.objects.get(id=self.kwargs.get('pk'))
+        return super().form_valid(form)

@@ -10,9 +10,9 @@
       <p>{{ booking.property_item }}</p>
     </div>
     <div class="col">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#booking-modal-{{ forloop.counter0 }}">
+      <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn btn-primary">
         Review
-      </button>
+      </a>
     </div>
   </div>
   {% endfor %}

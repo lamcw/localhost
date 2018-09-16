@@ -19,4 +19,8 @@ urlpatterns = [
         'booking-history/',
         views.BookingListView.as_view(),
         name='booking-history'),
+    path(
+        'review/listing/<int:pk>',
+        views.ListingReviewView.as_view(),
+        name='listing-review')
 ]

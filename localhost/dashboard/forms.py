@@ -4,13 +4,7 @@ from django.conf import settings
 from django.forms.models import ModelForm, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from localhost.core.models import Property, PropertyItem, PropertyItemReview
-
-
-class PropertyItemReviewForm(ModelForm):
-    class Meta:
-        model = PropertyItemReview
-        exclude = ('booking', )
+from localhost.core.models import Property, PropertyItem
 
 
 class PropertyItemForm(ModelForm):
