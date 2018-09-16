@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 from polymorphic.showfields import ShowFieldType
@@ -55,6 +56,9 @@ class Property(models.Model):
     class Meta:
         verbose_name_plural = 'properties'
 
+    def get_absolute_url(self):
+        return reverse('core:property-detail', args=[str(self.id)])
+
     def __str__(self):
         return f"Property: {self.title} owned by {self.host}"
 
@@ -81,6 +85,9 @@ class PropertyItem(models.Model):
     bindable = models.BooleanField(
         default=True, help_text=_('Enable binding bids.'))
     available = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('core:property-item-detail', args=[str(self.id)])
 
     def __str__(self):
         return f"{self.title}"
@@ -112,6 +119,7 @@ class PropertyItemImage(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='images')
     img = models.ImageField(upload_to=property_item_img_path)
+
 
 class Bid(models.Model):
     property_item = models.ForeignKey(

@@ -35,10 +35,10 @@
           <span class="sr-only">Next</span>
         </a>
       </div>
-      <a href="{% url 'core:property-detail' pk=property.id %}">
+      <a href="{{ property.get_absolute_url }}">
         <div class="card-body">
-          <h5 class="card-title">{{property.title}}</h5>
-          <p class="card-text">{{property.description}}</p>
+          <h5 class="card-title">{{ property.title }}</h5>
+          <p class="card-text">{{ property.description }}</p>
         </div>
       </a>
     </div>
