@@ -17,6 +17,7 @@ class PropertyImageInline(admin.StackedInline):
 class PropertyItemInline(admin.StackedInline):
     model = PropertyItem
     extra = 1
+    show_change_link = True
 
 
 @admin.register(Property)
