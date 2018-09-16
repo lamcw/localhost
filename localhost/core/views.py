@@ -1,6 +1,7 @@
-from datetime import date, datetime, time, timedelta
+from datetime import timedelta
 
 from django.db.models import Case, F, Q, When
+from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 from geopy import distance
 
@@ -24,18 +25,17 @@ class SearchResultsView(ListView):
 
     def get_queryset(self, **kwargs):
         queryset = super(SearchResultsView, self).get_queryset()
-        url_parameters = self.request.GET
+        url_params = self.request.GET
 
-        time_now = time(21, 0)
-        latitude = float(url_parameters.get('lat', -33.8688))
-        longitude = float(url_parameters.get('lng', 151.2039))
-        guests = int(url_parameters.get('guests', 1))
-        bid_now = url_parameters.get('bidding-active', 'false')
+        latitude = float(url_params.get('lat', -33.8688))
+        longitude = float(url_params.get('lng', 151.2039))
+        guests = int(url_params.get('guests', 1))
+        bid_now = url_params.get('bidding-active', 'false')
         # default checkin time is set half an hour from now
-        default_checkin = (datetime.combine(date.today(), time_now) +
-                           timedelta(minutes=30)).strftime('%H%M')
-        checkin = datetime.strptime(
-            url_parameters.get('checkin', default_checkin), "%H%M").time()
+        default_checkin = (
+            timezone.now() + timedelta(minutes=30)).time().strftime('%H:%M')
+        checkin = dateparse.parse_time(
+            url_params.get('checkin', default_checkin))
 
         if bid_now == 'on':
             # filter if checkin times are on same day
@@ -52,8 +52,8 @@ class SearchResultsView(ListView):
             queryset = q1 | q2
 
             queryset = queryset.filter(
-                property_item__session__end_time__gt=time_now,
-                property_item__session__start_time__lte=time_now,
+                property_item__session__end_time__gt=timezone.now().time(),
+                property_item__session__start_time__lte=timezone.now().time(),
                 property_item__available=True,
                 property_item__capacity__gte=guests).distinct()
 
@@ -65,7 +65,7 @@ class SearchResultsView(ListView):
             properties.append(tuple((p.id, geodesic_distance)))
 
         sorted_properties = sorted(properties, key=lambda x: x[1])
-        sorted_ids = list(i[0] for i in sorted_properties)
+        sorted_ids = [i[0] for i in sorted_properties]
         preserved = Case(
             *[When(pk=pk, then=pos) for pos, pk in enumerate(sorted_ids)])
 
