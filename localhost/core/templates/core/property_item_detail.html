@@ -51,8 +51,8 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Bidding</h5>
-              <div id="card-text" class="card-text">Current bid: $<span id="bid-current">150</span></div>
-              <button id="bid" class="btn btn-primary">Bid! (+$5)</button>
+              <div id="card-text" class="card-text">Current bid: $<span id="bid-current">{{ current_price }}</span></div>
+              <button id="bid" class="btn btn-primary">Bid <span id="next-bid"> {{ next_bid }}</span></button>
             </div>
           </div>
         </div>
@@ -71,6 +71,7 @@
         var data = JSON.parse(e.data);
         var message = data['message'];
         $('#bid-current').text(message);
+        $('#next-bid').text(parseInt(message) + 5);
     };
 
     chatSocket.onclose = function(e) {
@@ -82,10 +83,10 @@
         //console.log(messageInputDom);
         //var message = messageInputDom.value;
         //console.log(message);
-        var target = $('#bid-current');
+        var target = $('#next-bid');
         var message = target.text();
         chatSocket.send(JSON.stringify({
-            'message': parseInt(message) + 5
+            'message': parseInt(message)
         }));
     };
         </script>

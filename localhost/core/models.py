@@ -116,10 +116,13 @@ class PropertyItemImage(models.Model):
 class Bid(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='bids')
-    highest_bidder = models.ForeignKey(
+    bidder = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE)
     bid_amount = models.PositiveIntegerField()
+
+    class Meta:
+        get_latest_by = 'bid_amount'
 
 
 class Booking(models.Model):
