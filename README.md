@@ -3,25 +3,39 @@
 * postgreSQL>=10.4
 * psycopg2>=2.7.5
 
-
-# Setup
+# Development
+## Setup
 Carefully follow these steps to set this project up:
 
-**Note: the following steps assumes that you have PostgreSQL installed and
-configured correctly.**
+### 1. Installing PostgreSQL
+Choose package to install based on your distro.
+```sh
+sudo apt-get install postgresql postgresql-contrib # for ubuntu-based distro
+sudo xbps-install -S postgresql postgresql-client # for void linux
+sudo pacman -S postgresql # for arch-based distro
+```
+### 2. Database cluster initialization
+```sh
+sudo -u postgres -i
+[postgres]$ initdb -D '/var/lib/postgres/data'
+[postgres]$ systemctl enable postgresql.service
+[postgres]$ systemctl start postgresql.service
+[postgres]$ createuser --interactive  # use your own linux user name
+[postgres]$ ^D
+exit
+```
 
-## 1. Installing dependencies
+### 3. Installing dependencies
 ```sh
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 2. Create database for development
-`username` = your Linux username
+### 4. Create database for development
 ```sh
 createdb localhost_db
-sudo su - postgres
+sudo -u postgres -i
 psql
 localhost_db=# GRANT ALL PRIVILEGES ON DATABASE localhost_db TO {username};
 localhost_db=# ALTER ROLE {username} SET client_encoding TO 'utf8';
@@ -31,7 +45,7 @@ exit
 ```
 Running the server
 ```sh
-./manage.py makemigrations # you may have to specify app label in order to generate all migration files
+./manage.py makemigrations [app_label [app_label [...]]]
 ./manage.py migrate
 ./manage.py runserver
 ```
