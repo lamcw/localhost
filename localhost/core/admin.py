@@ -20,7 +20,7 @@ class PropertyItemInline(admin.StackedInline):
     readonly_fields = [
         'highest_bidder',
     ]
-    # TODO nested inline with image
+    show_change_link = True
 
 
 @admin.register(Property)
