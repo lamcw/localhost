@@ -69,11 +69,7 @@
         </div>
         <div class="row m-0 my-3 justify-content-center">
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Book</h5>
-              <p id="check-in" class="card-text"><b>Check-in:</b></p>
-              <p id="check-out" class="card-text"><b>Check-out:</b></p>
-              <button class="btn btn-primary">Add to cart</button>
+            <div id="map" class="card-body" style="min-height: 20em;">
             </div>
           </div>
         </div>
@@ -81,4 +77,14 @@
     </div>
   </div>
 {% include "core/include/footer.html" %}
+<script>
+  function initMap() {
+    var property = {lat: {{ property.latitude }}, lng: {{ property.longitude }}};
+    var map = new google.maps.Map(
+    document.getElementById('map'), {zoom: 12, center: property});
+    var marker = new google.maps.Marker({position: property, map: map});
+  }
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=initMap"></script>
+
 {% endblock %}
