@@ -1,12 +1,15 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from localhost.core.models import PropertyItem
+from localhost.core.models import PropertyItem, Bid
 import json
 
 class BidConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        self.user = self.scope['user']
+        self.property_item = PropertyItem.objects.get(pk=self.room_name)
+
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -27,14 +30,26 @@ class BidConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'bid',
-                'message': message
-            }
-        )
+        if not Bid.objects.filter(property_item=self.room_name).exists():
+            next_bid = PropertyItem.objects.get(pk=self.room_name).min_price
+        else:
+            next_bid = Bid.objects.filter(
+                property_item=self.room_name).latest('bid_amount').bid_amount + 5
+
+        if message == next_bid:
+            Bid.objects.create(
+                property_item=self.property_item,
+                bidder=self.user,
+                bid_amount=message)
+
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'bid',
+                    'message': message
+                }
+            )
+
 
     # Receive message from room group
     def bid(self, event):
