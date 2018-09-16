@@ -60,3 +60,6 @@ Use production settings
 ```sh
 DB_USER={username} DB_PW={password} ./manage.py runserver --settings=localhost.settings_production
 ```
+
+# Docker for bidding and messaging 
+docker run -p 6379:6379 -d redis:2.8
