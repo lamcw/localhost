@@ -50,28 +50,6 @@ class BidConsumer(WebsocketConsumer):
                 }
             )
 
-        # if not Bid.objects.filter(property_item=self.room_name).exists():
-        #     Bid.objects.create(
-        #         property_item=self.property_item,
-        #         bidder=self.user,
-        #         bid_amount=message)
-        # else:
-        #     highest_bid = Bid.objects.filter(
-        #         property_item=self.room_name).latest('bid_amount')
-        #     if message > highest_bid.bid_amount:
-        #         Bid.objects.create(
-        #             property_item=self.property_item,
-        #             bidder=self.user,
-        #             bid_amount=message)
-
-        # # Send message to room group
-        # async_to_sync(self.channel_layer.group_send)(
-        #     self.room_group_name,
-        #     {
-        #         'type': 'bid',
-        #         'message': message
-        #     }
-        # )
 
     # Receive message from room group
     def bid(self, event):
