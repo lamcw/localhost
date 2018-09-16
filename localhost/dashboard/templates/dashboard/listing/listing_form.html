@@ -1,11 +1,19 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 
 <div class="container">
   {% block form %}
-  <form enctype="multipart/form-data" method="post" novalidate>
+  <form class="panel" enctype="multipart/form-data" method="post" novalidate>
     {% csrf_token %}
     <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
     {% include "dashboard/listing/property_form.html" with form=form image_formset=image_formset %}
@@ -84,5 +92,6 @@
     new_item.insertAfter(latest_item);
   }
 </script>
-{% include "core/include/gmaps_search.html" with address_field_id=form.address.auto_id %}
+<script type="text/javascript" src="{% static "core/js/address_search.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
 {% endblock %}

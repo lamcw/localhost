@@ -7,11 +7,17 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormMixin
 from geopy import distance
 
-from localhost.core.models import Property
+from localhost.core.models import Property, PropertyItem
 
 
 class PropertyDetailView(DetailView):
     queryset = Property.objects.prefetch_related()
+
+
+class PropertyItemDetailView(DetailView):
+    queryset = PropertyItem.objects.prefetch_related()
+    template_name = 'core/property_item_detail.html'
+    context_object_name = 'property_item'
 
 
 class SearchResultsView(ListView):
@@ -32,7 +38,7 @@ class SearchResultsView(ListView):
         default_checkin = (datetime.combine(date.today(), time_now) +
                            timedelta(minutes=30)).strftime('%H%M')
         checkin = datetime.strptime(
-            self.request.GET.get('checkin', default_checkin), "%H%M").time()
+            url_parameters.get('checkin', default_checkin), "%H%M").time()
 
         if bid_now == 'on':
             # filter if checkin times are on same day

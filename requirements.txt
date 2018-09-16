@@ -4,9 +4,9 @@ channels-redis==2.3.0
 chardet==3.0.4
 Django==2.1.1
 django-polymorphic==2.0.3
-django-widget-tweaks==1.4.2
+django-widget-tweaks==1.4.3
 googlemaps==3.0.2
-geopy==1.16.0
+geopy==1.17.0
 idna==2.7
 Pillow==5.2.0
 psycopg2-binary==2.7.5

@@ -70,12 +70,6 @@ class PropertyItem(models.Model):
         _('min price'), help_text=_('Starting price of the auction.'))
     buyout_price = models.PositiveIntegerField(
         _('buyout price'), help_text=_('Buyout price during auction.'))
-    highest_bidder = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        blank=True,
-        editable=False,
-        on_delete=models.SET_NULL)
     session = models.ManyToManyField(
         BiddingSession,
         verbose_name=_('bidding session'),
@@ -118,6 +112,14 @@ class PropertyItemImage(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='images')
     img = models.ImageField(upload_to=property_item_img_path)
+
+class Bid(models.Model):
+    property_item = models.ForeignKey(
+        PropertyItem, on_delete=models.CASCADE, related_name='bids')
+    highest_bidder = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE)
+    bid_amount = models.PositiveIntegerField()
 
 
 class Booking(models.Model):

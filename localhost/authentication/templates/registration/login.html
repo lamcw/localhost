@@ -1,5 +1,13 @@
 {% extends "core/base.html" %}
 {% load widget_tweaks %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
 
 {% block title %} {{ block.super }} - Login {% endblock %}
 
@@ -23,7 +31,7 @@
       </div>
     {% endif %}
 
-    <form class="form-login" method="post" action="{% url 'authentication:login' %}" novalidate>
+    <form class="panel" method="post" action="{% url 'authentication:login' %}" novalidate>
       {% csrf_token %}
       <h3 class="">localhost</h3>
       {% for field in form.visible_fields %}
