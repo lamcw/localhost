@@ -16,23 +16,36 @@
   <div class="p-0">
     <div class="list-group">
       <a href="#" class="list-group-item list-group-item-action">Profile</a>
-      <a href="#" class="list-group-item list-group-item-action active">Settings</a>
-      <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
+      <a href="#" class="list-group-item list-group-item-action">Settings</a>
+      <a href="#" class="list-group-item list-group-item-action active">Active Bids</a>
       <a href="#" class="list-group-item list-group-item-action">Booking History</a>
       <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
       <a href="#" class="list-group-item list-group-item-action">Wallet</a>
     </div>
   </div>
   <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-    <form class="p-2">
-      <div class="form-group">
-        <label for="change-password">Password</label>
-        <input type="password" class="form-control" id="change-password" aria-label="Password" aria-describedby="basic-addon1">
-      </div>
-      <div class="form-group">
-        <button class="btn btn-primary">Apply</button>
-      </div>
-    </form>
+    <ul class="list-group w-100 px-2">
+      <li class="list-group-item">
+        <a href="#" class="align-middle">A property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2"></span>
+          Your bid: $50
+          <span class="mx-2"></span>
+          Current bid: $100
+          <span class="mx-2"></span>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a href="#">Another property</a>
+        <div class="d-inline float-right">
+          <span class="mx-2"></span>
+          Your bid: $100
+          <span class="mx-2"></span>
+          Current bid: $100
+          <span class="mx-2"></span>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
 {% include "core/include/footer.html" %}

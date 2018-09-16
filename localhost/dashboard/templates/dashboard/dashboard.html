@@ -1,64 +1,41 @@
-{% extends "core/default.html" %}
+{% extends "core/base.html" %}
+{% load static %}
 
-{% block body %}
-<!-- Content -->
-<div class="container-fluid d-flex flex-column flex-grow-1 justify-content-center">
-  <div class="d-flex flex-row flex-grow-1">
-    <div class="col-sm-2 p-0">
-      <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action">Profile</a>
-        <a href="#" class="list-group-item list-group-item-action">Settings</a>
-        <a href="#" class="list-group-item list-group-item-action">Booking History</a>
-        <a href="#" class="list-group-item list-group-item-action active">Property Listings</a>
-        <a href="#" class="list-group-item list-group-item-action">Wallet</a>
-      </div>
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
+
+{% block title %} {{ block.super }} - Dashboard {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
+  <div class="p-0">
+    <div class="list-group">
+      <a href="#" class="list-group-item list-group-item-action">Profile</a>
+      <a href="#" class="list-group-item list-group-item-action">Settings</a>
+      <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
+      <a href="#" class="list-group-item list-group-item-action">Booking History</a>
+      <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
+      <a href="#" class="list-group-item list-group-item-action active">Wallet</a>
     </div>
-    <div class="col-md-10 bg-light p-2 d-flex justify-content-center" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-      <div class="accordion" id="accordionExample">
-        <div class="card">
-          <div class="card-header w-100" id="headingOne">
-            <h5 class="mb-0">
-              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Collapsible Group Item #1
-              </button>
-            </h5>
-          </div>
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header w-100" id="headingTwo">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Collapsible Group Item #2
-              </button>
-            </h5>
-          </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header w-100" id="headingThree">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                Collapsible Group Item #3
-              </button>
-            </h5>
-          </div>
-          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            </div>
-          </div>
-        </div>
-      </div>
+  </div>
+  <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
+    <div>
+      Current Balance: $200
     </div>
+    <form class="p-2">
+      <div class="form-group">
+        <label for="add-currency">Add money to Wallet</label>
+        <input type="number" class="form-control" id="add-currency" placeholder="50">
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary">Add</button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}

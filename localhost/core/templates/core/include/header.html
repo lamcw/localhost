@@ -7,17 +7,17 @@
     {% block search_bar %}{% endblock %}
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
-        {% if not user.is_authenticated %}
         <li class="nav-item">
+        {% if not user.is_authenticated %}
           <a class="nav-link" href="{% url 'authentication:register' %}">Register</a>
         </li>
-        {% endif %}
         <li class="nav-item">
-          {% if user.is_authenticated %}
-          <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
-          {% else %}
           <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
-          {% endif %}
+        {% else %}
+          <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
+        {% endif %}
         </li>
       </ul>
     </div>

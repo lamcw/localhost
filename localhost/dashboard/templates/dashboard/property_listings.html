@@ -1,4 +1,12 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
 
 {% block title %} {{ block.super }} - Dashboard {% endblock %}
 
@@ -10,13 +18,105 @@
       <div class="list-group">
         <a href="#" class="list-group-item list-group-item-action">Profile</a>
         <a href="#" class="list-group-item list-group-item-action">Settings</a>
+        <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
         <a href="#" class="list-group-item list-group-item-action">Booking History</a>
         <a href="#" class="list-group-item list-group-item-action active">Property Listings</a>
         <a href="#" class="list-group-item list-group-item-action">Wallet</a>
       </div>
     </div>
-    <div class="col-md-10 bg-light px-0 py-2 d-flex justify-content-center" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-      
+    <div class="col-md-10 bg-light p-2 d-flex flex-column justify-content-between">
+      <div class="accordion w-100" id="accordionExample">
+        <div class="card w-100">
+          <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+              <div class="d-inline" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <a href="#" class="d-inline text-left">
+                  Property A
+                  <small class="">
+                    123 Fake Street, Nopeville NSW
+                  </small>
+                </a>
+                <div class="d-inline float-right">
+                  <a href="#" class="btn btn-primary">Edit</a>
+                </div>
+              </div>
+            </h5>
+          </div>
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body p-2">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a href="#">Room 1</a>
+                </li>
+                <li class="list-group-item">
+                  <a href="#">Comfy bed thing</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card w-100">
+          <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+              <div data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <a href="#" class="d-inline text-left">
+                  Property B
+                  <small class="">
+                    124 Fake Street, Nopeville NSW
+                  </small>
+                </a>
+                <div class="d-inline float-right">
+                  <a href="#" class="btn btn-primary">Edit</a>
+                </div>
+              </div>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body p-2">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a href="#">New Room</a>
+                </li>
+                <li class="list-group-item">
+                  <a href="#">Couch</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card w-100">
+          <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+              <div data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                <a href="#" class="d-inline text-left">
+                  Property C
+                  <small class="">
+                    125 Fake Street, Nopeville NSW
+                  </small>
+                </a>
+                <div class="d-inline float-right">
+                  <a href="#" class="btn btn-primary">Edit</a>
+                </div>
+              </div>
+            </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+            <div class="card-body p-2">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a href="#">Shower</a>
+                </li>
+                <li class="list-group-item">
+                  <a href="#">Kitchen Floor</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="align-self-end p-2">
+        <button class="btn">Add Property</button>
+      </div>
     </div>
   </div>
 </div>
