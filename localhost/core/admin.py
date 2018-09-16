@@ -17,10 +17,6 @@ class PropertyImageInline(admin.StackedInline):
 class PropertyItemInline(admin.StackedInline):
     model = PropertyItem
     extra = 1
-    readonly_fields = [
-        'highest_bidder',
-    ]
-    # TODO nested inline with image
 
 
 @admin.register(Property)
