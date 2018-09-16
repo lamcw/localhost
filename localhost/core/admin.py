@@ -17,9 +17,6 @@ class PropertyImageInline(admin.StackedInline):
 class PropertyItemInline(admin.StackedInline):
     model = PropertyItem
     extra = 1
-    readonly_fields = [
-        'highest_bidder',
-    ]
     show_change_link = True
 
 
