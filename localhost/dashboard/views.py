@@ -16,6 +16,8 @@ class PropertyItemReviewMixin(AccessMixin):
     """
     Allow access only if property item review does not exists,
     and the date today is the day after booking.
+
+    URL has to contain <int:pk>
     """
     raise_exception = True
 
@@ -25,6 +27,7 @@ class PropertyItemReviewMixin(AccessMixin):
             return self.handle_no_permission()
         except ObjectDoesNotExist:
             booking = Booking.objects.get(pk=kwargs.get('pk'))
+            # next day after the booking
             date_at_least = datetime.combine(booking.date,
                                              time()) + timedelta(days=1)
             if datetime.now() >= date_at_least:
