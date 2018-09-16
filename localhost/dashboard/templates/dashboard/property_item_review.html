@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+
+{% block title %} {{ block.super }} - Review {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save">
+  </form>
+</div>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
