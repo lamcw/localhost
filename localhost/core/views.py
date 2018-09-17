@@ -5,7 +5,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 from geopy import distance
 
-from localhost.core.models import Property, PropertyItem
+from localhost.core.models import Property, PropertyItem, Bid
 
 
 class PropertyDetailView(DetailView):
@@ -16,6 +16,20 @@ class PropertyItemDetailView(DetailView):
     queryset = PropertyItem.objects.prefetch_related()
     template_name = 'core/property_item_detail.html'
     context_object_name = 'property_item'
+
+    def get_context_data(self, **kwargs):
+        context = super(PropertyItemDetailView,
+                        self).get_context_data(**kwargs)
+        if Bid.objects.filter(property_item=self.kwargs.get('pk')).exists():
+            context['current_price'] = Bid.objects.filter(
+                property_item=self.kwargs.get('pk')).latest(
+                    'bid_amount').bid_amount
+            context['next_bid'] = context['current_price'] + 5
+        else:
+            context['current_price'] = PropertyItem.objects.get(
+                pk=self.kwargs.get('pk')).min_price
+            context['next_bid'] = context['current_price']
+        return context
 
 
 class SearchResultsView(ListView):
