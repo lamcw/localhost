@@ -76,50 +76,10 @@
                 Select A Booking
               </button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Bed</a>
-                <a class="dropdown-item" href="#">Room</a>
-                <a class="dropdown-item" href="#">Room</a>
+                {% for item in property.property_item.all %}
+                <a class="dropdown-item" href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+                {% endfor %}
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Registered Sessions -->
-      <div class="flex-row">
-        <div class="success-banner card flex-md-row">
-          <div class="card-body d-flex flex-column align-items-center">
-            <strong class="d-inline-block">Booking name</strong>
-            <button type="button" class="btn dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Registered Sessions
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">12PM - 6PM</a>
-              <a class="dropdown-item" href="#">6PM - 8PM</a>
-              <a class="dropdown-item" href="#">8PM - 10PM</a>
-            </div>
-          </div>
-        </div>
-        <div class="card flex-md-row h-md-250">
-          <div class="card-body d-flex flex-column align-items-center">
-            <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
-            <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
-            <h3>Current bid: $50</h3>
-            <small class="small"><em>Janet</em> has the highest bid!</small>
-          </div>
-        </div>
-        <div class="card flex-md-row">
-          <div class="card-body d-flex flex-column align-items-center">
-            <strong class="d-inline-block">Place Bid</strong>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">$</span>
-              </div>
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-              <div class="input-group-append">
-                <span class="input-group-text">.00</span>
-              </div>
-              <button type="button" class="btn btn-success mb-0">Place</button>
             </div>
           </div>
         </div>
@@ -128,11 +88,4 @@
   </div>
 </div>
 {% include "core/include/footer.html" %}
-{% endblock %}
-{% block js %}
-<script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
-<script>
-  var session_end = new Date('Dec 17, 2018 13:00:00').getTime();
-  register_countdown('countdown', session_end, 'CLOSED');
-</script>
 {% endblock %}
