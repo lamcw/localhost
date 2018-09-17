@@ -1,22 +1,26 @@
-.card-deck .card {
-  /*margin: 2.5% 2.5% 0 2.5%;*/
-  /* For flex reasons just "width" isn't enough */
-  min-width: 20em !important;
-  max-width: 20em !important;
-  margin: .5em 1em;
+@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
+
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+  background-size: cover;
 }
 
-.btn {
-  text-align-last: center;
+body {
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
 }
 
-.card > a, .card > a:hover {
-  text-decoration: none;
-  color: black; /* TODO: fix */
+main {
+  color: black;
 }
 
-@media (max-width: 767.98px) {
-  .card-deck .card {
-    margin: .5em auto;
-  }
+.card-title {
+  font-family: Raleway, sans-serif;
 }
