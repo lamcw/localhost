@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta, time
+from datetime import datetime, time, timedelta
 
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
                                   View)
 
@@ -28,9 +29,11 @@ class PropertyItemReviewMixin(AccessMixin):
         except ObjectDoesNotExist:
             booking = Booking.objects.get(pk=kwargs.get('pk'))
             # next day after the booking
-            date_at_least = datetime.combine(booking.date,
-                                             time()) + timedelta(days=1)
-            if datetime.now() >= date_at_least:
+            date_at_least = datetime.combine(
+                booking.date,
+                time(tzinfo=timezone.get_current_timezone())) + timedelta(
+                    days=1)
+            if timezone.now() >= date_at_least:
                 return super().dispatch(request, *args, **kwargs)
             else:
                 return self.handle_no_permission()
