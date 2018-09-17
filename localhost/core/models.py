@@ -34,6 +34,64 @@ class BiddingSession(models.Model):
             {self.end_time.strftime('%I:%M %p')}"""
 
 
+class Sin(models.Func):
+    function = 'SIN'
+
+
+class Cos(models.Func):
+    function = 'COS'
+
+
+class Acos(models.Func):
+    function = 'ACOS'
+
+
+class Radians(models.Func):
+    function = 'RADIANS'
+
+
+class DistanceManager(models.Manager):
+    """
+    Custom manager that adds functions related to geographical distance.
+    """
+
+    def within(self, latitude, longitude):
+        """
+        Returns the distance between two locations given latitude and
+        longitude. The distance is calculated using Haversine Formula. See
+        https://en.wikipedia.org/wiki/Haversine_formula
+        The model that this manager handles must have a latitude and longitutde
+        field.
+
+        Usage:
+        >>> class Foo(models.Model):
+        >>>     latitude = models.DecimalField()
+        >>>     longitude = models.DecimalField()
+        >>>     objects = DistanceManager()
+
+        >>> Foo.objects.within(lat, lng)
+        <QuerySet [<Foo: ...>]>
+
+        Args:
+            latitude: latitude of the given location
+            longitude: longitude of the given location
+        Returns:
+            queryset with annotated distance between the given location and
+            objects
+        """
+        radlat = Radians(latitude)  # given latitude
+        radlong = Radians(longitude)  # given longitude
+        radflat = Radians(models.F('latitude'))
+        radflong = Radians(models.F('longitude'))
+
+        # 6371 is for km. Use 3959 for miles
+        expr = 6371 * Acos(
+            Cos(radlat) * Cos(radflat) * Cos(radflong - radlong) +
+            Sin(radlat) * Sin(radflat))
+
+        return self.get_queryset().annotate(distance=expr)
+
+
 class Property(models.Model):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(
@@ -52,6 +110,8 @@ class Property(models.Model):
     latest_checkin_time = models.TimeField(
         _('latest check-in time'),
         help_text=_('Latest time a guest can check-in.'))
+
+    objects = DistanceManager()
 
     class Meta:
         verbose_name_plural = 'properties'
@@ -124,9 +184,7 @@ class PropertyItemImage(models.Model):
 class Bid(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='bids')
-    bidder = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE)
+    bidder = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     bid_amount = models.PositiveIntegerField()
 
     class Meta:

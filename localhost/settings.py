@@ -150,3 +150,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+DEFAULT_SEARCH_ADDRESS = 'Sydney, Australia'
+DEFAULT_SEARCH_COORD = (-33.8688, 151.2039)
