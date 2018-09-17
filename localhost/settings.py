@@ -150,3 +150,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+DEFAULT_SEARCH_COORD = (-33.8688, 151.2039)

@@ -1,11 +1,11 @@
 from datetime import timedelta
 
-from django.db.models import Case, F, Q, When
+from django.conf import settings
+from django.db.models import F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
-from geopy import distance
 
-from localhost.core.models import Property, PropertyItem, Bid
+from localhost.core.models import Bid, Property, PropertyItem
 
 
 class PropertyDetailView(DetailView):
@@ -18,8 +18,7 @@ class PropertyItemDetailView(DetailView):
     context_object_name = 'property_item'
 
     def get_context_data(self, **kwargs):
-        context = super(PropertyItemDetailView,
-                        self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if Bid.objects.filter(property_item=self.kwargs.get('pk')).exists():
             context['current_price'] = Bid.objects.filter(
                 property_item=self.kwargs.get('pk')).latest(
@@ -38,11 +37,12 @@ class SearchResultsView(ListView):
     paginate_by = 20
 
     def get_queryset(self, **kwargs):
-        queryset = super(SearchResultsView, self).get_queryset(**kwargs)
         url_params = self.request.GET
 
-        latitude = float(url_params.get('lat', -33.8688))
-        longitude = float(url_params.get('lng', 151.2039))
+        latitude = float(
+            url_params.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+        longitude = float(
+            url_params.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         guests = int(url_params.get('guests', 1))
         bid_now = url_params.get('bidding-active', 'off')
         # default checkin time is set half an hour from now
@@ -51,36 +51,24 @@ class SearchResultsView(ListView):
         checkin = dateparse.parse_time(
             url_params.get('checkin', default_checkin))
 
+        properties = self.model.objects.within(latitude, longitude)
+
         if bid_now == 'on':
             # filter if checkin times are on same day
-            q1 = queryset.filter(
+            q1 = properties.filter(
                 Q(earliest_checkin_time__lt=F('latest_checkin_time')),
                 Q(earliest_checkin_time__lte=checkin),
                 latest_checkin_time__gt=checkin)
             # filter if checkin times cross midnight
-            q2 = queryset.filter(
+            q2 = properties.filter(
                 Q(earliest_checkin_time__gt=F('latest_checkin_time')),
                 Q(earliest_checkin_time__lte=checkin)
                 | Q(latest_checkin_time__gt=checkin))
 
-            queryset = q1 | q2
-
-            queryset = queryset.filter(
+            properties = (q1 | q2).filter(
                 property_item__session__end_time__gt=timezone.now().time(),
                 property_item__session__start_time__lte=timezone.now().time(),
                 property_item__available=True,
                 property_item__capacity__gte=guests).distinct()
 
-        properties = list()
-
-        for p in queryset:
-            geodesic_distance = distance.distance(
-                (latitude, longitude), (p.latitude, p.longitude)).kilometers
-            properties.append((p.id, geodesic_distance))
-
-        sorted_properties = sorted(properties, key=lambda x: x[1])
-        sorted_ids = [i[0] for i in sorted_properties]
-        preserved = Case(
-            *[When(pk=pk, then=pos) for pos, pk in enumerate(sorted_ids)])
-
-        return queryset.filter(pk__in=sorted_ids).order_by(preserved)
+        return properties.order_by('distance')
