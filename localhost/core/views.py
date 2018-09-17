@@ -45,7 +45,13 @@ class SearchResultsView(ListView):
             longitude = float(
                 args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
-            latitude, longitude = parse_address(args.get('address'))
+            address = args.get('address')
+            if address:
+                latitude, longitude = parse_address(address)
+            else:
+                # address also empty
+                latitude, longitude = parse_address(
+                    settings.DEFAULT_SEARCH_ADDRESS)
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
