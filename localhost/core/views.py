@@ -6,6 +6,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
 from localhost.core.models import Bid, Property, PropertyItem
+from localhost.core.utils import parse_address
 
 
 class PropertyDetailView(DetailView):
@@ -37,19 +38,21 @@ class SearchResultsView(ListView):
     paginate_by = 20
 
     def get_queryset(self, **kwargs):
-        url_params = self.request.GET
+        args = self.request.GET
 
-        latitude = float(
-            url_params.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-        longitude = float(
-            url_params.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
-        guests = int(url_params.get('guests', 1))
-        bid_now = url_params.get('bidding-active', 'off')
+        try:
+            latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            longitude = float(
+                args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
+        except ValueError:
+            latitude, longitude = parse_address(args.get('address'))
+
+        guests = int(args.get('guests', 1))
+        bid_now = args.get('bidding-active', 'off')
         # default checkin time is set half an hour from now
         default_checkin = (
             timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
-        checkin = dateparse.parse_time(
-            url_params.get('checkin', default_checkin))
+        checkin = dateparse.parse_time(args.get('checkin', default_checkin))
 
         properties = self.model.objects.within(latitude, longitude)
 

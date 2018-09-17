@@ -1,10 +1,9 @@
-import googlemaps
 from django import forms
-from django.conf import settings
 from django.forms.models import ModelForm, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from localhost.core.models import Property, PropertyItem
+from localhost.core.utils import parse_address
 
 
 class PropertyItemForm(ModelForm):
@@ -45,11 +44,8 @@ class PropertyForm(ModelForm):
 
     def save(self, commit=True):
         new_property = super().save(commit=False)
-        gmaps = googlemaps.Client(key=settings.GMAPS_KEY)
-        address = self.cleaned_data.get('address')
-        geocode = gmaps.geocode(address)
-        new_property.latitude = geocode[0]['geometry']['location']['lat']
-        new_property.longitude = geocode[0]['geometry']['location']['lng']
+        new_property.latitude, new_property.longitude = parse_address(
+            self.cleaned_data.get('address'))
         if commit:
             new_property.save()
         return new_property

@@ -14,7 +14,7 @@
 <div class="container d-flex flex-column flex-grow-1 justify-content-center">
   <form id="form-search" method="get" action="{% url 'core:search_results' %}">
     <div class="input-group stylish-input-group">
-      <input id="city_search_geolocation" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
+      <input id="city_search_geolocation" name="address" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
       <div class="input-group-append">
         <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
       </div>

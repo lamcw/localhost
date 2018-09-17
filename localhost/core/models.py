@@ -54,6 +54,7 @@ class DistanceManager(models.Manager):
     """
     Custom manager that adds functions related to geographical distance.
     """
+
     def within(self, latitude, longitude):
         """
         Returns the distance between two locations given latitude and
