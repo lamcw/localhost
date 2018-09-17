@@ -1,26 +1,3 @@
 #main-flex-wrapper {
   min-height: 100vh;
-  background: #f7f7f7;
-}
-
-.form-control:focus {
-  box-shadow: none;
-  border-color: #cccccc;
-}
-
-.btn-primary {
-  background-color: #c7d3da;
-  border: none;
-}
-
-.btn-primary:hover, .btn-primary:active {
-  background-color: #77888f !important;
-}
-
-.btn-primary.focus {
-  box-shadow: none !important;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
-  background-color: #77888f !important;
 }
