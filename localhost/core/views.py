@@ -24,16 +24,16 @@ class SearchResultsView(ListView):
     paginate_by = 20
 
     def get_queryset(self, **kwargs):
-        queryset = super(SearchResultsView, self).get_queryset()
+        queryset = super(SearchResultsView, self).get_queryset(**kwargs)
         url_params = self.request.GET
 
         latitude = float(url_params.get('lat', -33.8688))
         longitude = float(url_params.get('lng', 151.2039))
         guests = int(url_params.get('guests', 1))
-        bid_now = url_params.get('bidding-active', 'false')
+        bid_now = url_params.get('bidding-active', 'off')
         # default checkin time is set half an hour from now
         default_checkin = (
-            timezone.now() + timedelta(minutes=30)).time().strftime('%H:%M')
+            timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(
             url_params.get('checkin', default_checkin))
 
@@ -62,7 +62,7 @@ class SearchResultsView(ListView):
         for p in queryset:
             geodesic_distance = distance.distance(
                 (latitude, longitude), (p.latitude, p.longitude)).kilometers
-            properties.append(tuple((p.id, geodesic_distance)))
+            properties.append((p.id, geodesic_distance))
 
         sorted_properties = sorted(properties, key=lambda x: x[1])
         sorted_ids = [i[0] for i in sorted_properties]
