@@ -2,40 +2,34 @@
 {% load static %}
 
 {% block css %}
-
-<link rel="stylesheet" type="text/css" href="{% static "core/css/panel.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
-
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/login.css" %}">
 {% endblock %}
 
 {% block title %} {{ block.super }} - Register {% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
-  <div class="container d-flex flex-column flex-grow-1 justify-content-center">
-    <form method="post" class="panel" novalidate>
-      <h3 class="">Register</h3>
-      {% csrf_token %}
-      {% for field in form %}
-        {% if field.label != 'Gender' %}
-          {% include "core/include/form_field.html" with form=form field=field %}
-        {% endif %}
-      {% endfor %}
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        {% for radio in form.gender %}
-          <label class="btn btn-primary" for="{{ radio.id_for_label }}">
-              {{ radio.tag }}
-              {{ radio.choice_label }}
-          </label>
-        {% endfor %}
-        {% for error in form.gender.errors %}
-          <div class="invalid-feedback">
-            {{ error|escape }}
-          </div>
-        {% endfor %}
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
-    </form>
-  </div>
+<form method="post" class="panel" novalidate>
+  <h3 class="">localhost</h3>
+  {% csrf_token %}
+  {% for field in form %}
+    {% if field.label != 'Gender' %}
+      {% include "core/include/form_field.html" with form=form field=field %}
+    {% endif %}
+  {% endfor %}
+  {% for radio in form.gender %}
+    {{ radio.tag }}
+    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+  {% endfor %}
+  {% for error in form.gender.errors %}
+    <div class="invalid-feedback">
+      {{ error|escape }}
+    </div>
+  {% endfor %}
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+</form>
 {% include "core/include/footer.html" %}
 {% endblock %}

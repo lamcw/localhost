@@ -1,9 +1,63 @@
+@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  color: black;
+  background: #f5f5f5;
+}
+
+#carousel {
+  border: 1px solid black;
+}
+
+
+.nav-masthead .nav-link,
+.nav-mastfoot .nav-link {
+  color: grey;
+}
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: 700;
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-mastfoot .nav-link:hover,
+.nav-mastfoot .nav-link:focus,
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  color: black;
+}
+
+.carousel, .item, .active {
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-inner {
+  height:100%;
+}
+
+.success-banner {
+  width: 100%;
+  background: var(--green);
+  text-transform: uppercase;
+  color: white;
+}
+
+.success-banner .btn,
+.success-banner .btn:hover,
+.success-banner .btn:focus,
+.success-banner .btn:active {
+  color: white;
+}
+
 .card {
-  border: 1px solid #d8d8d8;
-  border-radius: 0;
-  box-shadow: 0 3px 8px rgba(0,0,0,.25);
-  padding: 1em;
-  text-align: center;
-  width: 80%;
-  max-width: 360px;
+  box-shadow: none;
+}
+
+small {
+  font-size: 14px !important;
 }
