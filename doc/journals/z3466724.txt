@@ -41,3 +41,10 @@ tweaks to reposition elements and it can be finalised. Removed the calendar
 from all the pages as date is no longer to be used. Results and listing pages
 will need to be finalised ASAP for backend integration and work to start on the
 dashboard next week.
+
+// Week 8
+Worked with Ed to link the front and back end for the filtering functionality.
+Prototyped the Dashboard and all the required pages, group decision to use 
+separate pages for now and incorporate dynamic page content switching as a 
+possible extension. Few issues with the search bar and filters on the pages as
+a result of merging the front and back end together which need to be addressed.
