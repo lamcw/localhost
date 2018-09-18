@@ -20,14 +20,13 @@ class PropertyItemDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if Bid.objects.filter(property_item=self.kwargs.get('pk')).exists():
+        if Bid.objects.filter(property_item=self.object).exists():
             context['current_price'] = Bid.objects.filter(
-                property_item=self.kwargs.get('pk')).latest(
+                property_item=self.object).latest(
                     'bid_amount').bid_amount
             context['next_bid'] = context['current_price'] + 5
         else:
-            context['current_price'] = PropertyItem.objects.get(
-                pk=self.kwargs.get('pk')).min_price
+            context['current_price'] = self.object.min_price
             context['next_bid'] = context['current_price']
         return context
 
