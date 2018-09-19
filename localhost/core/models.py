@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 from polymorphic.showfields import ShowFieldType
@@ -33,6 +34,64 @@ class BiddingSession(models.Model):
             {self.end_time.strftime('%I:%M %p')}"""
 
 
+class Sin(models.Func):
+    function = 'SIN'
+
+
+class Cos(models.Func):
+    function = 'COS'
+
+
+class Acos(models.Func):
+    function = 'ACOS'
+
+
+class Radians(models.Func):
+    function = 'RADIANS'
+
+
+class DistanceManager(models.Manager):
+    """
+    Custom manager that adds functions related to geographical distance.
+    """
+
+    def within(self, latitude, longitude):
+        """
+        Returns the distance between two locations given latitude and
+        longitude. The distance is calculated using Haversine Formula. See
+        https://en.wikipedia.org/wiki/Haversine_formula
+        The model that this manager handles must have a latitude and longitutde
+        field.
+
+        Usage:
+        >>> class Foo(models.Model):
+        >>>     latitude = models.DecimalField()
+        >>>     longitude = models.DecimalField()
+        >>>     objects = DistanceManager()
+
+        >>> Foo.objects.within(lat, lng)
+        <QuerySet [<Foo: ...>]>
+
+        Args:
+            latitude: latitude of the given location
+            longitude: longitude of the given location
+        Returns:
+            queryset with annotated distance between the given location and
+            objects
+        """
+        radlat = Radians(latitude)  # given latitude
+        radlong = Radians(longitude)  # given longitude
+        radflat = Radians(models.F('latitude'))
+        radflong = Radians(models.F('longitude'))
+
+        # 6371 is for km. Use 3959 for miles
+        expr = 6371 * Acos(
+            Cos(radlat) * Cos(radflat) * Cos(radflong - radlong) +
+            Sin(radlat) * Sin(radflat))
+
+        return self.get_queryset().annotate(distance=expr)
+
+
 class Property(models.Model):
     host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(
@@ -52,8 +111,13 @@ class Property(models.Model):
         _('latest check-in time'),
         help_text=_('Latest time a guest can check-in.'))
 
+    objects = DistanceManager()
+
     class Meta:
         verbose_name_plural = 'properties'
+
+    def get_absolute_url(self):
+        return reverse('core:property-detail', args=[str(self.id)])
 
     def __str__(self):
         return f"Property: {self.title} owned by {self.host}"
@@ -70,12 +134,6 @@ class PropertyItem(models.Model):
         _('min price'), help_text=_('Starting price of the auction.'))
     buyout_price = models.PositiveIntegerField(
         _('buyout price'), help_text=_('Buyout price during auction.'))
-    highest_bidder = models.ForeignKey(
-        get_user_model(),
-        null=True,
-        blank=True,
-        editable=False,
-        on_delete=models.SET_NULL)
     session = models.ManyToManyField(
         BiddingSession,
         verbose_name=_('bidding session'),
@@ -87,6 +145,9 @@ class PropertyItem(models.Model):
     bindable = models.BooleanField(
         default=True, help_text=_('Enable binding bids.'))
     available = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('core:property-item-detail', args=[str(self.id)])
 
     def __str__(self):
         return f"{self.title}"
@@ -118,6 +179,16 @@ class PropertyItemImage(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='images')
     img = models.ImageField(upload_to=property_item_img_path)
+
+
+class Bid(models.Model):
+    property_item = models.ForeignKey(
+        PropertyItem, on_delete=models.CASCADE, related_name='bids')
+    bidder = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    bid_amount = models.PositiveIntegerField()
+
+    class Meta:
+        get_latest_by = 'bid_amount'
 
 
 class Booking(models.Model):

@@ -1,0 +1,11 @@
+.pac-container {
+  font-family: inherit !important;
+}
+
+.pac-container:after {
+  display: none;
+}
+
+.pac-item {
+  border: none;
+}

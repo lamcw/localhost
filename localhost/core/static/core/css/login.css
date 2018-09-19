@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
+
+html {
+  background: url(../images/sacha-styles-748090-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
+body {
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  overflow: auto;
+  top: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+}
+
+form h3 {
+  font-family: 'Lobster', sans-serif;
+}
