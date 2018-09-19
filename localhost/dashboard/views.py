@@ -4,8 +4,9 @@ from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
+                                  TemplateView)
 
 from localhost.core.models import (Booking, Property, PropertyImage,
                                    PropertyItemImage, PropertyItemReview)
