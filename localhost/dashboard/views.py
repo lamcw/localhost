@@ -112,10 +112,10 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
 
 class BookingListView(LoginRequiredMixin, ListView):
     model = Booking
-    template_name = 'dashboard/booking_list.html'
+    template_name = 'dashboard/booking_history.html'
 
     def get_queryset(self):
-        return Booking.objects.filter(user=self.request.user)
+        return Booking.objects.prefetch_related().filter(user=self.request.user)
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,

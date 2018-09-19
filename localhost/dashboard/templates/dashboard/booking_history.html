@@ -3,72 +3,19 @@
 {% block content %}
 <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
   <ul class="list-group w-100 px-2">
+    {% for booking in booking_list %}
     <li class="list-group-item">
-      <a href="#" class="align-middle">A property</a>
+      <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
       <div class="d-inline float-right">
         <span class="mx-2"></span>
-        $50
+        ${{ booking.price }}
         <span class="mx-2"></span>
-        11/10/2018
+        {{ booking.date|date }}
         <span class="mx-2"></span>
-        <button class="btn">Cancel</button>
+        <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
       </div>
     </li>
-    <li class="list-group-item">
-      <a href="#">Another property</a>
-      <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        $50
-        <span class="mx-2"></span>
-        12/10/2018
-        <span class="mx-2"></span>
-        <button class="btn">Review</button>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <a href="#">Anothernother property</a>
-      <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        $50
-        <span class="mx-2"></span>
-        12/10/2018
-        <span class="mx-2"></span>
-        <button class="btn">Review</button>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <a href="#">Anothernothernother property</a>
-      <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        $50
-        <span class="mx-2"></span>
-        12/10/2018
-        <span class="mx-2"></span>
-        <button class="btn">Review</button>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <a href="#">New property</a>
-      <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        $50
-        <span class="mx-2"></span>
-        12/10/2018
-        <span class="mx-2"></span>
-        <button class="btn">Review</button>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <a href="#">Newnew property</a>
-      <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        $50
-        <span class="mx-2"></span>
-        12/10/2018
-        <span class="mx-2"></span>
-        <button class="btn" disabled>Review</button>
-      </div>
-    </li>
+    {% endfor %}
   </ul>
 </div>
 {% endblock %}
