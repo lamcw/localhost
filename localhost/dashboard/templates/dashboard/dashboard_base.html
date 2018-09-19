@@ -17,7 +17,7 @@
       <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a>
       <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Active Bids</a>
       <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}">Booking History</a>
-      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listings' %}active{% endif %}">Property Listings</a>
+      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}">Property Listings</a>
       <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">Wallet</a>
     </div>
   </div>

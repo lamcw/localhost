@@ -1,124 +1,44 @@
-{% extends "core/base.html" %}
-{% load static %}
+{% extends "dashboard/dashboard_base.html" %}
 
-{% block css %}
-
-<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
-
-{% endblock %}
-
-{% block title %} {{ block.super }} - Dashboard {% endblock %}
-
-{% block body_wrapped %}
-{% include "core/include/header.html" %}
-<div class="container d-flex flex-column flex-grow-1 justify-content-center">
-  <div class="d-flex row flex-grow-1">
-    <div class="col-md-2 p-0">
-      <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action">Profile</a>
-        <a href="#" class="list-group-item list-group-item-action">Settings</a>
-        <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
-        <a href="#" class="list-group-item list-group-item-action">Booking History</a>
-        <a href="#" class="list-group-item list-group-item-action active">Property Listings</a>
-        <a href="#" class="list-group-item list-group-item-action">Wallet</a>
+{% block content %}
+<div class="col-md-10 bg-light p-2 d-flex flex-column justify-content-between">
+  <div class="accordion w-100" id="accordionExample">
+    {% for property in property_list %}
+    <div class="card w-100">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <div class="d-inline" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+            <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
+              {{ property.title }}
+              <small class="">
+                {{ property.address }}
+              </small>
+            </a>
+            <div class="d-inline float-right">
+              <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
+            </div>
+          </div>
+        </h5>
+      </div>
+      <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body p-2">
+          <ul class="list-group">
+            {% for item in property.property_item.all %}
+            <li class="list-group-item">
+              <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            </li>
+            {% endfor %}
+            <li class="list-group-item">
+              <a href="#">Comfy bed thing</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <div class="col-md-10 bg-light p-2 d-flex flex-column justify-content-between">
-      <div class="accordion w-100" id="accordionExample">
-        <div class="card w-100">
-          <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-              <div class="d-inline" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                <a href="#" class="d-inline text-left">
-                  Property A
-                  <small class="">
-                    123 Fake Street, Nopeville NSW
-                  </small>
-                </a>
-                <div class="d-inline float-right">
-                  <a href="#" class="btn btn-primary">Edit</a>
-                </div>
-              </div>
-            </h5>
-          </div>
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body p-2">
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <a href="#">Room 1</a>
-                </li>
-                <li class="list-group-item">
-                  <a href="#">Comfy bed thing</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="card w-100">
-          <div class="card-header" id="headingTwo">
-            <h5 class="mb-0">
-              <div data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <a href="#" class="d-inline text-left">
-                  Property B
-                  <small class="">
-                    124 Fake Street, Nopeville NSW
-                  </small>
-                </a>
-                <div class="d-inline float-right">
-                  <a href="#" class="btn btn-primary">Edit</a>
-                </div>
-              </div>
-            </h5>
-          </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body p-2">
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <a href="#">New Room</a>
-                </li>
-                <li class="list-group-item">
-                  <a href="#">Couch</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="card w-100">
-          <div class="card-header" id="headingThree">
-            <h5 class="mb-0">
-              <div data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                <a href="#" class="d-inline text-left">
-                  Property C
-                  <small class="">
-                    125 Fake Street, Nopeville NSW
-                  </small>
-                </a>
-                <div class="d-inline float-right">
-                  <a href="#" class="btn btn-primary">Edit</a>
-                </div>
-              </div>
-            </h5>
-          </div>
-          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-            <div class="card-body p-2">
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <a href="#">Shower</a>
-                </li>
-                <li class="list-group-item">
-                  <a href="#">Kitchen Floor</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="align-self-end p-2">
-        <button class="btn">Add Property</button>
-      </div>
-    </div>
+    {% endfor %}
+  </div>
+  <div class="align-self-end p-2">
+    <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
   </div>
 </div>
-{% include "core/include/footer.html" %}
 {% endblock %}

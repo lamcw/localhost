@@ -67,6 +67,14 @@ class PropertyItemReviewMixin(AccessMixin):
                 return self.handle_no_permission()
 
 
+class ListingListView(LoginRequiredMixin, ListView):
+    model = Property
+    template_name = 'dashboard/property_listings.html'
+
+    def get_queryset(self, **kwargs):
+        return Property.objects.prefetch_related().filter(host=self.request.user)
+
+
 class ListingCreate(LoginRequiredMixin, CreateView):
     model = Property
     form_class = PropertyForm
