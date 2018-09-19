@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
-                                  View)
+                                  TemplateView)
 
 from localhost.core.models import (Booking, Property, PropertyImage,
                                    PropertyItemImage, PropertyItemReview)

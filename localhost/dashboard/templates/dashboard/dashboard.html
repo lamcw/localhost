@@ -15,27 +15,29 @@
 <div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
   <div class="p-0">
     <div class="list-group">
-      <a href="#" class="list-group-item list-group-item-action">Profile</a>
+      <a href="#" class="list-group-item list-group-item-action active">Profile</a>
       <a href="#" class="list-group-item list-group-item-action">Settings</a>
       <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
       <a href="#" class="list-group-item list-group-item-action">Booking History</a>
       <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
-      <a href="#" class="list-group-item list-group-item-action active">Wallet</a>
+      <a href="#" class="list-group-item list-group-item-action">Wallet</a>
     </div>
   </div>
-  <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-    <div>
-      Current Balance: $200
+  <div class="col-md-10 bg-light px-0 py-2">
+    <div class="col-md-5 p-2">
+      <a class="btn btn-secondary" href="#">View Public Profile</a>
     </div>
-    <form class="p-2">
-      <div class="form-group">
-        <label for="add-currency">Add money to Wallet</label>
-        <input type="number" class="form-control" id="add-currency" placeholder="50">
-      </div>
-      <div class="form-group">
-        <button class="btn btn-primary">Add</button>
-      </div>
-    </form>
+    <div class="col-md-7 p-2">
+      <form class="p-2 w-100">
+        <div class="form-group">
+          <label for="description">Personal Description</label>
+          <textarea class="form-control" id="description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary">Apply</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% include "core/include/footer.html" %}
