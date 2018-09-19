@@ -2,15 +2,16 @@ from datetime import datetime, time, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+from django.db.models import Subquery, Max, OuterRef
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import (CreateView, DeleteView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from localhost.core.models import (Booking, Property, PropertyImage,
-                                   PropertyItemImage, PropertyItemReview)
+from localhost.core.models import (Booking, Bid, Property, PropertyImage,
+                                   PropertyItem, PropertyItemImage,
+                                   PropertyItemReview)
 from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
 
 
@@ -22,6 +23,22 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+
+class ActiveBidsView(LoginRequiredMixin, ListView):
+    model = PropertyItem
+    context_object_name = 'property_items'
+    template_name = 'dashboard/active_bids.html'
+
+    def get_queryset(self, **kwargs):
+        # uses order_by() instead of latest() since latest() evaluates the expr
+        user_bid = Bid.objects.filter(
+            property_item=OuterRef('pk'),
+            bidder=self.request.user).order_by()
+        return PropertyItem.objects \
+            .filter(bids__bidder=self.request.user).distinct() \
+            .annotate(current_bid=Max('bids__bid_amount')) \
+            .annotate(user_bid=Subquery(user_bid.values('bid_amount')[:1]))
 
 
 class PropertyItemReviewMixin(AccessMixin):

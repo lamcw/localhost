@@ -1,98 +1,74 @@
-{% extends "core/base.html" %}
-{% load static %}
+{% extends "dashboard/dashboard_base.html" %}
 
-{% block css %}
-
-<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
-
-{% endblock %}
-
-{% block title %} {{ block.super }} - Dashboard {% endblock %}
-
-{% block body_wrapped %}
-{% include "core/include/header.html" %}
-<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
-  <div class="p-0">
-    <div class="list-group">
-      <a href="#" class="list-group-item list-group-item-action">Profile</a>
-      <a href="#" class="list-group-item list-group-item-action">Settings</a>
-      <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
-      <a href="#" class="list-group-item list-group-item-action active">Booking History</a>
-      <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
-      <a href="#" class="list-group-item list-group-item-action">Wallet</a>
-    </div>
-  </div>
-  <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-    <ul class="list-group w-100 px-2">
-      <li class="list-group-item">
-        <a href="#" class="align-middle">A property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          11/10/2018
-          <span class="mx-2"></span>
-          <button class="btn">Cancel</button>
-        </div>
-      </li>
-      <li class="list-group-item">
-        <a href="#">Another property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          12/10/2018
-          <span class="mx-2"></span>
-          <button class="btn">Review</button>
-        </div>
-      </li>
-      <li class="list-group-item">
-        <a href="#">Anothernother property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          12/10/2018
-          <span class="mx-2"></span>
-          <button class="btn">Review</button>
-        </div>
-      </li>
-      <li class="list-group-item">
-        <a href="#">Anothernothernother property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          12/10/2018
-          <span class="mx-2"></span>
-          <button class="btn">Review</button>
-        </div>
-      </li>
-      <li class="list-group-item">
-        <a href="#">New property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          12/10/2018
-          <span class="mx-2"></span>
-          <button class="btn">Review</button>
-        </div>
-      </li>
-      <li class="list-group-item">
-        <a href="#">Newnew property</a>
-        <div class="d-inline float-right">
-          <span class="mx-2"></span>
-          $50
-          <span class="mx-2"></span>
-          12/10/2018
-          <span class="mx-2"></span>
-          <button class="btn" disabled>Review</button>
-        </div>
-      </li>
-    </ul>
-  </div>
+{% block content %}
+<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
+  <ul class="list-group w-100 px-2">
+    <li class="list-group-item">
+      <a href="#" class="align-middle">A property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        11/10/2018
+        <span class="mx-2"></span>
+        <button class="btn">Cancel</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <a href="#">Another property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        12/10/2018
+        <span class="mx-2"></span>
+        <button class="btn">Review</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <a href="#">Anothernother property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        12/10/2018
+        <span class="mx-2"></span>
+        <button class="btn">Review</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <a href="#">Anothernothernother property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        12/10/2018
+        <span class="mx-2"></span>
+        <button class="btn">Review</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <a href="#">New property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        12/10/2018
+        <span class="mx-2"></span>
+        <button class="btn">Review</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <a href="#">Newnew property</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        $50
+        <span class="mx-2"></span>
+        12/10/2018
+        <span class="mx-2"></span>
+        <button class="btn" disabled>Review</button>
+      </div>
+    </li>
+  </ul>
 </div>
-{% include "core/include/footer.html" %}
 {% endblock %}

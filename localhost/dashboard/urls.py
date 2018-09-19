@@ -11,6 +11,7 @@ urlpatterns = [
         RedirectView.as_view(url=reverse_lazy('dashboard:profile')),
         name='dashboard'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
+    path('active-bids/', views.ActiveBidsView.as_view(), name='bids'),
     path('listing/add/', views.ListingCreate.as_view(), name='listing-create'),
     path(
         'listing/<int:pk>/',
