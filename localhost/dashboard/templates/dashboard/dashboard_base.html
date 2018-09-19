@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+{% endblock %}
+
+{% block title %} {{ block.super }} - Dashboard {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
+  <div class="p-0">
+    <div class="list-group">
+      <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a>
+      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Active Bids</a>
+      <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}">Booking History</a>
+      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listings' %}active{% endif %}">Property Listings</a>
+      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">Wallet</a>
+    </div>
+  </div>
+  {% block content %}{% endblock %}
+</div>
+{% include "core/include/footer.html" %}
+{% endblock %}

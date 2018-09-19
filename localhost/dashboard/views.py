@@ -1,20 +1,28 @@
 from datetime import datetime, time, timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
-                                  TemplateView)
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  TemplateView, UpdateView)
 
 from localhost.core.models import (Booking, Property, PropertyImage,
                                    PropertyItemImage, PropertyItemReview)
 from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'dashboard/dashboard.html'
+class ProfileView(LoginRequiredMixin, UpdateView):
+    model = get_user_model()
+    fields = ('bio', )
+    template_name = 'dashboard/profile.html'
+    success_url = reverse_lazy('dashboard:profile')
+
+    def get_object(self):
+        return self.request.user
+
 
 class PropertyItemReviewMixin(AccessMixin):
     """
@@ -40,7 +48,6 @@ class PropertyItemReviewMixin(AccessMixin):
                 return super().dispatch(request, *args, **kwargs)
             else:
                 return self.handle_no_permission()
-
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):

@@ -1,11 +1,16 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
+from django.views.generic import RedirectView, TemplateView
 
 from . import views
 
 app_name = 'dashboard'
 
 urlpatterns = [
-    path('', views.DashboardView.as_view(), name='dashboard'),
+    path(
+        '',
+        RedirectView.as_view(url=reverse_lazy('dashboard:profile')),
+        name='dashboard'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
     path('listing/add/', views.ListingCreate.as_view(), name='listing-create'),
     path(
         'listing/<int:pk>/',
