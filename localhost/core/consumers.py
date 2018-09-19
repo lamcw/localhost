@@ -2,9 +2,10 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from django.utils import timezone
+from localhost.core.models import Bid, PropertyItem, BiddingSession
 
-from localhost.core.models import Bid, PropertyItem
-
+ERROR_INVALID_BID = -1
 
 class BidConsumer(WebsocketConsumer):
     def connect(self):
@@ -35,27 +36,58 @@ class BidConsumer(WebsocketConsumer):
         Receive message from WebSocket.
         """
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        bid_message = text_data_json['message']
+        time_now = timezone.localtime(timezone.now()).time()
+        latest_bid = Bid.objects.filter(
+                property_item=self.room_name).latest('bid_amount').bid_amount
+        current_session = BiddingSession.objects.filter(
+                propertyitem__id=self.room_name,
+                end_time__gt=time_now,
+                start_time__lte=time_now)
 
-        if not Bid.objects.filter(property_item=self.room_name).exists():
-            next_bid = PropertyItem.objects.get(pk=self.room_name).min_price
+        if current_session.exists():
+            if bid_message > latest_bid:
+                Bid.objects.create(
+                        property_item=self.property_item,
+                        bidder=self.user,
+                        bid_amount=bid_message)
+
+                async_to_sync(self.channel_layer.group_send)(
+                        self.room_group_name,
+                        {
+                            'type': 'bid',
+                            'message': bid_message
+                            }
+                        )
+            else:
+                self.send(text_data=json.dumps({
+                    'message': ERROR_INVALID_BID
+                }))
         else:
-            next_bid = Bid.objects.filter(
-                property_item=self.room_name).latest('bid_amount').bid_amount + 5
+            self.send(text_data=json.dumps({
+                'message': ERROR_NVALID_BID
+            }))
 
-        if message == next_bid:
-            Bid.objects.create(
-                property_item=self.property_item,
-                bidder=self.user,
-                bid_amount=message)
 
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    'type': 'bid',
-                    'message': message
-                }
-            )
+            # if not Bid.objects.filter(property_item=self.room_name).exists():
+        #     next_bid = PropertyItem.objects.get(pk=self.room_name).min_price
+        # else:
+        #     next_bid = Bid.objects.filter(
+        #         property_item=self.room_name).latest('bid_amount').bid_amount + 5
+
+        # if message == next_bid:
+        #     Bid.objects.create(
+        #         property_item=self.property_item,
+        #         bidder=self.user,
+        #         bid_amount=message)
+
+        #     async_to_sync(self.channel_layer.group_send)(
+        #         self.room_group_name,
+        #         {
+        #             'type': 'bid',
+        #             'message': message
+        #         }
+        #     )
 
     def bid(self, event):
         """
@@ -66,4 +98,4 @@ class BidConsumer(WebsocketConsumer):
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message
-        }))
+            }))
