@@ -2,14 +2,14 @@ from datetime import datetime, time, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
-from django.db.models import Subquery, Max, OuterRef
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max, OuterRef, Subquery
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from localhost.core.models import (Booking, Bid, Property, PropertyImage,
+from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
 from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
@@ -33,8 +33,7 @@ class ActiveBidsView(LoginRequiredMixin, ListView):
     def get_queryset(self, **kwargs):
         # uses order_by() instead of latest() since latest() evaluates the expr
         user_bid = Bid.objects.filter(
-            property_item=OuterRef('pk'),
-            bidder=self.request.user).order_by()
+            property_item=OuterRef('pk'), bidder=self.request.user).order_by()
         return PropertyItem.objects \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(current_bid=Max('bids__bid_amount')) \
@@ -72,7 +71,8 @@ class ListingListView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/property_listings.html'
 
     def get_queryset(self, **kwargs):
-        return Property.objects.prefetch_related().filter(host=self.request.user)
+        return Property.objects.prefetch_related().filter(
+            host=self.request.user)
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):
@@ -123,7 +123,8 @@ class BookingListView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/booking_history.html'
 
     def get_queryset(self):
-        return Booking.objects.prefetch_related().filter(user=self.request.user)
+        return Booking.objects.prefetch_related().filter(
+            user=self.request.user)
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,

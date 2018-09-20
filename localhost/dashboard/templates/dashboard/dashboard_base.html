@@ -14,7 +14,7 @@
   <div class="p-0">
     <div class="list-group">
       <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
-      <a href="#" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a>
+      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}">Settings</a>
       <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Active Bids</a>
       <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}">Booking History</a>
       <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}">Property Listings</a>

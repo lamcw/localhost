@@ -1,14 +1,17 @@
 {% extends "dashboard/dashboard_base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-  <form class="p-2">
+  <form method="post" class="p-2">
+    {% csrf_token %}
     <div class="form-group">
-      <label for="change-password">Password</label>
-      <input type="password" class="form-control" id="change-password" aria-label="Password" aria-describedby="basic-addon1">
+      {% for field in form %}
+      {% include "core/include/form_field.html" with form=form field=field %}
+      {% endfor %}
     </div>
     <div class="form-group">
-      <button class="btn btn-primary">Apply</button>
+      <input type="submit" value="Apply" class="btn btn-primary"></input>
     </div>
   </form>
 </div>
