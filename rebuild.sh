@@ -2,8 +2,8 @@
 # saner programming env: these switches turn some bugs into errors
 set -o errexit -o pipefail -o noclobber -o nounset
 
-OPTIONS=Mml:
-LONGOPTS=makemigrations,migrate,loaddata:
+OPTIONS=Mmsl:
+LONGOPTS=makemigrations,migrate,server,loaddata:
 
 # -use ! and PIPESTATUS to get exit code with errexit set
 # -temporarily store output to be able to check for errors
@@ -17,7 +17,7 @@ if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
 fi
 eval set -- "$PARSED"
 
-M=n m=n data=-
+M=n m=n s=n data=-
 while true; do
     case "$1" in
         -M|--makemigrations)
@@ -32,6 +32,10 @@ while true; do
             data="$2"
             shift 2
             ;;
+        -s|--server)
+            s=y
+            shift
+            ;; 
         --)
             shift
             break
@@ -65,17 +69,29 @@ createdb $1
 
 if [ $M = y ]; then
     tput setaf 5; echo "Making migrations..."
-    ./manage.py makemigrations core report messaging dashboard authentication
+    if [ $s = y ]; then
+        ./manage.py makemigrations core report messaging dashboard authentication --settings localhost.settings_production
+    else
+        ./manage.py makemigrations core report messaging dashboard authentication
+    fi
 fi
 
 if [ $m = y ]; then
     tput setaf 5; echo "Migrating..."
-    ./manage.py migrate
+    if [ $s = y ]; then
+        ./manage.py migrate --settings localhost.settings_production
+    else
+        ./manage.py migrate
+    fi
 fi
 
 if [ $data != - ]; then
     tput setaf 5; echo "Loading data..."
-    ./manage.py loaddata $data
+    if [ $s = y ]; then
+        ./manage.py loaddata $data --settings localhost.settings_production
+    else
+        ./manage.py loaddata $data
+    fi
 fi
 
 tput setaf 5; echo "Finished...exiting."
