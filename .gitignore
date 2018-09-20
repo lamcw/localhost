@@ -118,7 +118,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-#
-## Editor
+
+# Editors
 .idea
 .nvimrc
+
+# Server
+/staticfiles

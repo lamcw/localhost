@@ -9,7 +9,7 @@ setup(
     install_requires=[
         'django>=2.1.1', 'psycopg2-binary>=2.7.5', 'Pillow>=5.2.0',
         'django-polymorphic>=2.0.3', 'django-widget-tweaks>=1.4.3',
-        'googlemaps>=3.0.2', 'pyyaml>=3.13'
+        'googlemaps>=3.0.2', 'pyyaml>=3.13', 'uWSGI>=2.0.17.1',
         'channels>=2.1.3', 'channels-redis>=2.3.0'
     ],
     packages=find_packages(
