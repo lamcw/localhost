@@ -33,3 +33,8 @@ Week 7
 
 Redesigned most of the model in backend. Migrate changes in model to views and
 templates. Property details could be accessed through URL.
+
+Week 8
+
+Property reviews page is done. Rewrote property search by using natively
+supported SQL expressions and functions. Listing creations backend is finished.
