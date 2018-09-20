@@ -40,5 +40,6 @@ urlpatterns = [
     path(
         'password-change/done',
         auth_views.PasswordChangeDoneView.as_view(),
-        name='password-change-done')
+        name='password-change-done'),
+    path('wallet', views.WalletView.as_view(), name='wallet')
 ]

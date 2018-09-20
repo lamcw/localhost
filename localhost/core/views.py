@@ -22,7 +22,7 @@ class PropertyItemDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         if Bid.objects.filter(property_item=self.object).exists():
             context['current_price'] = Bid.objects.filter(
-                property_item=self.object).latest().bid_amount
+                property_item=self.object).latest().amount
             context['next_bid'] = context['current_price'] + 5
         else:
             context['current_price'] = self.object.min_price

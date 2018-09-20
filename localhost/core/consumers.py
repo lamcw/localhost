@@ -41,13 +41,13 @@ class BidConsumer(WebsocketConsumer):
             next_bid = PropertyItem.objects.get(pk=self.room_name).min_price
         else:
             next_bid = Bid.objects.filter(
-                property_item=self.room_name).latest('bid_amount').bid_amount + 5
+                property_item=self.room_name).latest().amount + 5
 
         if message == next_bid:
             Bid.objects.create(
                 property_item=self.property_item,
                 bidder=self.user,
-                bid_amount=message)
+                amount=message)
 
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,

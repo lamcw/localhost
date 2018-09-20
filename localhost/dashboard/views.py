@@ -3,16 +3,19 @@ from datetime import datetime, time, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Max, OuterRef, Subquery
+from django.db.models import (BooleanField, Case, Exists, F, Max, OuterRef,
+                              Subquery, Value, When)
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import (CreateView, DeleteView, FormView, ListView,
+                                  UpdateView)
 
 from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
-from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
+from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
+                                       WalletForm)
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):
@@ -33,11 +36,24 @@ class ActiveBidsView(LoginRequiredMixin, ListView):
     def get_queryset(self, **kwargs):
         # uses order_by() instead of latest() since latest() evaluates the expr
         user_bid = Bid.objects.filter(
-            property_item=OuterRef('pk'), bidder=self.request.user).order_by()
+            property_item=OuterRef('pk'),
+            bidder=self.request.user).order_by('amount')
         return PropertyItem.objects \
             .filter(bids__bidder=self.request.user).distinct() \
-            .annotate(current_bid=Max('bids__bid_amount')) \
-            .annotate(user_bid=Subquery(user_bid.values('bid_amount')[:1]))
+            .annotate(current_bid=Max('bids__amount')) \
+            .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
+
+
+class WalletView(LoginRequiredMixin, FormView):
+    form_class = WalletForm
+    template_name = 'dashboard/wallet.html'
+    success_url = reverse_lazy('dashboard:wallet')
+
+    def form_valid(self, form):
+        recharge = form.cleaned_data.get('recharge_amount')
+        self.request.user.credits = F('credits') + recharge
+        self.request.user.save()
+        return super().form_valid(form)
 
 
 class PropertyItemReviewMixin(AccessMixin):
@@ -123,8 +139,23 @@ class BookingListView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/booking_history.html'
 
     def get_queryset(self):
-        return Booking.objects.prefetch_related().filter(
-            user=self.request.user)
+        """
+        Return a QuerySet of Booking annotated with:
+
+        1. reviewed: if a booking is reviewed by the user
+        2. passed_one_day: True if a day has passed since the booking date
+        """
+        reviews = PropertyItemReview.objects.filter(
+            booking=OuterRef('pk'), booking__user=self.request.user)
+        one_day_after = timezone.now() + timedelta(days=1)
+        return Booking.objects.prefetch_related() \
+            .filter(user=self.request.user) \
+            .annotate(reviewed=Exists(reviews)) \
+            .annotate(passed_one_day=Case(
+                When(date__gte=one_day_after.date(), then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ))
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,

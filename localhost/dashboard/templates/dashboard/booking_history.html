@@ -12,7 +12,13 @@
         <span class="mx-2"></span>
         {{ booking.date|date }}
         <span class="mx-2"></span>
+        {% if not booking.passed_one_day %}
+        <a href="" class="btn">Cancel</a>
+        {% elif booking.reviewed %}
+        <button class="btn" disabled>Review</button>
+        {% else %}
         <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
+        {% endif %}
       </div>
     </li>
     {% endfor %}

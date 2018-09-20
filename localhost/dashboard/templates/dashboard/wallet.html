@@ -1,39 +1,16 @@
-{% extends "core/base.html" %}
-{% load static %}
+{% extends "dashboard/dashboard_base.html" %}
 
-{% block css %}
-
-<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
-
-{% endblock %}
-
-{% block title %} {{ block.super }} - Dashboard {% endblock %}
-
-{% block body_wrapped %}
-{% include "core/include/header.html" %}
-<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
-  <div class="p-0">
-    <div class="list-group">
-      <a href="#" class="list-group-item list-group-item-action">Profile</a>
-      <a href="#" class="list-group-item list-group-item-action">Settings</a>
-      <a href="#" class="list-group-item list-group-item-action">Active Bids</a>
-      <a href="#" class="list-group-item list-group-item-action">Booking History</a>
-      <a href="#" class="list-group-item list-group-item-action">Property Listings</a>
-      <a href="#" class="list-group-item list-group-item-action active">Wallet</a>
+{% block content %}
+<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
+  <p>Current amount: {{ request.user.credits }}</p>
+  <form method="post" class="p-2">
+    {% csrf_token %}
+    {% for field in form %}
+    {% include "core/include/form_field.html" with form=form field=field %}
+    {% endfor %}
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary" value="Add"></input>
     </div>
-  </div>
-  <div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-    <form class="p-2">
-      <div class="form-group">
-        <label for="add-currency">Add money to Wallet</label>
-        <input type="number" class="form-control" id="add-currency" placeholder="50">
-      </div>
-      <div class="form-group">
-        <button class="btn btn-primary">Add</button>
-      </div>
-    </form>
-  </div>
+  </form>
 </div>
-{% include "core/include/footer.html" %}
 {% endblock %}
