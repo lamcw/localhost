@@ -24,3 +24,17 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+# DATABASE CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': os.environ.get('DB_NAME', 'localhost_db'),
+       'USER': os.environ.get('DB_USER'),
+       'PASSWORD': os.environ.get('DB_PW'),
+       'HOST': '127.0.0.1',
+       'PORT': '5432',
+   }
+}
+# END DATABASE CONFIGURATION
