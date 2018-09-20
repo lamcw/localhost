@@ -13,3 +13,4 @@ pytz==2018.5
 pyyaml==3.13
 requests==2.19.1
 urllib3==1.23
+uWSGI==2.0.17.1
