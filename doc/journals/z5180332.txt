@@ -72,3 +72,15 @@ Django channels and on Friday night we worked together on a prototype branch
 and implemented a proof of concept. At the end of the week I applied for AWS
 Educate so that we would have access to a server for development, testing and
 the final demonstration.
+
+# Week 9
+
+Official meetings ran as per usual. On Monday, I started, finished, and merged
+a major UI upgrade (12+ consecutive man hours). Later in the week I configured
+the AWS server. I wrote a number of bash scripts to to configure the nginx web
+server, to configure the web server gateway, to restart services, and to
+automate dropping, migrating and repopulation of the database, I also bought a
+domain for the web server (h11a.xyz) and configured the server to use HTTPS
+through the Lets Encrypt platform. During the Wednesday meeting I worked with
+Ed to define the protocol used for socket communication between the clients
+and server.
