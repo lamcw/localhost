@@ -103,12 +103,13 @@
           <div class="card-body d-flex flex-column align-items-center">
             <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
             <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
-            <h3>Current bid: $50</h3>
-            <small class="small"><em>Janet</em> has the highest bid!</small>
+            <h3>Current bid: $<span id="bid-current">{{ current_price }}</span></h3>
+            <small class="small"><span id="highest-bidder">{{ highest_bidder }}</span> has the highest bid!</small>
           </div>
         </div>
         <div class="card flex-md-row">
           <div class="card-body d-flex flex-column align-items-center">
+            <button id="bid" class="btn btn-primary">Bid <span id="next-bid"> {{ next_bid }}</span></button>
             <strong class="d-inline-block">Place Bid</strong>
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -123,6 +124,44 @@
           </div>
         </div>
       </div>
+      <script
+          src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+      <script>
+    var roomName = {{ property_item.id }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/property-item/' + roomName + '/');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        console.log(message);
+        var user = data['user'];
+        $('#bid-current').text(message);
+        $('#highest-bidder').text(user);
+        // #next-bid for testing purposes only
+        $('#next-bid').text(parseInt(message) + 5);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#bid').onclick = function(e) {
+        // var messageInputDom = document.querySelector('#card-text');
+        //console.log(messageInputDom);
+        //var message = messageInputDom.value;
+        //console.log(message);
+        var target = $('#next-bid');
+        var message = target.text();
+        chatSocket.send(JSON.stringify({
+            'message': parseInt(message)
+        }));
+    };
+        </script>
     </div>
   </div>
 </div>

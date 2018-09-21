@@ -11,8 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-SETTINGS = 'localhost.settings' if os.environ.get(
-    'SECRET_KEY') else 'localhost.settings_dev'
+SETTINGS = 'localhost.settings_production'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS)
 
 application = get_wsgi_application()
