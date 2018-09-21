@@ -2,34 +2,120 @@
 {% load static %}
 
 {% block css %}
-
-<link rel="stylesheet" type="text/css" href="{% static "core/css/home.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
-
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/review.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/public_profile.css" %}">
 {% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
-
-<div class="container d-flex flex-column flex-grow-1 justify-content-center">
-  <form id="form-search" method="get" action="{% url 'core:search_results' %}">
-    <div class="input-group stylish-input-group">
-      <input id="city_search_geolocation" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
-      <div class="input-group-append">
-        <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+<div class="container-fluid">
+  <h1 class="tag-line">Person</h1>
+  <div class="container-fluid">
+    <div class="flex-row">
+      <div class="card flex-md-row mb-4 h-md-250">
+        <div class="card-body d-flex flex-column align-items-start">
+          <h4>Description</h4>
+          <p>Lorem ipsum excepteur incididunt tempor est pariatur dolor enim cupidatat eiusmod sed adipisicing minim aliqua officia do elit. In incididunt dolor eiusmod dolore magna minim officia dolor culpa laboris in ut ullamco. Aute in dolor culpa dolore culpa officia ex enim excepteur ut esse amet aliqua dolor non. Dolor exercitation duis tempor aliqua voluptate occaecat non esse laborum non commodo ut velit nulla reprehenderit nostrud sunt.</p>
+        </div>
       </div>
-      <input type="hidden" id="lat" name="lat" value="1">
-      <input type="hidden" id="lng" name="lng" value="1">
     </div>
-  </form>
+    <div class="card flex-md-row mb-4 h-md-250 text-left">
+      <div class="card-body d-flex flex-column align-items-start">
+        <h4>Listings</h4>
+        <div class="px-0 w-100">
+          <ul class="list-group w-100">
+            <li class="list-group-item">
+              <div class="w-100 row m-0">
+                <div class="col-md-4 m-0">
+                  <a href="#" class="align-middle">A property</a>
+                </div>
+                <div class="col-md-8">
+                  123 Fake St
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="w-100 row m-0">
+                <div class="col-md-4 m-0">
+                  <a href="#">Another property with a very very very very very very very very long naaammmeee</a>
+                </div>
+                <div class="col-md-8 align-self-center">
+                  124 Fake St, Wooloomoolooo
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="w-100 row m-0">
+                <div class="col-md-4 m-0">
+                  <a href="#">New property</a>
+                </div>
+                <div class="col-md-8">
+                  125 Fake St
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="w-100 row m-0">
+                <div class="col-md-4 m-0">
+                  <a href="#">Newnew property</a>
+                </div>
+                <div class="col-md-8">
+                  126 Fake St
+                </div>
+              </div>
+            </li>
+          </ul>  
+        </div>
+      </div>
+    </div>
+    <div class="flex-row">
+      <div class="card flex-md-row mb-4 h-md-250 text-left">
+        <div class="card-body d-flex flex-column align-items-start">
+          <div class="w-100">
+            <h4 class="d-inline">Reviews</h4>
+            <div class="d-inline float-right">
+              <div class="d-inline">
+                  <i class="fas fa-star checked"></i>
+                  <i class="fas fa-star checked"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  (2)
+                </div>
+            </div>
+          </div>
+          <div class="review">
+            <p class="m-0">
+              Nisi dolore ullamco dolore duis quis nostrud ut commodo. Dolore quis anim laboris ut aute dolor dolor sed consectetur sunt dolor ex ea id eiusmod. Ex dolore dolor eiusmod qui laborum in sint consectetur non velit ut proident in reprehenderit consectetur velit. Ut nisi nostrud sed laborum cillum nisi dolore quis culpa ut anim quis.
+            </p>
+            <div class="d-inline float-right m-1">
+              - Person A
+            </div>
+          </div>
+          <div class="review">
+            <p class="m-0">
+              Nisi dolore ullamco dolore duis quis nostrud ut commodo. Dolore quis anim laboris ut aute dolor dolor sed consectetur sunt dolor ex ea id eiusmod. Ex dolore dolor eiusmod qui laborum in sint consectetur non velit ut proident in reprehenderit consectetur velit. Magna labore laboris quis dolore ex duis ullamco proident. Cillum velit amet esse quis dolor consequat ut sed veniam.
+            </p>
+            <div class="d-inline float-right m-1">
+              - Person B
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% include "core/include/footer.html" %}
 {% endblock %}
 
 {% block js %}
-
-<script type="text/javascript" src="{% static "core/js/city_search_geolocation.js" %}"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
-
+<script>
+  function activateSearchCallback() {
+    activateSuburbSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng');
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/suburb_search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
 {% endblock %}
