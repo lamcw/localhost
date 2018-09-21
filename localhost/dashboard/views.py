@@ -13,6 +13,9 @@ from localhost.core.models import (Booking, Property, PropertyImage,
 from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
 
 
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard/dashboard.html'
+
 class PropertyItemReviewMixin(AccessMixin):
     """
     Allow access only if property item review does not exists,
@@ -37,9 +40,6 @@ class PropertyItemReviewMixin(AccessMixin):
                 return super().dispatch(request, *args, **kwargs)
             else:
                 return self.handle_no_permission()
-
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'dashboard/dashboard.html'
 
 class ListingCreate(LoginRequiredMixin, CreateView):
     model = Property
