@@ -13,9 +13,9 @@ ERROR_INSUFFICIENT_FUNDS = -3
 
 class BidConsumer(WebsocketConsumer):
     def connect(self):
-        self.property_item_id = self.scope['url_route']['kwargs']['item_id']
-        self.room_group_name = 'bidding_%s' % self.property_item_id
-        self.property_item = PropertyItem.objects.get(pk=self.property_item_id)
+        pk = self.scope['url_route']['kwargs']['item_id']
+        self.room_group_name = 'bidding_%s' % pk
+        self.property_item = PropertyItem.objects.get(pk=pk)
         self.user = self.scope['user']
 
         # Join room group
@@ -24,7 +24,6 @@ class BidConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        print(self.channel_name)
         self.accept()
 
     def disconnect(self, close_code):
@@ -42,7 +41,7 @@ class BidConsumer(WebsocketConsumer):
         """
         text_data_json = json.loads(text_data)
         user_bid = text_data_json['message']
-        time_now = timezone.localtime(timezone.now())
+        time_now = timezone.localtime().time()
 
         try:
             min_next_bid = Bid.objects.filter(
