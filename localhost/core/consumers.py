@@ -79,7 +79,7 @@ class BidConsumer(WebsocketConsumer):
             Bid.objects.create(
                 property_item=self.property_item,
                 bidder=self.user,
-                bid_amount=user_bid)
+                amount=user_bid)
 
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
