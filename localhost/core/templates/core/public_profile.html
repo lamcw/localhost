@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/home.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container d-flex flex-column flex-grow-1 justify-content-center">
+  <form id="form-search" method="get" action="{% url 'core:search_results' %}">
+    <div class="input-group stylish-input-group">
+      <input id="city_search_geolocation" type="text" class="form-control border-right-0" placeholder="Where would you like to go?">
+      <div class="input-group-append">
+        <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+      </div>
+      <input type="hidden" id="lat" name="lat" value="1">
+      <input type="hidden" id="lng" name="lng" value="1">
+    </div>
+  </form>
+</div>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript" src="{% static "core/js/city_search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
+
+{% endblock %}

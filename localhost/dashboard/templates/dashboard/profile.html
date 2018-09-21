@@ -1,0 +1,20 @@
+{% extends "dashboard/dashboard_base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="col-md-10 bg-light px-0 py-2">
+  <div class="col-md-5 p-2">
+    <a class="btn btn-secondary" href="#">View Public Profile</a>
+  </div>
+  <div class="col-md-7 p-2">
+    <form method="post" class="p-2 w-100">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+        {% render_field form.bio class="form-control" rows="3" %}
+      </div>
+      <input class="btn btn-primary" type="submit" value="Apply"></input>
+    </form>
+  </div>
+</div>
+{% endblock %}

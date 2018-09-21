@@ -1,16 +1,59 @@
 from datetime import datetime, time, timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import (BooleanField, Case, Exists, F, Max, OuterRef,
+                              Subquery, Value, When)
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import (CreateView, DeleteView, ListView, UpdateView,
-                                  View)
+from django.views.generic import (CreateView, DeleteView, FormView, ListView,
+                                  UpdateView)
 
-from localhost.core.models import (Booking, Property, PropertyImage,
-                                   PropertyItemImage, PropertyItemReview)
-from localhost.dashboard.forms import PropertyForm, PropertyItemFormSet
+from localhost.core.models import (Bid, Booking, Property, PropertyImage,
+                                   PropertyItem, PropertyItemImage,
+                                   PropertyItemReview)
+from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
+                                       WalletForm)
+
+
+class ProfileView(LoginRequiredMixin, UpdateView):
+    model = get_user_model()
+    fields = ('bio', )
+    template_name = 'dashboard/profile.html'
+    success_url = reverse_lazy('dashboard:profile')
+
+    def get_object(self):
+        return self.request.user
+
+
+class ActiveBidsView(LoginRequiredMixin, ListView):
+    model = PropertyItem
+    context_object_name = 'property_items'
+    template_name = 'dashboard/active_bids.html'
+
+    def get_queryset(self, **kwargs):
+        # uses order_by() instead of latest() since latest() evaluates the expr
+        user_bid = Bid.objects.filter(
+            property_item=OuterRef('pk'),
+            bidder=self.request.user).order_by('amount')
+        return PropertyItem.objects \
+            .filter(bids__bidder=self.request.user).distinct() \
+            .annotate(current_bid=Max('bids__amount')) \
+            .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
+
+
+class WalletView(LoginRequiredMixin, FormView):
+    form_class = WalletForm
+    template_name = 'dashboard/wallet.html'
+    success_url = reverse_lazy('dashboard:wallet')
+
+    def form_valid(self, form):
+        recharge = form.cleaned_data.get('recharge_amount')
+        self.request.user.credits = F('credits') + recharge
+        self.request.user.save()
+        return super().form_valid(form)
 
 
 class PropertyItemReviewMixin(AccessMixin):
@@ -30,7 +73,7 @@ class PropertyItemReviewMixin(AccessMixin):
             booking = Booking.objects.get(pk=kwargs.get('pk'))
             # next day after the booking
             date_at_least = datetime.combine(
-                booking.date,
+                booking.latest_checkin_time,
                 time(tzinfo=timezone.get_current_timezone())) + timedelta(
                     days=1)
             if timezone.now() >= date_at_least:
@@ -39,8 +82,13 @@ class PropertyItemReviewMixin(AccessMixin):
                 return self.handle_no_permission()
 
 
-class DashboardView(LoginRequiredMixin, View):
-    pass
+class ListingListView(LoginRequiredMixin, ListView):
+    model = Property
+    template_name = 'dashboard/property_listings.html'
+
+    def get_queryset(self, **kwargs):
+        return Property.objects.prefetch_related().filter(
+            host=self.request.user)
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):
@@ -88,10 +136,39 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
 
 class BookingListView(LoginRequiredMixin, ListView):
     model = Booking
-    template_name = 'dashboard/booking_list.html'
+    template_name = 'dashboard/booking_history.html'
 
     def get_queryset(self):
-        return Booking.objects.filter(user=self.request.user)
+        """
+        Return a QuerySet of Booking annotated with:
+
+        1. reviewed: if a booking is reviewed by the user
+        2. passed_one_day: True if a day has passed since the booking date
+        3. can_cancel: True if the user can cancel this booking
+        """
+        reviews = PropertyItemReview.objects.filter(
+            booking=OuterRef('pk'), booking__user=self.request.user)
+        # today >= booking.latest_checkin_time.date + 1 day
+        # so latest_checkin_time <= today - 1 day
+        one_day_ago = datetime.combine(
+            timezone.now().date(),
+            time(tzinfo=timezone.get_current_timezone())) - timedelta(days=1)
+        return Booking.objects.prefetch_related() \
+            .filter(user=self.request.user) \
+            .order_by('-earliest_checkin_time') \
+            .annotate(reviewed=Exists(reviews)) \
+            .annotate(passed_one_day=Case(
+                When(latest_checkin_time__lte=one_day_ago, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )) \
+            .annotate(can_cancel=Case(
+                When(
+                    earliest_checkin_time__gt=timezone.now(),
+                    then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ))
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,

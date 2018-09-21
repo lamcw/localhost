@@ -1,0 +1,16 @@
+{% extends "dashboard/dashboard_base.html" %}
+
+{% block content %}
+<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
+  <p>Current amount: {{ request.user.credits }}</p>
+  <form method="post" class="p-2">
+    {% csrf_token %}
+    {% for field in form %}
+    {% include "core/include/form_field.html" with form=form field=field %}
+    {% endfor %}
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary" value="Add"></input>
+    </div>
+  </form>
+</div>
+{% endblock %}

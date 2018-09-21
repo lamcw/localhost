@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container d-flex flex-column flex-grow-1 justify-content-center">
+  <h1 class="mx-auto">About Us</h1>
+  <p class="mx-auto">we are anonymous.</p>
+</div>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript" src="{% static "core/js/city_search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
+
+{% endblock %}

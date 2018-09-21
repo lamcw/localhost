@@ -42,12 +42,12 @@ class BidConsumer(WebsocketConsumer):
         """
         text_data_json = json.loads(text_data)
         user_bid = text_data_json['message']
-        time_now = timezone.localtime(timezone.now()).time()
+        time_now = timezone.localtime(timezone.now())
 
         try:
             min_next_bid = Bid.objects.filter(
                 property_item=self.property_item_id). \
-                latest('bid_amount').bid_amount + 1
+                latest('amount').amount + 1
         except Bid.DoesNotExist:
             min_next_bid = self.property_item.min_price
 
@@ -58,17 +58,17 @@ class BidConsumer(WebsocketConsumer):
 
         if current_session.exists():
             if user_bid <= self.user.credits:
-                if user_bid > min_next_bid:
+                if user_bid >= min_next_bid:
                     Bid.objects.create(
                             property_item=self.property_item,
                             bidder=self.user,
-                            bid_amount=user_bid)
+                            amount=user_bid)
 
                     async_to_sync(self.channel_layer.group_send)(
                             self.room_group_name,
                             {
                                 'type' : "bid",
-                                'bid_amount': user_bid,
+                                'amount': user_bid,
                                 'user' : self.user.first_name
                             }
                     )
@@ -91,7 +91,7 @@ class BidConsumer(WebsocketConsumer):
             }))
 
     def bid(self, event):
-        bid_amount = event['bid_amount']
+        bid_amount = event['amount']
         user = event['user']
         # Send message to WebSocket
         self.send(text_data=json.dumps({

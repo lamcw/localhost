@@ -1,0 +1,44 @@
+{% extends "dashboard/dashboard_base.html" %}
+
+{% block content %}
+<div class="col-md-10 bg-light p-2 d-flex flex-column justify-content-between">
+  <div class="accordion w-100" id="accordionExample">
+    {% for property in property_list %}
+    <div class="card w-100">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <div class="d-inline" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+            <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
+              {{ property.title }}
+              <small class="">
+                {{ property.address }}
+              </small>
+            </a>
+            <div class="d-inline float-right">
+              <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
+            </div>
+          </div>
+        </h5>
+      </div>
+      <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body p-2">
+          <ul class="list-group">
+            {% for item in property.property_item.all %}
+            <li class="list-group-item">
+              <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            </li>
+            {% endfor %}
+            <li class="list-group-item">
+              <a href="#">Comfy bed thing</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="align-self-end p-2">
+    <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
+  </div>
+</div>
+{% endblock %}

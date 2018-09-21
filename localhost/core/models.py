@@ -185,17 +185,18 @@ class Bid(models.Model):
     property_item = models.ForeignKey(
         PropertyItem, on_delete=models.CASCADE, related_name='bids')
     bidder = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    bid_amount = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField()
 
     class Meta:
-        get_latest_by = 'bid_amount'
+        get_latest_by = 'amount'
 
 
 class Booking(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     price = models.PositiveIntegerField(_('price'))
-    date = models.DateField(_('date'))
+    earliest_checkin_time = models.DateTimeField(_('earliest check-in time'))
+    latest_checkin_time = models.DateTimeField(_('latest check-in time'))
 
     def __str__(self):
         return f"{self.user} booked {self.property_item}"

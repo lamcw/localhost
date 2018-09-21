@@ -22,8 +22,8 @@ class PropertyItemDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         try:
             highest_bid = Bid.objects.filter(
-                property_item=self.object).latest('bid_amount')
-            context['current_price'] = highest_bid.bid_amount
+                property_item=self.object).latest('amount')
+            context['current_price'] = highest_bid.amount
             context['next_bid'] = context['current_price'] + 5
             context['highest_bid'] = highest_bid.bidder
         except Bid.DoesNotExist:

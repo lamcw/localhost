@@ -51,5 +51,14 @@ class PropertyForm(ModelForm):
         return new_property
 
 
+class WalletForm(forms.Form):
+    recharge_amount = forms.IntegerField(min_value=1)
+
+    class Meta:
+        labels = {
+            'recharge_amount': 'Add money to wallet',
+        }
+
+
 PropertyItemFormSet = inlineformset_factory(
     Property, PropertyItem, form=PropertyItemForm, extra=1)
