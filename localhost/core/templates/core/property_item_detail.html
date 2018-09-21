@@ -137,9 +137,10 @@
 
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
-        var message = data['message'];
-        console.log(message);
-        var user = data['user'];
+        var message = data['content']['amount'];
+        var user = data['content']['user_name'];
+        var status_code = data['status_code'];
+        console.log(status_code);
         $('#bid-current').text(message);
         $('#highest-bidder').text(user);
         // #next-bid for testing purposes only
