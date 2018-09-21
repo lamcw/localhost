@@ -5,6 +5,7 @@ from channels.generic.websocket import WebsocketConsumer
 from django.utils import timezone
 from localhost.core.models import Bid, PropertyItem, BiddingSession
 
+SUCCESFUL_BID = 0
 ERROR_INVALID_BID = -1
 ERROR_INVALID_SESSION = -2
 ERROR_INSUFFICIENT_FUNDS = -3
@@ -23,6 +24,7 @@ class BidConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+        print(self.channel_name)
         self.accept()
 
     def disconnect(self, close_code):
@@ -43,10 +45,11 @@ class BidConsumer(WebsocketConsumer):
         time_now = timezone.localtime(timezone.now()).time()
 
         try:
-            highest_bid = Bid.objects.filter(
-                property_item=self.property_item_id).latest('bid_amount').bid_amount
+            min_next_bid = Bid.objects.filter(
+                property_item=self.property_item_id). \
+                latest('bid_amount').bid_amount + 1
         except Bid.DoesNotExist:
-            highest_bid = self.property_item.min_price - 1
+            min_next_bid = self.property_item.min_price
 
         current_session = BiddingSession.objects.filter(
                 propertyitem__id=self.property_item_id,
@@ -55,7 +58,7 @@ class BidConsumer(WebsocketConsumer):
 
         if current_session.exists():
             if user_bid <= self.user.credits:
-                if user_bid > highest_bid:
+                if user_bid > min_next_bid:
                     Bid.objects.create(
                             property_item=self.property_item,
                             bidder=self.user,
@@ -67,8 +70,14 @@ class BidConsumer(WebsocketConsumer):
                                 'type' : "bid",
                                 'bid_amount': user_bid,
                                 'user' : self.user.first_name
-                                }
-                            )
+                            }
+                    )
+                    self.send(text_data=json.dumps({
+                        'message': SUCCESFUL_BID
+                    }))
+
+
+                    #TODO subtract bid amount from credits
                 else:
                     self.send(text_data=json.dumps({
                         'message': ERROR_INVALID_BID
@@ -88,4 +97,4 @@ class BidConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': bid_amount,
             'user' : user
-            }))
+        }))
