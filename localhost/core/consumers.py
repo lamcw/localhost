@@ -45,13 +45,13 @@ class BidConsumer(WebsocketConsumer):
 
         try:
             min_next_bid = Bid.objects.filter(
-                property_item=self.property_item_id). \
+                property_item=self.property_item). \
                 latest('amount').amount + 1
         except Bid.DoesNotExist:
             min_next_bid = self.property_item.min_price
 
         current_session = BiddingSession.objects.filter(
-                propertyitem__id=self.property_item_id,
+                propertyitem=self.property_item,
                 end_time__gt=time_now,
                 start_time__lte=time_now)
 
