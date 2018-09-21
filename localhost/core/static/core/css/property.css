@@ -61,3 +61,20 @@ body {
 small {
   font-size: 14px !important;
 }
+
+.col-md-8, .col-md-4 {
+  padding: 0;
+}
+
+.row {
+  margin: 0;
+}
+
+.items > div:nth-of-type(odd) {
+  background-color: white;
+}
+
+.carousel.slide {
+  width: calc(100%/5); 
+  min-width: calc(100%/5);
+}
