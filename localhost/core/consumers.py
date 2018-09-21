@@ -42,7 +42,7 @@ class BidConsumer(WebsocketConsumer):
         """
         text_data_json = json.loads(text_data)
         user_bid = text_data_json['message']
-        time_now = timezone.now()
+        time_now = timezone.localtime(timezone.now())
 
         try:
             min_next_bid = Bid.objects.filter(
@@ -58,7 +58,7 @@ class BidConsumer(WebsocketConsumer):
 
         if current_session.exists():
             if user_bid <= self.user.credits:
-                if user_bid > min_next_bid:
+                if user_bid >= min_next_bid:
                     Bid.objects.create(
                             property_item=self.property_item,
                             bidder=self.user,
