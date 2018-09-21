@@ -35,7 +35,7 @@ urlpatterns = [
         'password-change',
         auth_views.PasswordChangeView.as_view(
             template_name='dashboard/settings.html',
-            success_url=reverse_lazy('password-change-done')),
+            success_url=reverse_lazy('dashboard:password-change-done')),
         name='password-change'),
     path(
         'password-change/done',
