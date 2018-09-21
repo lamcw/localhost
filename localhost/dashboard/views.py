@@ -73,7 +73,7 @@ class PropertyItemReviewMixin(AccessMixin):
             booking = Booking.objects.get(pk=kwargs.get('pk'))
             # next day after the booking
             date_at_least = datetime.combine(
-                booking.date,
+                booking.latest_checkin_time,
                 time(tzinfo=timezone.get_current_timezone())) + timedelta(
                     days=1)
             if timezone.now() >= date_at_least:
@@ -144,15 +144,28 @@ class BookingListView(LoginRequiredMixin, ListView):
 
         1. reviewed: if a booking is reviewed by the user
         2. passed_one_day: True if a day has passed since the booking date
+        3. can_cancel: True if the user can cancel this booking
         """
         reviews = PropertyItemReview.objects.filter(
             booking=OuterRef('pk'), booking__user=self.request.user)
-        one_day_after = timezone.now() + timedelta(days=1)
+        # today >= booking.latest_checkin_time.date + 1 day
+        # so latest_checkin_time <= today - 1 day
+        one_day_ago = datetime.combine(
+            timezone.now().date(),
+            time(tzinfo=timezone.get_current_timezone())) - timedelta(days=1)
         return Booking.objects.prefetch_related() \
             .filter(user=self.request.user) \
+            .order_by('-earliest_checkin_time') \
             .annotate(reviewed=Exists(reviews)) \
             .annotate(passed_one_day=Case(
-                When(date__gte=one_day_after.date(), then=Value(True)),
+                When(latest_checkin_time__lte=one_day_ago, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )) \
+            .annotate(can_cancel=Case(
+                When(
+                    earliest_checkin_time__gt=timezone.now(),
+                    then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField()
             ))

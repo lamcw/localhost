@@ -10,11 +10,15 @@
         <span class="mx-2"></span>
         ${{ booking.price }}
         <span class="mx-2"></span>
-        {{ booking.date|date }}
+        {{ booking.earliest_checkin_time|date }}
         <span class="mx-2"></span>
-        {% if not booking.passed_one_day %}
-        <a href="" class="btn">Cancel</a>
-        {% elif booking.reviewed %}
+        {{ booking.earliest_checkin_time|time }}
+        <span class="mx-2"></span>
+        {{ booking.latest_checkin_time|time }}
+        <span class="mx-2"></span>
+        {% if booking.can_cancel %}
+        <a href="" class="btn">Cancel Booking</a>
+        {% elif booking.reviewed or not booking.passed_one_day %}
         <button class="btn" disabled>Review</button>
         {% else %}
         <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
