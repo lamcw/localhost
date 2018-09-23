@@ -27,6 +27,7 @@ class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
         """
         Unsubscribes the consumer from a group.
         """
+        self.groups.remove(group)
         async_to_sync(self.channel_layer.group_discard)(
             group,
             self.channel_name
