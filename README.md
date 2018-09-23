@@ -125,7 +125,7 @@ Not all the linters provided in the *ALE* documentation are good quality and som
 
 All development work should be done on custom branches off `dev`. When a feature is complete,  a pull request should be made to be reviewed by other members of the development team.
 
-When selected team members for review:
+Who do I select for a review?
 
 * For front-end modifications either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Steven / @studoo](https://bitbucket.org/studoo/).
 * For modifications relating to the real-time component of the project either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Ed / @eddai741](https://bitbucket.org/eddai741/).
