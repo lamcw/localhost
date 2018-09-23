@@ -1,65 +1,136 @@
+# localhost
+
 # Dependencies
-* Python>=3.7
-* postgreSQL>=10.4
+* Python>=3.6.5
+* postgreSQL>=9.6.10
 * psycopg2>=2.7.5
+* Redis>=4.0.9
 
-# Development
-## Setup
-Carefully follow these steps to set this project up:
+localhost is a real-time property auction platform tailored for short stays.
+It was developed by team *Undergrads* for the capstone course [COMP3900: Computer Science Project](http://legacy.handbook.unsw.edu.au/undergraduate/courses/2018/COMP3900.html) in Semester 2 2018 at [UNSW](https://www.unsw.edu.au/).
 
-### 1. Installing PostgreSQL
-Choose package to install based on your distro.
+## Contributing
+### Setup
+
+#### Install PostgreSQL
 ```sh
-sudo apt-get install postgresql postgresql-contrib # for ubuntu-based distro
-sudo xbps-install -S postgresql postgresql-client # for void linux
-sudo pacman -S postgresql # for arch-based distro
+# pacman -S postgresql                          # for arch-based distros
+# apt-get install postgresql postgresql-contrib # for debian-based distros
+# xbps-install -S postgresql postgresql-client  # for void linux
 ```
-### 2. Database cluster initialization
+
+#### Create database cluster
 ```sh
-sudo -u postgres -i
+$ sudo -u postgres -i
 [postgres]$ initdb -D '/var/lib/postgres/data'
-[postgres]$ systemctl enable postgresql.service
-[postgres]$ systemctl start postgresql.service
 [postgres]$ createuser --interactive  # use your own linux user name
 [postgres]$ ^D
-exit
 ```
 
-### 3. Installing dependencies
+Note that the path `/var/lib/postgres` differs between distributions. The directory should be created when *postgresql* is installed so verify its location before running `initdb`.
+
+In the `data` folder for the *postgres* installation, there is a file called `pg_hba.conf`. This file is responsible for how authentication is managed on the service. On general desktop distributions such as *Arch* and *Debian*, entries are configured with the value `trust`. This allows for use by accounts without passwords. On server tailored distributions such as *Gentoo* and *Ubuntu Server*, *postgres* is more likely to be configured to require password authentication - so an account with credentials must be made instead. If there's any doubt, review the bottom of `pg_hba.conf` to check whether or not `trust` is used and configure accordingly.
+
+### Enable postgresql service
+For `systemd`:
 ```sh
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# systemctl enable postgresql.service
+# systemctl start postgresql.service
 ```
 
-### 4. Create database for development
+For `runit`:
 ```sh
-createdb localhost_db
-sudo -u postgres -i
-psql
+# ln -s /etc/sv/postgresql /var/service/
+```
+
+#### Create database for development
+```sh
+$ createdb localhost_db
+$ sudo -u postgres -i
+[postgres]$ psql
 localhost_db=# GRANT ALL PRIVILEGES ON DATABASE localhost_db TO {username};
 localhost_db=# ALTER ROLE {username} SET client_encoding TO 'utf8';
 localhost_db=# ALTER ROLE {username} SET default_transaction_isolation TO 'read committed';
 localhost_db=# \q
-exit
-```
-Running the server
-```sh
-./manage.py makemigrations [app_label [app_label [...]]]
-./manage.py migrate
-./manage.py runserver
+[postgres]$ exit
 ```
 
-# Tests
+#### Clone repository and set up a Python virtual environment
 ```sh
-./manage.py test [test_label]
+$ git clone git@bitbucket.org:jtalowell/localhost.git && cd localhost
+$ python -m venv venv
+$ source venv/bin/activate
+$ (venv) pip install -r requirements.txt
 ```
 
-# Deploy
-Use production settings
+#### Install Redis
 ```sh
-DB_USER={username} DB_PW={password} ./manage.py runserver --settings=localhost.settings_production
+# apt-get install redis-server # for debian based distros
+# xbps-install -S redis        # for void linux
 ```
 
-# Docker for bidding and messaging 
-docker run -p 6379:6379 -d redis:2.8
+A server instance can now be started with:
+```sh
+$ redis-server
+```
+
+As the project uses the default port, no further configuration should be required.
+
+### Development
+
+####  Rebuild tool
+
+To automate the process dropping, creation and repopulation of the development
+database, a bash script was written and is available in the project root.
+```sh
+$ ./rebuild.sh [database name] -Mmsl [data name]
+```
+
+* `-M` is short for `--Makemigrations`
+* `-m` is short for `--migrate`
+* `-s` is short for `--server` and should only be used on the server deployment
+* `-l` is short for `--loaddata` and implies a further `[data name]` argument
+
+This can be used immediately after *Setup* with `./rebuild.sh localhost_db -Mml testdata`.
+
+#### Linters
+
+Strongly recommended is the [ALE](https://github.com/w0rp/ale) plugin for *vim* and *neovim*.
+
+In the Python section of the *ALE* documentation, all the support linters are listed. They can be installed using `pip` as follows; only are subset are installed in the following example.
+
+```
+$ pip3 install flake8 pylint pyls --user
+```
+
+*vim* and *neovim* must then be configured to allow autocompletion and to select the installed linters.
+
+```
+$ cat ~/.config/nvim/init.vim
+
+...
+
+let g:ale_completion_enabled = 1
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint', 'pyls']
+\}
+```
+
+Not all the linters provided in the *ALE* documentation are good quality and some may not run well alongside others. Add each linter one at a time and watch for unacceptable performance drops before continuing.
+
+#### Branches and pull requests
+
+* `master` contains the latest stable release
+* `dev` contains a *moderately* stable release that is being prepared for merge into `master`
+
+All development work should be done on custom branches off `dev`. When a feature is complete,  a pull request should be made to be reviewed by other members of the development team.
+
+When selected team members for review:
+* For front-end modifications either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Steven / @studoo](https://bitbucket.org/studoo/)
+* For modifications relating to the real-time component of the project either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Ed / @eddai741](https://bitbucket.org/eddai741/)
+* For back-end modifications either [Tom / @lamcw](https://bitbucket.org/lamcw/) or [Ed / @eddai741](https://bitbucket.org/eddai741/)
+
+##### Reviews
+
+* If there are code corrections to be made, request them to be made before the pull request is merged. 
+* Ensure that the changes do not break any functionality.
