@@ -125,44 +125,41 @@
         </div>
       </div>
       <script
-          src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
       <script>
-    var roomName = {{ property_item.id }};
+        var roomName = {{ property_item.id }};
 
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/property-item/' + roomName + '/');
+        var chatSocket = new WebSocket(
+          'ws://' + window.location.host +
+          '/ws/property-item/' + roomName + '/');
 
-    chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['content']['amount'];
-        var user = data['content']['user_name'];
-        var status_code = data['status_code'];
-        console.log(status_code);
-        $('#bid-current').text(message);
-        $('#highest-bidder').text(user);
-        // #next-bid for testing purposes only
-        $('#next-bid').text(parseInt(message) + 5);
-    };
+        chatSocket.onmessage = function(e) {
+          var data = JSON.parse(e.data);
+          console.log(data);
+        };
 
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+        chatSocket.onclose = function(e) {
+          console.error('Chat socket closed unexpectedly');
+        };
 
-    document.querySelector('#bid').onclick = function(e) {
-        // var messageInputDom = document.querySelector('#card-text');
-        //console.log(messageInputDom);
-        //var message = messageInputDom.value;
-        //console.log(message);
-        var target = $('#next-bid');
-        var message = target.text();
-        chatSocket.send(JSON.stringify({
-            'message': parseInt(message)
-        }));
-    };
-        </script>
+        chatSocket.onopen = function () {
+          chatSocket.send(JSON.stringify({
+            'request': 'subscribe',
+            'data': {
+              'group': '1'
+            }
+          }));
+          chatSocket.send(JSON.stringify({
+            'request': 'subscribe',
+            'data': {
+              'group': '2'
+            }
+          }));
+        }
+
+      </script>
     </div>
   </div>
 </div>
