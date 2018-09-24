@@ -33,6 +33,7 @@ class MSocket {
     this.url = url;
     this.socket = undefined;
     this.handlers = {};
+    this.queue = [];
   }
 
   /**
@@ -47,8 +48,12 @@ class MSocket {
 
     this.socket = new WebSocket(this.url);
 
+    var queue = this.queue;
     this.socket.onopen = function() {
       console.log('MSocket: connected.');
+      while (queue.length > 0) {
+        this.send(queue.shift());
+      }
     }
 
     this.socket.onclose = function() {
@@ -138,12 +143,19 @@ class MSocket {
    * @param type The identifier for the message
    * @param data The data of the message
    *
+   * @note Messages are queued if the socket is not yet ready
    * @note It is up to the caller to obey any conventions for data structure
    * */
   send(type, data) {
-    this.socket.send(JSON.stringify({
+    var message = JSON.stringify({
       'type': type,
       'data': data
-    }));
+    });
+
+    if (this.socket.readyState !== 1) {
+      this.queue.push(message);
+    } else {
+      this.socket.send(message);
+    }
   }
 }
