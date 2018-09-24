@@ -41,6 +41,8 @@ class MSocket {
    *
    * @return On success, @c true
    * @return On failure, @c false when the socket is already open
+   *
+   * @note Sends any queued messages
    * */
   open() {
     if (this.socket)
