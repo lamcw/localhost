@@ -1,3 +1,10 @@
+"""
+This module provides the MultiplexJsonWebsocketConsumer and Consumer classes.
+These classes are used to provide multiplexed socket commmunication between
+the server and a variety of clients who can listen to different and many
+groups.
+"""
+
 from decimal import Decimal
 from django.utils import timezone
 from asgiref.sync import async_to_sync
@@ -15,6 +22,7 @@ class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
     def disconnect(self, code):
         for group in self.groups:
             self.unsubscribe(group)
+        self.groups = []
 
     def subscribe(self, group):
         """
