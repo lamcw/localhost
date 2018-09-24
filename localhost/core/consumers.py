@@ -1,5 +1,8 @@
+from decimal import Decimal
+from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
+from localhost.core.models import Bid, PropertyItem, BiddingSession
 
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
@@ -71,15 +74,22 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         if req == 'subscribe':
             try:
                 group = content['data']['group']
+                self.request_subscribe(str(group))
             except KeyError:
                 pass
-            self.request_subscribe(group)
         elif req == 'unsubscribe':
             try:
                 group = content['data']['group']
+                self.request_unsubscribe(group)
             except KeyError:
                 pass
-            self.request_unsubscribe(group)
+        elif req == 'bid':
+            try:
+                property_item_id = content['data']['property_item_id']
+                amount = Decimal(content['data']['amount'])
+                self.request_bid(property_item_id, amount)
+            except KeyError:
+                pass
 
     def request_subscribe(self, group):
         """
@@ -94,3 +104,65 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
+
+    def request_bid(self, property_item_id, amount):
+        """
+        Handles a bid request
+        """
+        time_now = timezone.localtime().time()
+        property_item = PropertyItem.objects.get(pk=property_item_id)
+
+        try:
+            # The minimum next bid is either
+            # * The starting price when there are no bids
+            # * The next dollar amount if there is a bid
+            min_next_bid = Bid.objects.filter(
+                property_item=property_item). \
+                latest('amount').amount + 1
+        except Bid.DoesNotExist:
+            min_next_bid = property_item.min_price
+
+        current_session = BiddingSession.objects.filter(
+            propertyitem=property_item,
+            end_time__gt=time_now,
+            start_time__lte=time_now)
+
+        if not current_session.exists():
+            print('Out of session.')
+
+        elif amount > self.scope['user'].credits:
+            print('Not enough credits.')
+
+        elif amount < min_next_bid:
+            print('Bid not high enough')
+
+        else:
+            Bid.objects.create(
+                property_item=property_item,
+                bidder=self.scope['user'],
+                amount=amount)
+
+            async_to_sync(self.channel_layer.group_send)(
+                str(property_item_id),
+                {
+                    'type': 'propagate',
+                    'identifier_type': 'bid',
+                    'data': {
+                        'property_item_id': property_item_id,
+                        'amount': str(amount),
+                        'user': {
+                            'id': self.scope['user'].id,
+                            'name': self.scope['user'].first_name
+                        }
+                    }
+                }
+            )
+
+    def propagate(self, event):
+        """
+        Propagates a message to the client
+        """
+        self.send_json({
+            'type': str(event['identifier_type']),
+            'data': event['data']
+        })

@@ -68,6 +68,7 @@ class MSocket {
 
       var handler = handlers[type];
       if (!handler) {
+        console.log(parsed)
         console.log('MSocket: no handler for recieved type.');
         return;
       }
@@ -129,5 +130,20 @@ class MSocket {
 
     delete this.handlers[type];
     return true;
+  }
+
+  /**
+   * @brief Sends data through msocket
+   *
+   * @param type The identifier for the message
+   * @param data The data of the message
+   *
+   * @note It is up to the caller to obey any conventions for data structure
+   * */
+  send(type, data) {
+    this.socket.send(JSON.stringify({
+      'type': type,
+      'data': data
+    }));
   }
 }

@@ -142,8 +142,23 @@
   msocket.open();
 
   var handler = function(data) {
-    console.log('In handler');
+    console.log(data);
   }
-  msocket.register_handler('test', handler);
+  msocket.register_handler('bid', handler);
+
+
+  document.querySelector('#bid').onclick = function(e) {
+    var data = {
+      'group': roomName
+    }
+    msocket.send('subscribe', data);
+    var target = $('#next-bid');
+    var message = {
+      'property_item_id': roomName,
+      'amount': target.text()
+    };
+    msocket.send('bid', message);
+  };
+
 </script>
 {% endblock %}
