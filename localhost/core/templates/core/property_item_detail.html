@@ -137,7 +137,7 @@
 </script>
 <script>
   var roomName = {{ property_item.id }};
-  var msocket = new MSocket('ws://' + window.location.host + '/ws/property-item/' + roomName + '/');
+  var msocket = new MSocket('ws://' + window.location.host + '/ws/realtime/');
   msocket.open();
 
   var handler = function(data) {
