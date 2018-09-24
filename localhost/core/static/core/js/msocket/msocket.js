@@ -1,91 +1,133 @@
 /**
- * @brief Creates a multiplex socket
+ * @file msocket.js
+ * @author Jasper Lowell / @jtalowell
+ * @date 24 Sep 2018
+ * @brief File containing library interface and implementation for cooperative
+ *        multiplex sockets.
  *
- *        A multiplex socket contains a regular socket and a dictionary of
- *        registered handlers. The key is the response type to watch for
- *        and the value is the function to execute when that key is seen.
+ * As the name 'cooperative multiplex sockets' implies, this library requires
+ * a cooperative server. The protocol used is simple:
+ * 	{
+ *    'type': 'identifier',
+ *    'data': {
+ *      ...
+ *    }
+ *  }
  *
- *        This requires an established protocol between the server and the
- *        client. The only constraint of using this library is that the lowest
- *        level must be a JSON object of the following form:
+ * To handle messages of different types, specific handlers must be written
+ * and then assigned using the object method provided.
  *
- *        {
- *          "type": key,
- *          "data": {
- *            ...
- *          }
- *        }
+ * Failures are handled gracefully.
  *
- * @param url The url the server is listening to
- *
- * @method msocket.send(type, data)
- * */
-function msocket_create(url) {
-  var msocket {
-    var socket = new WebSocket(url)
-    var handlers = {};
-  };
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+ */
 
-  msocket.socket.onopen(function() {
-    console.log('Connected to server.');
-  });
+class MSocket {
+  /**
+   * @brief MSocket constructor
+   *        Initialises the state of the MSocket
+   *
+   * @param url The url that the socket is binded to
+   * */
+  constructor(url) {
+    this.url = url;
+    this.socket = undefined;
+    this.handlers = {};
+  }
 
-  msocket.socket.onclose(function() {
-    console.log('Disconnected from server.');
-  });
+  /**
+   * @brief Opens the socket and connects
+   *
+   * @return On success, @c true
+   * @return On failure, @c false when the socket is already open
+   * */
+  open() {
+    if (this.socket)
+      return false;
 
-  msocket.socket.onmessage(function(message) {
-    var response = JSON.parse(message.data);
+    this.socket = new WebSocket(this.url);
 
-    if (response.type && response.data) {
-      var type = response.type;
-      var data = response.data;
-
-      var handler = msocket.handlers[type];
-      if (handler !== undefined) {
-        console.log('Error: No response handler registered for this type.');
-      } else {
-        handler(data);
-      }
-    } else {
-      console.log('Error: Server abandoned the msocket protocol.');
+    this.socket.onopen = function() {
+      console.log('MSocket: connected.');
     }
-  });
 
-  msocket.send(function(type, data) {
-    var message = {
-      'type': type,
-      'data': data
-    };
-    msocket.socket.send(JSON.stringify(message));
-  });
+    this.socket.onclose = function() {
+      console.log('MSocket: disconnected.');
+    }
 
-  return msocket;
-}
+    var handlers = this.handlers;
+    this.socket.onmessage = function(message) {
+      var parsed = JSON.parse(message.data);
 
-/**
- * @brief Closes a multiplex socket
- *
- * @param msocket
- * */
-function msocket_close(msocket) {
-  msocket.socket.close();
-}
+      var type = parsed.type;
+      var data = parsed.data;
+      if (!type || !data) {
+        console.log('MSocket: server abandoned protocol.');
+        return;
+      }
 
-/**
- * @brief Registers a handler for the multiplex socket
- *
- * @param msocket The multiplex socket
- * @param type    The type to listen for
- * @param handler The handler to execute when @p type is recieved
- *
- * @return true  On success
- * @return false On failure, when the type already has a handler
- * */
-function msocket_register_handler(msocket, type, handler) {
-  if (msocket.handlers[type] !== undefined) {
-    msocket.hanlders[type] = handler;
+      var handler = handlers[type];
+      if (!handler) {
+        console.log('MSocket: no handler for recieved type.');
+        return;
+      }
+
+      handler(data);
+    }
+
     return true;
   }
-  return false;
+
+  /**
+   * @brief Closes the socket and disconnects
+   *
+   * @return On success, @c true
+   * @retern On failure, @c false when the socket is not yet open
+   * */
+  close() {
+    if (!this.socket)
+      return false;
+
+    this.socket.close();
+    this.socket = undefined;
+
+    return true;
+  }
+
+  /**
+   * @brief Registers a handler for a message type
+   *
+   * @param type    The type of message the handler should apply to
+   * @param handler The handler to execute on message recieve
+   *                Should take the data as an argument
+   *                See JSON specification
+   *
+   * @return On success, @c true
+   * @return On failure, @c false when a handler is already set for the type
+   * */
+  register_handler(type, handler) {
+    if (this.handlers[type]) {
+      return false;
+    }
+
+    this.handlers[type] = handler;
+    return true;
+  }
+
+  /**
+   * @brief Unregisters a handler for a message type
+   *
+   * @param type The type of message to clear the handler for
+   *
+   * @return On success, @c true
+   * @return On failure, @c false when there is no handler for the type
+   * */
+  unregister_handler(type) {
+    if (!this.handlers[type]) {
+      return false;
+    }
+
+    delete this.handlers[type];
+    return true;
+  }
 }

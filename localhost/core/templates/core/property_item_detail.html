@@ -124,42 +124,6 @@
           </div>
         </div>
       </div>
-      <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-      <script>
-        var roomName = {{ property_item.id }};
-
-        var chatSocket = new WebSocket(
-          'ws://' + window.location.host +
-          '/ws/property-item/' + roomName + '/');
-
-        chatSocket.onmessage = function(e) {
-          var data = JSON.parse(e.data);
-          console.log(data);
-        };
-
-        chatSocket.onclose = function(e) {
-          console.error('Chat socket closed unexpectedly');
-        };
-
-        chatSocket.onopen = function () {
-          chatSocket.send(JSON.stringify({
-            'request': 'subscribe',
-            'data': {
-              'group': '1'
-            }
-          }));
-          chatSocket.send(JSON.stringify({
-            'request': 'subscribe',
-            'data': {
-              'group': '2'
-            }
-          }));
-        }
-
-      </script>
     </div>
   </div>
 </div>
@@ -167,8 +131,19 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
+<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
   var session_end = new Date('Dec 17, 2018 13:00:00').getTime();
   register_countdown('countdown', session_end, 'CLOSED');
+</script>
+<script>
+  var roomName = {{ property_item.id }};
+  var msocket = new MSocket('ws://' + window.location.host + '/ws/property-item/' + roomName + '/');
+  msocket.open();
+
+  var handler = function(data) {
+    console.log('In handler');
+  }
+  msocket.register_handler('test', handler);
 </script>
 {% endblock %}

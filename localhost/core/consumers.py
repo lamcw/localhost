@@ -49,6 +49,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
     def connect(self):
         if self.scope['user'].is_authenticated:
             self.accept()
+            self.send_json({
+                'type': 'test',
+                'data': {}
+            })
         else:
             self.close()
 
