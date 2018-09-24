@@ -172,9 +172,9 @@ class ClientSocket extends MSocket {
    *        Further messages to the group will be sent to the client socket
    *
    * @param group_class ['property_item', 'conversation']
-   * @param group       The ID that together with the class identifies a unique group
+   * @param id          The ID that together with the class identifies a unique group
    * */
-  subscribe(group_class, group) {
+  subscribe(group_class, id) {
     var payload = {
       'group': group_class + '_' + group
     };
@@ -185,10 +185,10 @@ class ClientSocket extends MSocket {
    * @brief Unsubscribes from a group
    *
    * @param group_class ['property_item', 'conversation']
-   * @param group       The ID that together with the class identifies a
+   * @param id          The ID that together with the class identifies a
    *                    unique group
    * */
-  unsubscribe(group_class, group) {
+  unsubscribe(group_class, id) {
     var payload = {
       'group': group_class + '_' + group
     };
