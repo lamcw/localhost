@@ -137,30 +137,22 @@
 </script>
 <script>
   var roomName = {{ property_item.id }};
-  var msocket = new MSocket('ws://' + window.location.host + '/ws/realtime/');
-  msocket.open();
+  var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
+  csocket.open();
 
   var handler = function(data) {
     var new_bid = data.amount;
     $('#bid-current').text(new_bid);
   }
-  msocket.register_handler('bid', handler);
 
-  var data = {
-    'group': roomName
-  }
-  msocket.send('subscribe', data);
+  csocket.register_handler('bid', handler);
+  csocket.subscribe('property_item', roomName);
 
   $('#bid-place').click(function() {
     var amount = $('#bid-amount').val();
     if (amount) {
       if (!isNaN(amount)) {
-        /* Send bid */
-        var bid_data = {
-          'property_item_id': roomName,
-          'amount': amount
-        }
-        msocket.send('bid', bid_data);
+        csocket.bid(roomName, amount);
       }
     }
   });

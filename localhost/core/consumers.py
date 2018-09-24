@@ -144,7 +144,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 amount=amount)
 
             async_to_sync(self.channel_layer.group_send)(
-                str(property_item_id),
+                'property_item_' + str(property_item_id),
                 {
                     'type': 'propagate',
                     'identifier_type': 'bid',
