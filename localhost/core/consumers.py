@@ -44,21 +44,27 @@ class Consumer(MultiplexJsonWebsocketConsumer):
     """
     Generalised variant of MultiplexJsonWebsocketConsumer for use by all
     socket connections.
+
+    JSON data makes use of the client side cooperative multiplex
+    socket library that expects all JSON data to be of the form:
+    {
+        'type': 'identifier',
+        'data': {
+            ...
+        }
+    }
+    For incoming JSON data, the 'type' will contain the request.
     """
 
     def connect(self):
         if self.scope['user'].is_authenticated:
             self.accept()
-            self.send_json({
-                'type': 'test',
-                'data': {}
-            })
         else:
             self.close()
 
     def receive_json(self, content, **kwargs):
         try:
-            req = content['request']
+            req = content['type']
         except KeyError:
             pass
 
