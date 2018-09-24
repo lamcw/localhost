@@ -66,6 +66,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             self.close()
 
     def receive_json(self, content, **kwargs):
+        print(content)
         try:
             req = content['type']
         except KeyError:

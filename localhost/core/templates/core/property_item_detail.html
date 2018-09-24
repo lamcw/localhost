@@ -109,17 +109,16 @@
         </div>
         <div class="card flex-md-row">
           <div class="card-body d-flex flex-column align-items-center">
-            <button id="bid" class="btn btn-primary">Bid <span id="next-bid"> {{ next_bid }}</span></button>
             <strong class="d-inline-block">Place Bid</strong>
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text">$</span>
               </div>
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+              <input id="bid-amount" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
               <div class="input-group-append">
                 <span class="input-group-text">.00</span>
               </div>
-              <button type="button" class="btn btn-success mb-0">Place</button>
+              <button id="bid-place" type="button" class="btn btn-success mb-0">Place</button>
             </div>
           </div>
         </div>
@@ -142,23 +141,29 @@
   msocket.open();
 
   var handler = function(data) {
-    console.log(data);
+    var new_bid = data.amount;
+    $('#bid-current').text(new_bid);
   }
   msocket.register_handler('bid', handler);
 
+  var data = {
+    'group': roomName
+  }
+  msocket.send('subscribe', data);
 
-  document.querySelector('#bid').onclick = function(e) {
-    var data = {
-      'group': roomName
+  $('#bid-place').click(function() {
+    var amount = $('#bid-amount').val();
+    if (amount) {
+      if (!isNaN(amount)) {
+        /* Send bid */
+        var bid_data = {
+          'property_item_id': roomName,
+          'amount': amount
+        }
+        msocket.send('bid', bid_data);
+      }
     }
-    msocket.send('subscribe', data);
-    var target = $('#next-bid');
-    var message = {
-      'property_item_id': roomName,
-      'amount': target.text()
-    };
-    msocket.send('bid', message);
-  };
+  });
 
 </script>
 {% endblock %}
