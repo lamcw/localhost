@@ -2,11 +2,12 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models import F, Q
+from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
-from localhost.core.models import Bid, Property, PropertyItem
+from localhost.core.models import (Bid, Property, PropertyItem,
+                                   PropertyItemReview)
 from localhost.core.utils import parse_address
 
 
@@ -30,6 +31,14 @@ class PropertyItemDetailView(DetailView):
             context['current_price'] = self.object.min_price
             context['next_bid'] = context['current_price']
         return context
+
+    def get_object(self):
+        property_item = super().get_object()
+        reviews = PropertyItemReview.objects.filter(
+            booking__property_item=property_item)
+        property_item.reviews = reviews.order_by('-rating')
+        property_item.rating = reviews.aggregate(Avg('rating'))['rating__avg']
+        return property_item
 
 
 class SearchResultsView(ListView):
