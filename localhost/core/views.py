@@ -6,7 +6,8 @@ from django.db.models import F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
-from localhost.core.models import Bid, Property, PropertyItem
+from localhost.core.models import (Bid, Property, PropertyItem,
+                                   PropertyItemReview)
 from localhost.core.utils import parse_address
 
 
@@ -30,6 +31,12 @@ class PropertyItemDetailView(DetailView):
             context['current_price'] = self.object.min_price
             context['next_bid'] = context['current_price']
         return context
+
+    def get_object(self):
+        property_item = super().get_object()
+        property_item.reviews = PropertyItemReview.objects.filter(
+            booking__property_item=property_item).order_by('rating')
+        return property_item
 
 
 class SearchResultsView(ListView):
