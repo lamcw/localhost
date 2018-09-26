@@ -4,13 +4,16 @@ These classes are used to provide multiplexed socket commmunication between
 the server and a variety of clients who can listen to different and many
 groups.
 """
-
+import logging
 from decimal import Decimal
-from django.utils import timezone
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
-from localhost.core.models import Bid, PropertyItem, BiddingSession
-from django.contrib.auth import get_user_model
+from django.utils import timezone
+from localhost.core.models import Bid, BiddingSession, PropertyItem
+
+logger = logging.getLogger(__name__)
+
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
     """
@@ -74,31 +77,20 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             self.close()
 
     def receive_json(self, content, **kwargs):
-        print(content)
         try:
             req = content['type']
-        except KeyError:
-            pass
-
-        if req == 'subscribe':
-            try:
+            if req == 'subscribe':
                 group = content['data']['group']
-                self.request_subscribe(str(group))
-            except KeyError:
-                pass
-        elif req == 'unsubscribe':
-            try:
+                self.request_subscribe(group)
+            elif req == 'unsubscribe':
                 group = content['data']['group']
                 self.request_unsubscribe(group)
-            except KeyError:
-                pass
-        elif req == 'bid':
-            try:
+            elif req == 'bid':
                 property_item_id = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
                 self.request_bid(property_item_id, amount)
-            except KeyError:
-                pass
+        except KeyError:
+            logger.exception('Invalid JSON format')
 
     def request_subscribe(self, group):
         """
@@ -118,17 +110,15 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         Handles a bid request
         """
-        User = get_user_model()
         time_now = timezone.localtime().time()
         property_item = PropertyItem.objects.get(pk=property_item_id)
         latest_bid = property_item.bids.latest('amount')
-        bid_user = self.scope['user']
 
         try:
             # The minimum next bid is either
             # * The starting price when there are no bids
             # * The next dollar amount if there is a bid
-            min_next_bid = latest_bid.amount+1
+            min_next_bid = latest_bid.amount + 1
         except Bid.DoesNotExist:
             min_next_bid = property_item.min_price
 
@@ -148,7 +138,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             self.send_json({
                 'type': 'alert',
                 'data': {
-                    'description': 'Not enough credits! Go to Dashboard to add credits.'
+                    'description':
+                    'Not enough credits! Go to Dashboard to add credits.'
                 }
             })
 
@@ -162,8 +153,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
 
         else:
             async_to_sync(self.channel_layer.group_send)(
-                'property_item_' + str(property_item_id),
-                {
+                f'property_item_{property_item_id}', {
                     'type': 'propagate',
                     'identifier_type': 'bid',
                     'data': {
@@ -174,16 +164,15 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                             'name': self.scope['user'].first_name
                         }
                     }
-                }
-            )
+                })
 
             if latest_bid.bidder == self.scope['user']:
-                self.scope['user'].credits-=(amount-latest_bid.amount)
+                self.scope['user'].credits -= amount - latest_bid.amount
                 self.scope['user'].save()
             else:
-                latest_bid.bidder.credits+=latest_bid.amount
+                latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
-                self.scope['user'].credits-=amount
+                self.scope['user'].credits -= amount
                 self.scope['user'].save()
             Bid.objects.create(
                 property_item=property_item,
@@ -195,6 +184,6 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         Propagates a message to the client
         """
         self.send_json({
-            'type': str(event['identifier_type']),
+            'type': event['identifier_type'],
             'data': event['data']
         })
