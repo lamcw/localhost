@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
@@ -21,8 +22,7 @@ class PropertyItemDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            highest_bid = Bid.objects.filter(
-                property_item=self.object).latest('amount')
+            highest_bid = self.object.bids.latest('amount')
             context['current_price'] = highest_bid.amount
             context['next_bid'] = context['current_price'] + 5
             context['highest_bid'] = highest_bid.bidder
@@ -81,3 +81,9 @@ class SearchResultsView(ListView):
                 property_item__capacity__gte=guests).distinct()
 
         return properties.order_by('distance')
+
+
+class ProfileView(DetailView):
+    model = get_user_model()
+    template_name = 'core/public_profile.html'
+    context_object_name = 'user'
