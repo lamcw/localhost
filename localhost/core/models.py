@@ -217,4 +217,7 @@ class PropertyItemReview(Review):
 class UserReview(Review):
     reviewer = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='received_reviews')

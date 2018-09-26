@@ -18,5 +18,6 @@ urlpatterns = [
         'property-item/<int:pk>',
         views.PropertyItemDetailView.as_view(),
         name='property-item-detail'),
-    path('search/', views.SearchResultsView.as_view(), name='search_results')
+    path('search/', views.SearchResultsView.as_view(), name='search_results'),
+    path('profile/<int:pk>', views.ProfileView.as_view(), name='profile')
 ]
