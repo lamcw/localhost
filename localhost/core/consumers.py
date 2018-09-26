@@ -1,114 +1,177 @@
-import json
+"""
+This module provides the MultiplexJsonWebsocketConsumer and Consumer classes.
+These classes are used to provide multiplexed socket commmunication between
+the server and a variety of clients who can listen to different and many
+groups.
+"""
 
-from asgiref.sync import async_to_sync
-from channels.generic.websocket import WebsocketConsumer
+from decimal import Decimal
 from django.utils import timezone
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import JsonWebsocketConsumer
 from localhost.core.models import Bid, PropertyItem, BiddingSession
 
-OK = 0
-ERROR_INVALID_BID = -1
-ERROR_INVALID_SESSION = -2
-ERROR_INSUFFICIENT_FUNDS = -3
 
+class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
+    """
+    Variant of JsonWebsocketConsumer that is extended to support group
+    multiplexing; allowing consumers to participate in multiple groups
+    with a single socker connection.
+    """
 
-class BidConsumer(WebsocketConsumer):
-    def connect(self):
-        pk = self.scope['url_route']['kwargs']['item_id']
-        self.room_group_name = 'bidding_%s' % pk
-        self.property_item = PropertyItem.objects.get(pk=pk)
-        self.user = self.scope['user']
+    def disconnect(self, code):
+        for group in self.groups:
+            self.unsubscribe(group)
+        self.groups = []
 
-        # Join room group
+    def subscribe(self, group):
+        """
+        Subscribes the consumer to a group.
+        """
+        self.groups.append(group)
         async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
+            group,
             self.channel_name
         )
 
-        self.accept()
-
-    def disconnect(self, close_code):
+    def unsubscribe(self, group):
         """
-        Leave room group.
+        Unsubscribes the consumer from a group.
         """
+        self.groups.remove(group)
         async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
+            group,
             self.channel_name
         )
 
-    def receive(self, text_data):
+    def is_subscribed(self, group):
         """
-        Receive message from WebSocket.
+        Checks if the consumer is subscribed to a group.
         """
-        text_data_json = json.loads(text_data)
-        user_bid = text_data_json['message']
+        return group in self.groups
+
+
+class Consumer(MultiplexJsonWebsocketConsumer):
+    """
+    Generalised variant of MultiplexJsonWebsocketConsumer for use by all
+    socket connections.
+
+    JSON data makes use of the client side cooperative multiplex
+    socket library that expects all JSON data to be of the form:
+    {
+        'type': 'identifier',
+        'data': {
+            ...
+        }
+    }
+    For incoming JSON data, the 'type' will contain the request.
+    """
+
+    def connect(self):
+        if self.scope['user'].is_authenticated:
+            self.accept()
+        else:
+            self.close()
+
+    def receive_json(self, content, **kwargs):
+        print(content)
+        try:
+            req = content['type']
+        except KeyError:
+            pass
+
+        if req == 'subscribe':
+            try:
+                group = content['data']['group']
+                self.request_subscribe(str(group))
+            except KeyError:
+                pass
+        elif req == 'unsubscribe':
+            try:
+                group = content['data']['group']
+                self.request_unsubscribe(group)
+            except KeyError:
+                pass
+        elif req == 'bid':
+            try:
+                property_item_id = content['data']['property_item_id']
+                amount = Decimal(content['data']['amount'])
+                self.request_bid(property_item_id, amount)
+            except KeyError:
+                pass
+
+    def request_subscribe(self, group):
+        """
+        Handles a request to subscribe to a group
+        """
+        if not self.is_subscribed(group):
+            self.subscribe(group)
+
+    def request_unsubscribe(self, group):
+        """
+        Handles a request to unsubscribe to a group
+        """
+        if self.is_subscribed(group):
+            self.unsubscribe(group)
+
+    def request_bid(self, property_item_id, amount):
+        """
+        Handles a bid request
+        """
         time_now = timezone.localtime().time()
+        property_item = PropertyItem.objects.get(pk=property_item_id)
 
         try:
+            # The minimum next bid is either
+            # * The starting price when there are no bids
+            # * The next dollar amount if there is a bid
             min_next_bid = Bid.objects.filter(
-                property_item=self.property_item). \
+                property_item=property_item). \
                 latest('amount').amount + 1
         except Bid.DoesNotExist:
-            min_next_bid = self.property_item.min_price
+            min_next_bid = property_item.min_price
 
         current_session = BiddingSession.objects.filter(
-                propertyitem=self.property_item,
-                end_time__gt=time_now,
-                start_time__lte=time_now)
+            propertyitem=property_item,
+            end_time__gt=time_now,
+            start_time__lte=time_now)
 
         if not current_session.exists():
-            self.send(text_data=json.dumps({
-                'type' : 'BID_RESPONSE',
-                'status_code' : ERROR_INVALID_SESSION,
-                'content': 'ERROR_INVALID_SESSION'
-            }))
+            print('Out of session.')
 
-        elif user_bid > self.user.credits:
-            self.send(text_data=json.dumps({
-                'type' : 'BID_RESPONSE',
-                'status_code' : ERROR_INSUFFICIENT_FUNDS,
-                'content': 'ERROR_INSUFFICIENT_FUNDS'
-            }))
+        elif amount > self.scope['user'].credits:
+            print('Not enough credits.')
 
-        elif user_bid < min_next_bid:
-            self.send(text_data=json.dumps({
-                'type' : 'BID_RESPONSE',
-                'status_code' : ERROR_INVALID_BID,
-                'content': 'ERROR_INVALID_BID'
-            }))
+        elif amount < min_next_bid:
+            print('Bid not high enough')
+
         else:
             Bid.objects.create(
-                property_item=self.property_item,
-                bidder=self.user,
-                amount=user_bid)
+                property_item=property_item,
+                bidder=self.scope['user'],
+                amount=amount)
 
             async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
+                'property_item_' + str(property_item_id),
                 {
-                    'type' : 'bid',
-                    'amount': user_bid,
-                    'user_id' : self.user.id,
-                    'user_name' : self.user.first_name
+                    'type': 'propagate',
+                    'identifier_type': 'bid',
+                    'data': {
+                        'property_item_id': property_item_id,
+                        'amount': str(amount),
+                        'user': {
+                            'id': self.scope['user'].id,
+                            'name': self.scope['user'].first_name
+                        }
+                    }
                 }
             )
-            self.send(text_data=json.dumps({
-                'type' : 'BID_RESPONSE',
-                'status_code' : OK,
-                'content': 'SUCCESSFUL_BID'
-            }))
 
-
-
-    def bid(self, event):
-        amount = event['amount']
-        user_id = event['user_id']
-        user_name = event['user_name']
-        # Send message to WebSocket
-        self.send(text_data=json.dumps({
-            'type' : 'BID_GLOBAL',
-            'status_code' : '0',
-            'content': {
-                'user_id' : user_id,
-                'user_name' : user_name,
-                'amount' : amount,
-            }
-        }))
+    def propagate(self, event):
+        """
+        Propagates a message to the client
+        """
+        self.send_json({
+            'type': str(event['identifier_type']),
+            'data': event['data']
+        })
