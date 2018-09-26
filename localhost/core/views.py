@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models import F, Q
+from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
@@ -34,8 +34,10 @@ class PropertyItemDetailView(DetailView):
 
     def get_object(self):
         property_item = super().get_object()
-        property_item.reviews = PropertyItemReview.objects.filter(
-            booking__property_item=property_item).order_by('rating')
+        reviews = PropertyItemReview.objects.filter(
+            booking__property_item=property_item)
+        property_item.reviews = reviews.order_by('-rating')
+        property_item.rating = reviews.aggregate(Avg('rating'))['rating__avg']
         return property_item
 
 
