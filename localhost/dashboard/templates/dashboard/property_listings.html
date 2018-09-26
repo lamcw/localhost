@@ -5,7 +5,7 @@
   <div class="accordion w-100" id="accordionExample">
     {% for property in property_list %}
     <div class="card w-100">
-      <div class="card-header" id="headingOne">
+      <div class="card-header" id="heading{{ forloop.counter }}">
         <h5 class="mb-0">
           <div class="d-inline" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
             <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
@@ -20,7 +20,7 @@
           </div>
         </h5>
       </div>
-      <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordionExample">
         <div class="card-body p-2">
           <ul class="list-group">
             {% for item in property.property_item.all %}
@@ -28,9 +28,6 @@
               <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
             </li>
             {% endfor %}
-            <li class="list-group-item">
-              <a href="#">Comfy bed thing</a>
-            </li>
           </ul>
         </div>
       </div>
