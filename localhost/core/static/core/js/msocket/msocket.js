@@ -176,7 +176,7 @@ class ClientSocket extends MSocket {
    * */
   subscribe(group_class, id) {
     var payload = {
-      'group': group_class + '_' + group
+      'group': group_class + '_' + id
     };
     this.send('subscribe', payload);
   }
@@ -190,7 +190,7 @@ class ClientSocket extends MSocket {
    * */
   unsubscribe(group_class, id) {
     var payload = {
-      'group': group_class + '_' + group
+      'group': group_class + '_' + id
     };
     this.send('unsubscribe', payload);
   }
