@@ -120,7 +120,7 @@ class Property(models.Model):
         return reverse('core:property-detail', args=[str(self.id)])
 
     def __str__(self):
-        return f"Property: {self.title} owned by {self.host}"
+        return f"Property: {self.title} owned by {self.host} ({self.longitude}, {self.latitude})"
 
 
 class PropertyItem(models.Model):
