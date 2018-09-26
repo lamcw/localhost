@@ -38,3 +38,8 @@ Week 8
 
 Property reviews page is done. Rewrote property search by using natively
 supported SQL expressions and functions. Listing creations backend is finished.
+
+Week 9
+
+Dashboard completed. Helped Jasper with server configuration. Set up test data
+auto-generation for search profiling.
