@@ -100,7 +100,7 @@ Strongly recommended is the [ALE](https://github.com/w0rp/ale) plugin for *vim* 
 In the Python section of the *ALE* documentation, all the support linters are listed. They can be installed using `pip` as follows; only are subset are installed in the following example.
 
 ```
-$ pip3 install flake8 pylint pyls --user
+$ pip3 install flake8 pylint python-language-server --user
 ```
 
 *vim* and *neovim* must then be configured to allow autocompletion and to select the installed linters.
