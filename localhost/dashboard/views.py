@@ -37,7 +37,7 @@ class ActiveBidsView(LoginRequiredMixin, ListView):
         # uses order_by() instead of latest() since latest() evaluates the expr
         user_bid = Bid.objects.filter(
             property_item=OuterRef('pk'),
-            bidder=self.request.user).order_by('amount')
+            bidder=self.request.user).order_by('-amount')
         return PropertyItem.objects \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(current_bid=Max('bids__amount')) \
@@ -150,9 +150,7 @@ class BookingListView(LoginRequiredMixin, ListView):
             booking=OuterRef('pk'), booking__user=self.request.user)
         # today >= booking.latest_checkin_time.date + 1 day
         # so latest_checkin_time <= today - 1 day
-        one_day_ago = datetime.combine(
-            timezone.now().date(),
-            time(tzinfo=timezone.get_current_timezone())) - timedelta(days=1)
+        one_day_ago = timezone.now() - timedelta(days=1)
         return Booking.objects.prefetch_related() \
             .filter(user=self.request.user) \
             .order_by('-earliest_checkin_time') \
