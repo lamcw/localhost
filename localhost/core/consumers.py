@@ -10,7 +10,8 @@ from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from localhost.core.models import Bid, PropertyItem, BiddingSession
-
+from django.contrib.auth import get_user_model
+from django.db.models import F
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
     """
@@ -118,16 +119,17 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         Handles a bid request
         """
+        User = get_user_model()
         time_now = timezone.localtime().time()
         property_item = PropertyItem.objects.get(pk=property_item_id)
+        latest_bid = property_item.bids.latest('amount')
+        bid_user = self.scope['user']
 
         try:
             # The minimum next bid is either
             # * The starting price when there are no bids
             # * The next dollar amount if there is a bid
-            min_next_bid = Bid.objects.filter(
-                property_item=property_item). \
-                latest('amount').amount + 1
+            min_next_bid = latest_bid.amount+1
         except Bid.DoesNotExist:
             min_next_bid = property_item.min_price
 
@@ -137,20 +139,29 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             start_time__lte=time_now)
 
         if not current_session.exists():
-            print('Out of session.')
-
+            self.send_json({
+                'type': 'alert',
+                'data': {
+                    'description': 'Bidding session expired'
+                }
+            })
         elif amount > self.scope['user'].credits:
-            print('Not enough credits.')
+            self.send_json({
+                'type': 'alert',
+                'data': {
+                    'description': 'Not enough credits! Go to Dashboard to add credits.'
+                }
+            })
 
         elif amount < min_next_bid:
-            print('Bid not high enough')
+            self.send_json({
+                'type': 'alert',
+                'data': {
+                    'description': 'Your bid is too low.'
+                }
+            })
 
         else:
-            Bid.objects.create(
-                property_item=property_item,
-                bidder=self.scope['user'],
-                amount=amount)
-
             async_to_sync(self.channel_layer.group_send)(
                 'property_item_' + str(property_item_id),
                 {
@@ -166,6 +177,19 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 }
             )
+
+            if latest_bid.bidder == self.scope['user']:
+                self.scope['user'].credits-=(amount-latest_bid.amount)
+                self.scope['user'].save()
+            else:
+                latest_bid.bidder.credits+=latest_bid.amount
+                latest_bid.bidder.save()
+                self.scope['user'].credits-=amount
+                self.scope['user'].save()
+            Bid.objects.create(
+                property_item=property_item,
+                bidder=self.scope['user'],
+                amount=amount)
 
     def propagate(self, event):
         """
