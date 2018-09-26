@@ -1,6 +1,6 @@
 # localhost
 
-# Dependencies
+## Dependencies
 * Python>=3.6.5
 * postgreSQL>=9.6.10
 * psycopg2>=2.7.5
@@ -31,7 +31,7 @@ Note that the path `/var/lib/postgres` differs between distributions. The direct
 
 In the `data` folder for the *postgres* installation, there is a file called `pg_hba.conf`. This file is responsible for how authentication is managed on the service. On general desktop distributions such as *Arch* and *Debian*, entries are configured with the value `trust`. This allows for use by accounts without passwords. On server tailored distributions such as *Gentoo* and *Ubuntu Server*, *postgres* is more likely to be configured to require password authentication - so an account with credentials must be made instead. If there's any doubt, review the bottom of `pg_hba.conf` to check whether or not `trust` is used and configure accordingly.
 
-### Enable postgresql service
+#### Enable postgresql service
 For `systemd`:
 ```sh
 # systemctl enable postgresql.service
@@ -78,7 +78,7 @@ As the project uses the default port, no further configuration should be require
 
 ### Development
 
-####  Rebuild tool
+#### Rebuild tool
 
 To automate the process dropping, creation and repopulation of the development
 database, a bash script was written and is available in the project root.
@@ -92,6 +92,13 @@ $ ./rebuild.sh [database name] -Mmsl [data name]
 * `-l` is short for `--loaddata` and implies a further `[data name]` argument
 
 This can be used immediately after *Setup* with `./rebuild.sh localhost_db -Mml testdata`.
+
+#### Testing
+
+To run the tests you must specify the batch size used for the testing database:
+```sh
+$ BATCH_SIZE=100 python manage.py test localhost.core.tests
+```
 
 #### Linters
 

@@ -43,4 +43,4 @@ class SearchPerformanceTest(TestCase):
         self.search()
         time_taken = time.clock() - time_start
         print('Finished.')
-        print('Search took: ' + str(time_taken))
+        print('Search took: ' + str(time_taken) + '.')
