@@ -74,7 +74,30 @@ small {
   background-color: white;
 }
 
-.carousel.slide {
+.carousel.slide.ttb {
   width: calc(100%/5); 
   min-width: calc(100%/5);
+}
+
+.img-sm {
+  width: calc(100%/5);
+}
+
+@media (min-width: 768px) {
+  .modal-lg {
+    width: 750px;
+    max-width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 970px;
+    max-width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .modal-lg {
+    width: 1170px;
+    max-width: 1170px;
+  }
 }
