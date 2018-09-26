@@ -37,7 +37,7 @@ class ActiveBidsView(LoginRequiredMixin, ListView):
         # uses order_by() instead of latest() since latest() evaluates the expr
         user_bid = Bid.objects.filter(
             property_item=OuterRef('pk'),
-            bidder=self.request.user).order_by('amount')
+            bidder=self.request.user).order_by('-amount')
         return PropertyItem.objects \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(current_bid=Max('bids__amount')) \
