@@ -11,7 +11,6 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from localhost.core.models import Bid, PropertyItem, BiddingSession
 from django.contrib.auth import get_user_model
-from django.db.models import F
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
     """
