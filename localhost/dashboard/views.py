@@ -39,8 +39,8 @@ class ActiveBidsView(LoginRequiredMixin, ListView):
             property_item=OuterRef('pk'),
             bidder=self.request.user).order_by('-amount')
         return PropertyItem.objects \
-            .filter(bids__bidder=self.request.user).distinct() \
             .annotate(current_bid=Max('bids__amount')) \
+            .filter(bids__bidder=self.request.user).distinct() \
             .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
 
 
