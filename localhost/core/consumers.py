@@ -119,8 +119,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             # * The next dollar amount if there is a bid
             latest_bid = property_item.bids.latest('amount')
             min_next_bid = latest_bid.amount + 1
+            bid_exists = True
         except Bid.DoesNotExist:
             min_next_bid = property_item.min_price
+            bid_exists = False
 
         current_session = BiddingSession.objects.filter(
             propertyitem=property_item,
@@ -166,7 +168,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 })
 
-            if not property_item.bids.exists():
+            if not bid_exists:
                 self.scope['user'].credits -= amount
                 self.scope['user'].save()
             elif latest_bid.bidder == self.scope['user']:
