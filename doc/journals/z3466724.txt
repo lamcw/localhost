@@ -48,3 +48,11 @@ Prototyped the Dashboard and all the required pages, group decision to use
 separate pages for now and incorporate dynamic page content switching as a 
 possible extension. Few issues with the search bar and filters on the pages as
 a result of merging the front and back end together which need to be addressed.
+
+// Week 9
+Created the template to serve as the public profile page protoype. Began work
+on modifying the property and the property item pages which I suggested to
+have the Property as the landing page from the search results and then all of
+the individual listings inside the property will pop up as a modal. To account
+for mobile user functionality, there will be a persistent button to close the 
+modal and return to the Property listing page.
