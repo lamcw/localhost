@@ -79,22 +79,55 @@ small {
   min-width: calc(100%/5);
 }
 
-.img-sm {
-  width: calc(100%/5);
+#property-carousel {
+  display: none;
 }
 
-@media (min-width: 768px) {
+.masthead {
+  margin-bottom: 0;
+}
+
+/*.img-sm {
+  width: calc(100%/5);
+}*/
+
+.modal-lg {
+}
+
+@media (max-width: 768px) {
   .modal-lg {
-    width: 750px;
-    max-width: 750px;
+    width: auto;
+    max-width: 500px;
+  }
+
+  .carousel.slide.ttb {
+    width: 100%;
+  }
+
+  .items > div {
+    flex-direction: column;
+  }
+
+  #property-imgs {
+    display: none;
+  }
+
+  #property-carousel {
+    display: flex;
+  }
+
+  .card-body {
+    flex-direction: column;
   }
 }
+
 @media (min-width: 992px) {
   .modal-lg {
     width: 970px;
     max-width: 970px;
   }
 }
+
 @media (min-width: 1200px) {
   .modal-lg {
     width: 1170px;
