@@ -55,7 +55,7 @@ def enable_bids(pk):
 
 
 @receiver(m2m_changed, sender=PropertyItem.session.through)
-def property_item_m2m_changed(sender, instance, action, pk_set, **kwargs):
+def property_item_m2m_changed(instance, action, pk_set, **kwargs):
     sessions = BiddingSession.objects.filter(id__in=pk_set)
     if action == 'post_add':
         for session in sessions:
