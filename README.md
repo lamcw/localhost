@@ -62,6 +62,8 @@ $ python -m venv venv
 $ source venv/bin/activate
 $ (venv) pip install -r requirements.txt
 ```
+
+#### Setting Up Celery
 Since Celery 4.2.x does not support Python 3.7, we need to install Celery from
 source.
 ```sh
@@ -78,6 +80,11 @@ $ (venv) python setup.py build
 $ (venv) python setup.py install
 $ (venv) cd .. && rm -rf celery
 ```
+To start the celery service, run:
+```sh
+celery -A localhost worker -l info -E -B
+```
+This is only used in development. To use Celery in production, see [here](http://docs.celeryproject.org/en/latest/userguide/daemonizing.html#daemonizing)
 
 #### Install Redis
 ```sh
