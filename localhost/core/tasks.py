@@ -1,12 +1,10 @@
-import json
 import logging
+from datetime import datetime
 
-from django.db.models.signals import m2m_changed, post_save
-from django.dispatch import receiver
-from django_celery_beat.models import CrontabSchedule, PeriodicTask
+from django.utils import timezone
 
 from celery import shared_task
-from localhost.core.models import Bid, BiddingSession, Booking, PropertyItem
+from localhost.core.models import Bid, Booking, PropertyItem
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +25,18 @@ def cleanup_bids(pk):
     logger.info(f'cleaning up bids for property item: {property_item.title}')
     try:
         max_bid = property_item.bids.latest()
+        now = timezone.now()
+        earliest = timezone.make_aware(
+            datetime.combine(now,
+                             property_item.property.earliest_checkin_time))
+        latest = timezone.make_aware(
+            datetime.combine(now, property_item.property.latest_checkin_time))
         Booking.objects.create(
             user=max_bid.bidder,
             property_item=property_item,
             price=max_bid.amount,
-            earliest_checkin_time=property_item.earliest_checkin_time,
-            latest_checkin_time=property_item.latest_checkin_time)
+            earliest_checkin_time=earliest,
+            latest_checkin_time=latest)
         property_item.available = False
         property_item.save()
         property_item.bids.all().delete()
@@ -50,36 +54,4 @@ def enable_bids(pk):
     """
     property_item = PropertyItem.objects.get(pk=pk)
     property_item.available = True
-    property_item.save()
     logger.info(f'Bidding enabled for {property_item.title}')
-
-
-@receiver(m2m_changed, sender=PropertyItem.session.through)
-def property_item_m2m_changed(instance, action, pk_set, **kwargs):
-    sessions = BiddingSession.objects.filter(id__in=pk_set)
-    if action == 'post_add':
-        for session in sessions:
-            schedule, _ = CrontabSchedule.objects.get_or_create(
-                minute=session.end_time.minute, hour=session.end_time.hour)
-            PeriodicTask.objects.create(
-                crontab=schedule,
-                task='localhost.core.tasks.cleanup_bids',
-                name=
-                f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
-                args=json.dumps([instance.id]))
-    elif action == 'post_remove':
-        names = [
-            f'PropertyItem<{instance.id}> cleanup bids {session.end_time}'
-            for session in sessions
-        ]
-        PeriodicTask.objects.filter(name__in=names).delete()
-
-
-@receiver(post_save, sender=PropertyItem)
-def property_item_post_save(sender, instance, **kwargs):
-    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12)
-    PeriodicTask.ojects.create(
-        crontab=schedule,
-        task='localhost.core.tasks.enable_bids',
-        name=f'Daily bids enable {instance.id}',
-        args=json.dumps([instance.id]))
