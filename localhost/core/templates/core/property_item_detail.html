@@ -145,7 +145,7 @@
 </script>
 <script>
   var roomName = {{ property_item.id }};
-  var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
+  var csocket = new ClientSocket('wss://' + window.location.host + '/ws/realtime/');
   csocket.open();
 
   var handler = function(data) {

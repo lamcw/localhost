@@ -112,15 +112,17 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         time_now = timezone.localtime().time()
         property_item = PropertyItem.objects.get(pk=property_item_id)
-        latest_bid = property_item.bids.latest('amount')
 
         try:
             # The minimum next bid is either
             # * The starting price when there are no bids
             # * The next dollar amount if there is a bid
+            latest_bid = property_item.bids.latest('amount')
             min_next_bid = latest_bid.amount + 1
+            bid_exists = True
         except Bid.DoesNotExist:
             min_next_bid = property_item.min_price
+            bid_exists = False
 
         current_session = BiddingSession.objects.filter(
             propertyitem=property_item,
@@ -166,7 +168,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 })
 
-            if latest_bid.bidder == self.scope['user']:
+            if not bid_exists:
+                self.scope['user'].credits -= amount
+                self.scope['user'].save()
+            elif latest_bid.bidder == self.scope['user']:
                 self.scope['user'].credits -= amount - latest_bid.amount
                 self.scope['user'].save()
             else:
@@ -174,6 +179,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 latest_bid.bidder.save()
                 self.scope['user'].credits -= amount
                 self.scope['user'].save()
+
             Bid.objects.create(
                 property_item=property_item,
                 bidder=self.scope['user'],
