@@ -62,6 +62,22 @@ $ python -m venv venv
 $ source venv/bin/activate
 $ (venv) pip install -r requirements.txt
 ```
+Since Celery 4.2.x does not support Python 3.7, we need to install Celery from
+source.
+```sh
+# install dependencies
+$ (venv) pip install https://github.com/celery/celery/zipball/master#egg=celery
+$ (venv) pip install https://github.com/celery/billiard/zipball/master#egg=billiard
+$ (venv) pip install https://github.com/celery/py-amqp/zipball/master#egg=amqp
+$ (venv) pip install https://github.com/celery/kombu/zipball/master#egg=kombu
+$ (venv) pip install https://github.com/celery/vine/zipball/master#egg=vine
+# install celery
+$ (venv) git clone https://github.com/celery/celery.git
+$ (venv) cd celery
+$ (venv) python setup.py build
+$ (venv) python setup.py install
+$ (venv) cd .. && rm -rf celery
+```
 
 #### Install Redis
 ```sh
