@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'channels',
     'polymorphic',
     'widget_tweaks',
+    'django_celery_beat',
     'localhost.core',
     'localhost.authentication',
     'localhost.messaging',
@@ -141,13 +142,17 @@ AUTH_USER_MODEL = 'authentication.User'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Redis
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+
 # Channels
 ASGI_APPLICATION = 'localhost.routing.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
     },
 }
@@ -159,8 +164,8 @@ DEFAULT_SEARCH_COORD = (-33.8688, 151.2039)
 
 # url in format: redis://:password@hostname:port/db_number
 # anything after protocal name is optional
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
