@@ -3,7 +3,7 @@ import os
 from localhost.settings import *
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '54.206.61.115', 'h11a.xyz']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '54.206.61.115', 'h11a.xyz', 'websocket']
 
 # Security
 # >= 50 characters & > 5 unique characters
