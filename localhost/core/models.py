@@ -1,10 +1,18 @@
+import json
+import logging
+
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
-from django.db import models
+from django.db import IntegrityError, models
+from django.db.models.signals import m2m_changed, pre_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from polymorphic.models import PolymorphicModel
 from polymorphic.showfields import ShowFieldType
+
+logger = logging.getLogger(__name__)
 
 
 class Amenity(models.Model):
@@ -221,3 +229,36 @@ class UserReview(Review):
         get_user_model(),
         on_delete=models.CASCADE,
         related_name='received_reviews')
+
+
+@receiver(m2m_changed, sender=PropertyItem.session.through)
+def property_item_m2m_changed(instance, action, pk_set, **kwargs):
+    sessions = BiddingSession.objects.filter(id__in=pk_set)
+    if action == 'post_add':
+        for session in sessions:
+            schedule, _ = CrontabSchedule.objects.get_or_create(
+                minute=session.end_time.minute, hour=session.end_time.hour)
+            PeriodicTask.objects.create(
+                crontab=schedule,
+                task='localhost.core.tasks.cleanup_bids',
+                name=f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
+                args=json.dumps([instance.id]))
+    elif action == 'post_remove':
+        names = [
+            f'PropertyItem<{instance.id}> cleanup bids {session.end_time}'
+            for session in sessions
+        ]
+        PeriodicTask.objects.filter(name__in=names).delete()
+
+
+@receiver(pre_save, sender=PropertyItem)
+def property_item_pre_save(sender, instance, **kwargs):
+    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12)
+    try:
+        PeriodicTask.objects.create(
+            crontab=schedule,
+            task='localhost.core.tasks.enable_bids',
+            name=f'Daily bids enable {instance.id}',
+            args=json.dumps([instance.id]))
+    except IntegrityError as e:
+        logger.exception('Task already exists. Task creation ignored.', e)
