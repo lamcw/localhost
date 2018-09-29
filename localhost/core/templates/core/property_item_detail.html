@@ -169,6 +169,7 @@
     if (amount) {
       if (!isNaN(amount)) {
         csocket.bid(roomName, amount);
+        $('#bid-amount').val('');
       }
     }
   });
