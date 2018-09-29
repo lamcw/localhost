@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
+@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway');
 
 body {
   color: #fff;
-  font-family: 'Roboto', sans-serif;
   height: 100vh;
   background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
   background-size: cover;
 }
 
 .tag-line {
+  text-align: center;
   font-family: 'Lobster', cursive;
 }
 
