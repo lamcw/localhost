@@ -26,7 +26,7 @@ class UserReport(Report):
         return super().__str__() + f" to {self.reported_user}"
 
 
-class PropertyReport(Report):
+class PropertyItemReport(Report):
     property_item = models.ForeignKey(PropertyItem, on_delete=models.PROTECT)
 
     def __str__(self):
