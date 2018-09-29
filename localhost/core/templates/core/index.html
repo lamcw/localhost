@@ -12,10 +12,10 @@
 {% include "core/include/header.html" %}
 <main role="main">
   <h3 class="tag-line">Where would you like to stay?</h3>
+  <div class="input-group stylish-input-group">
+    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try 'Kingsford'">
+  </div>
   <form id="form-search" method="get" action="{% url 'core:search_results' %}">
-    <div class="input-group stylish-input-group">
-      <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try 'Kingsford'">
-    </div>
     <input type="hidden" id="suburb_search_lat" name="lat" value="">
     <input type="hidden" id="suburb_search_lng" name="lng" value="">
   </form>
@@ -26,7 +26,7 @@
 {% block js %}
 <script>
   function activateSearchCallback() {
-    activateSuburbSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng');
+    activateSuburbSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
   }
 </script>
 <script type="text/javascript" src="{% static "core/js/suburb_search_geolocation.js" %}"></script>
