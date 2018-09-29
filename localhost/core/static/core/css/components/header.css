@@ -1,22 +1,19 @@
-header a {
-  color: white;
-}
-
-.masthead {
-  margin-bottom: 2rem;
-}
+@import url('https://fonts.googleapis.com/css?family=Lobster');
 
 .masthead-brand {
+  text-align: center;
+}
+
+.masthead-brand a {
+  color: white;
   font-family: 'Lobster', cursive;
-  margin-bottom: 0;
 }
 
 .nav-masthead .nav-link {
-  padding: .25rem 0;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
   font-weight: 700;
   color: rgba(255, 255, 255, .5);
-  background-color: transparent;
-  border-bottom: .25rem solid transparent;
 }
 
 .nav-masthead .nav-link:hover,
@@ -24,16 +21,15 @@ header a {
   color: white;
 }
 
-.nav-masthead .nav-link + .nav-link {
-  margin-left: 1rem;
-}
-
-.nav-masthead .active {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-
-@media (min-width: 48em) {
+@media (min-width: 768px) {
+  .masthead-brand {
+    float: left;
+  }
   .nav-masthead {
     float: right;
+  }
+  .nav-masthead .nav-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }

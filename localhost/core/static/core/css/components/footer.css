@@ -7,9 +7,3 @@
 .nav-mastfoot .nav-link:focus {
   color: white;
 }
-
-@media (min-width: 48em) {
-  .masthead-brand {
-    float: left;
-  }
-}
