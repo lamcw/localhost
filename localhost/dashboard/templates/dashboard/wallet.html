@@ -3,7 +3,7 @@
 {% block content %}
 <div class="p-2 d-flex flex-grow-1 justify-content-center">
   <form method="post" class="panel">
-    <p>Current balance: ${{ request.user.credits }}</p>
+    <p><u>Current balance:</u> ${{ request.user.credits }}</p>
     {% csrf_token %}
     {% for field in form %}
     {% include "core/include/form_field.html" with form=form field=field %}
