@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-  <form method="post" class="p-2">
+<div class="bg-light p-2 d-flex flex-grow-1 justify-content-center">
+  <form method="post" class="panel">
     {% csrf_token %}
     <div class="form-group">
       {% for field in form %}
