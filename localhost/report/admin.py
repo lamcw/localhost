@@ -2,7 +2,7 @@ from django.contrib import admin
 from polymorphic.admin import (PolymorphicChildModelAdmin,
                                PolymorphicParentModelAdmin)
 
-from localhost.report.models import PropertyReport, Report, UserReport
+from localhost.report.models import PropertyItemReport, Report, UserReport
 
 
 class ReportChildAdmin(PolymorphicChildModelAdmin):
@@ -15,12 +15,12 @@ class UserReportAdmin(ReportChildAdmin):
     base_model = UserReport
 
 
-@admin.register(PropertyReport)
-class PropertyReportAdmin(ReportChildAdmin):
-    base_model = PropertyReport
+@admin.register(PropertyItemReport)
+class PropertyItemReportAdmin(ReportChildAdmin):
+    base_model = PropertyItemReport
 
 
 @admin.register(Report)
 class ReportParentAdmin(PolymorphicParentModelAdmin):
     base_model = Report
-    child_models = (UserReport, PropertyReport)
+    child_models = (UserReport, PropertyItemReport)
