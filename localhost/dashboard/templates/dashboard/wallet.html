@@ -1,9 +1,9 @@
 {% extends "dashboard/dashboard_base.html" %}
 
 {% block content %}
-<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
-  <p>Current amount: {{ request.user.credits }}</p>
-  <form method="post" class="p-2">
+<div class="p-2 d-flex flex-grow-1 justify-content-center">
+  <form method="post" class="panel">
+    <p>Current balance: ${{ request.user.credits }}</p>
     {% csrf_token %}
     {% for field in form %}
     {% include "core/include/form_field.html" with form=form field=field %}
