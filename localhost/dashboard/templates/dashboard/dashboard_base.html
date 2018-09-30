@@ -5,24 +5,33 @@
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
 {% endblock %}
 
 {% block title %} {{ block.super }} - Dashboard {% endblock %}
 
+{% block main-flex-wrapper %}
+<div id="main-flex-wrapper" class="container-fluid d-flex flex-column justify-content-between p-0">
+{% endblock %}
+
 {% block body_wrapped %}
-{% include "core/include/header.html" %}
-<div class="container d-flex flex-row flex-wrap flex-grow-1 justify-content-center">
-  <div class="p-0">
-    <div class="list-group">
+<div class="container-fluid d-flex flex-row flex-wrap flex-grow-1 justify-content-center p-0">
+  <!-- <div class="p-0"> -->
+    <div class="list-group py-3">
+      <h2 class="text-center p-1">Dashboard</h2>
+      <!-- <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3> -->
+      <span class="divider"></span>
+      <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Activity</a>
       <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
-      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}">Settings</a>
-      <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Active Bids</a>
       <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}">Booking History</a>
-      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}">Property Listings</a>
+      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}">Listings</a>
+      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}">Security</a>
       <a href="{% url 'dashboard:wallet' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">Wallet</a>
     </div>
+  <!-- </div> -->
+  <div class="bg-light d-flex flex-column flex-grow-1">
+    {% include "core/include/header.html" %}
+    {% block content %}{% endblock %}
   </div>
-  {% block content %}{% endblock %}
 </div>
-{% include "core/include/footer.html" %}
 {% endblock %}
