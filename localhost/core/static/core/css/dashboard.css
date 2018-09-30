@@ -1,15 +1,61 @@
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
 body {
-    background: black;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
 }
 
 form {
-    max-width: 500px;
+  max-width: 500px;
 }
 
-.bg-light {
-    border: 1px solid rgba(0, 0, 0, 0.125);
+.masthead-brand a,
+.nav-link {
+  color: grey !important;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  color: black !important;
+}
+
+.masthead {
+  padding-bottom: 0 !important;
 }
 
 span {
-    border-left: 1px solid rgba(0, 0, 0, 0.125);
+  border-left: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.list-nav {
+  max-width: 200px;
+}
+
+.list-nav a {
+  color: gray;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.divider {
+  width: calc(100% - 2rem);
+  margin-left: 1rem;
+  border: 1px solid rgba(180, 180, 180, 0.3);
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.panel {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
 }
