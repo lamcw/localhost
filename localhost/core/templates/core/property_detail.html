@@ -177,7 +177,15 @@
                           <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
                           <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
                           <h3>Current bid: $<span id="bid-current">{{ item.current_price }}</span></h3>
-                          <small class="small"><span id="highest-bidder">{{ item.highest_bidder }}</span> has the highest bid!</small>
+                          <small class="small">
+                            {% if item.has_bid %}
+                            <span id="highest-bidder">
+                              {{ item.highest_bidder }}
+                            </span> has the highest bid!
+                            {% else %}
+                            No one has bidded yet!
+                            {% endif %}
+                          </small>
                         </div>
                       </div>
                       <div class="card flex-md-row">
@@ -279,7 +287,8 @@
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
-  var session_end = new Date('Dec 17, 2018 13:00:00').getTime();
+  // TODO time
+  var session_end = new Date('{% now "DATE_FORMAT" %} 13:00:00').getTime();
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>

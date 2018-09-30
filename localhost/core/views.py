@@ -6,39 +6,35 @@ from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
-from localhost.core.models import (Bid, Property, PropertyItem,
+from localhost.core.models import (Bid, BiddingSession, Property,
                                    PropertyItemReview)
 from localhost.core.utils import parse_address
 
 
 class PropertyDetailView(DetailView):
-    queryset = Property.objects.prefetch_related()
+    queryset = Property.objects.prefetch_related('property_item')
 
-
-class PropertyItemDetailView(DetailView):
-    queryset = PropertyItem.objects.prefetch_related()
-    template_name = 'core/property_item_detail.html'
-    context_object_name = 'property_item'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            highest_bid = self.object.bids.latest('amount')
-            context['current_price'] = highest_bid.amount
-            context['next_bid'] = context['current_price'] + 5
-            context['highest_bid'] = highest_bid.bidder
-        except Bid.DoesNotExist:
-            context['current_price'] = self.object.min_price
-            context['next_bid'] = context['current_price']
-        return context
-
-    def get_object(self):
-        property_item = super().get_object()
-        reviews = PropertyItemReview.objects.filter(
-            booking__property_item=property_item)
-        property_item.reviews = reviews.order_by('-rating')
-        property_item.rating = reviews.aggregate(Avg('rating'))['rating__avg']
-        return property_item
+    def get_object(self, queryset=None):
+        property = super().get_object(queryset)
+        # note that this is extremely inefficient, as the db hits grows
+        # linearly. A more sophisticated method is needed.
+        for property_item in property.property_item.all():
+            reviews = PropertyItemReview.objects.filter(
+                booking__property_item=property_item)
+            property_item.reviews = reviews.order_by('-rating')
+            property_item.rating = reviews.aggregate(
+                Avg('rating'))['rating__avg']
+            property_item.current_session = BiddingSession.objects.filter(
+                propertyitem=property_item,
+                start_time__lte=timezone.now().time(),
+                end_time__gt=timezone.now().time()).first()
+            try:
+                property_item.current_price = property_item.bids.latest()
+                property_item.has_bid = True
+            except Bid.DoesNotExist:
+                property_item.current_price = property_item.min_price
+                property_item.has_bid = False
+        return property
 
 
 class SearchResultsView(ListView):
