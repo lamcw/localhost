@@ -31,3 +31,7 @@ Bidding module working, search results refined. Added more data to testdata
 Week 9
 Began working on messaging, remodelled messaging database
 Bidding will be restructured for multiplexing by Jasper
+
+Mid-sem Break
+Re-wrote backend for bidding and messaging after Jasper added his socket multiplexing library
+Began populating the database with dummy properties, property items and images
