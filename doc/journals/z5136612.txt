@@ -43,3 +43,9 @@ Week 9
 
 Dashboard completed. Helped Jasper with server configuration. Set up test data
 auto-generation for search profiling.
+
+Mid-sem break
+
+Implemented a way so that tasks can be scheduled after a certain period of time.
+This is useful for removing bids after auction ends. Also added factories to
+generate test data. Finished backend for user profile as well.
