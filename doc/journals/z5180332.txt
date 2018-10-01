@@ -84,3 +84,12 @@ domain for the web server (h11a.xyz) and configured the server to use HTTPS
 through the Lets Encrypt platform. During the Wednesday meeting I worked with
 Ed to define the protocol used for socket communication between the clients
 and server.
+
+# Mid-semester break
+
+Over the mid-semester break I investigated different libraries and frameworks
+that could be used for real-time communication. I ended up writing a
+cooperative multiplex socket library in JavaScript and two Python classes for
+the server. Together they enable clients and the server to communicate almost
+instantly. I migrated the current bidding page to use the library. Afterwards,
+I configured the server for Django Channels and enabled SSL for web sockets.
