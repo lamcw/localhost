@@ -1,9 +1,24 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.forms.models import ModelForm, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from localhost.core.models import Property, PropertyItem
 from localhost.core.utils import parse_address
+
+User = get_user_model()
+
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ('bio', )
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'cols': 100,
+                'rows': 3
+            }),
+        }
 
 
 class PropertyItemForm(ModelForm):

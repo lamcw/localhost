@@ -9,11 +9,8 @@ app_name = 'dashboard'
 urlpatterns = [
     path(
         '',
-        RedirectView.as_view(url=reverse_lazy('dashboard:profile')),
+        views.DashboardView.as_view(),
         name='dashboard'),
-    path('profile/', views.ProfileView.as_view(), name='profile'),
-    path('active-bids/', views.ActiveBidsView.as_view(), name='bids'),
-    path('listing/', views.ListingListView.as_view(), name='listing-list'),
     path('listing/add/', views.ListingCreate.as_view(), name='listing-create'),
     path(
         'listing/<int:pk>/',
@@ -24,10 +21,6 @@ urlpatterns = [
         views.ListingDelete.as_view(),
         name='listing-delete'),
     path(
-        'booking-history/',
-        views.BookingListView.as_view(),
-        name='booking-history'),
-    path(
         'review/listing/<int:pk>',
         views.ListingReviewView.as_view(),
         name='listing-review'),
@@ -36,6 +29,5 @@ urlpatterns = [
         auth_views.PasswordChangeView.as_view(
             template_name='dashboard/settings.html',
             success_url=reverse_lazy('dashboard:profile')),
-        name='password-change'),
-    path('wallet', views.WalletView.as_view(), name='wallet')
+        name='password-change')
 ]

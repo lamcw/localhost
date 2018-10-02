@@ -1,59 +1,230 @@
 from datetime import datetime, time, timedelta
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import (BooleanField, Case, Exists, F, Max, OuterRef,
                               Subquery, Value, When)
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import (CreateView, DeleteView, FormView, ListView,
-                                  UpdateView)
+from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic.base import ContextMixin, TemplateResponseMixin
+from django.views.generic.edit import ProcessFormView
 
 from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
-from localhost.dashboard.forms import (PropertyForm, PropertyItemFormSet,
-                                       WalletForm)
+from localhost.dashboard.forms import (ProfileForm, PropertyForm,
+                                       PropertyItemFormSet, WalletForm)
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
-    model = get_user_model()
-    fields = ('bio', )
-    template_name = 'dashboard/profile.html'
-    success_url = reverse_lazy('dashboard:profile')
+class MultiFormMixin(ContextMixin):
+    """
+    View mixin to process multiple forms in one view.
 
-    def get_object(self):
-        return self.request.user
+    See:
+        https://gist.github.com/jamesbrobb/748c47f46b9bd224b07f
+    """
+    form_classes = {}
+    prefixes = {}
+    success_urls = {}
+    grouped_forms = {}
+
+    initial = {}
+    prefix = None
+    success_url = None
+
+    def get_form_classes(self):
+        return self.form_classes
+
+    def get_forms(self, form_classes, form_names=None, bind_all=False):
+        return dict([(key,
+                      self._create_form(key, klass,
+                                        (form_names and key in form_names)
+                                        or bind_all))
+                     for key, klass in form_classes.items()])
+
+    def get_form_kwargs(self, form_name, bind_form=False):
+        kwargs = {}
+        kwargs.update({'initial': self.get_initial(form_name)})
+        kwargs.update({'prefix': self.get_prefix(form_name)})
+
+        if bind_form:
+            kwargs.update(self._bind_form_data())
+
+        return kwargs
+
+    def forms_valid(self, forms, form_name):
+        form_valid_method = '%s_form_valid' % form_name
+        if hasattr(self, form_valid_method):
+            return getattr(self, form_valid_method)(forms[form_name])
+        else:
+            return redirect(self.get_success_url(form_name))
+
+    def forms_invalid(self, forms):
+        return self.render_to_response(self.get_context_data(forms=forms))
+
+    def get_initial(self, form_name):
+        initial_method = 'get_%s_initial' % form_name
+        if hasattr(self, initial_method):
+            return getattr(self, initial_method)()
+        else:
+            return self.initial.copy()
+
+    def get_prefix(self, form_name):
+        return self.prefixes.get(form_name, self.prefix)
+
+    def get_success_url(self, form_name=None):
+        return self.success_urls.get(form_name, self.success_url)
+
+    def _create_form(self, form_name, klass, bind_form):
+        form_kwargs = self.get_form_kwargs(form_name, bind_form)
+        form_create_method = 'create_%s_form' % form_name
+        if hasattr(self, form_create_method):
+            form = getattr(self, form_create_method)(**form_kwargs)
+        else:
+            form = klass(**form_kwargs)
+        return form
+
+    def _bind_form_data(self):
+        if self.request.method in ('POST', 'PUT'):
+            return {
+                'data': self.request.POST,
+                'files': self.request.FILES,
+            }
+        return {}
 
 
-class ActiveBidsView(LoginRequiredMixin, ListView):
-    model = PropertyItem
-    context_object_name = 'property_items'
-    template_name = 'dashboard/active_bids.html'
+class ProcessMultipleFormsView(ProcessFormView):
+    def get(self, request, *args, **kwargs):
+        form_classes = self.get_form_classes()
+        forms = self.get_forms(form_classes)
+        return self.render_to_response(self.get_context_data(forms=forms))
 
-    def get_queryset(self, **kwargs):
-        # uses order_by() instead of latest() since latest() evaluates the expr
+    def post(self, request, *args, **kwargs):
+        form_classes = self.get_form_classes()
+        form_name = request.POST.get('action')
+        if self._individual_exists(form_name):
+            return self._process_individual_form(form_name, form_classes)
+        elif self._group_exists(form_name):
+            return self._process_grouped_forms(form_name, form_classes)
+        else:
+            return self._process_all_forms(form_classes)
+
+    def _individual_exists(self, form_name):
+        return form_name in self.form_classes
+
+    def _group_exists(self, group_name):
+        return group_name in self.grouped_forms
+
+    def _process_individual_form(self, form_name, form_classes):
+        forms = self.get_forms(form_classes, (form_name, ))
+        form = forms.get(form_name)
+        if not form:
+            return HttpResponseForbidden()
+        elif form.is_valid():
+            return self.forms_valid(forms, form_name)
+        else:
+            return self.forms_invalid(forms)
+
+    def _process_grouped_forms(self, group_name, form_classes):
+        form_names = self.grouped_forms[group_name]
+        forms = self.get_forms(form_classes, form_names)
+        if all([
+                forms.get(form_name).is_valid()
+                for form_name in form_names.values()
+        ]):
+            return self.forms_valid(forms)
+        else:
+            return self.forms_invalid(forms)
+
+    def _process_all_forms(self, form_classes):
+        forms = self.get_forms(form_classes, None, True)
+        if all([form.is_valid() for form in forms.values()]):
+            return self.forms_valid(forms)
+        else:
+            return self.forms_invalid(forms)
+
+
+class BaseMultipleFormsView(MultiFormMixin, ProcessMultipleFormsView):
+    """
+    A base view for displaying several forms.
+    """
+    pass
+
+
+class MultiFormsView(TemplateResponseMixin, BaseMultipleFormsView):
+    """
+    A view for displaying several forms, and rendering a template response.
+    """
+    pass
+
+
+class DashboardView(LoginRequiredMixin, MultiFormsView):
+    template_name = 'dashboard/dashboard_base.html'
+    form_classes = {
+        'wallet': WalletForm,
+        'profile': ProfileForm,
+        'password_change': PasswordChangeForm
+    }
+    success_url = reverse_lazy('dashboard:dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         user_bid = Bid.objects.filter(
             property_item=OuterRef('pk'),
             bidder=self.request.user).order_by('-amount')
-        return PropertyItem.objects \
+        context['active_bids'] = PropertyItem.objects \
             .annotate(current_bid=Max('bids__amount')) \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
 
+        reviews = PropertyItemReview.objects.filter(
+            booking=OuterRef('pk'), booking__user=self.request.user)
+        # today >= booking.latest_checkin_time.date + 1 day
+        # so latest_checkin_time <= today - 1 day
+        one_day_ago = timezone.now() - timedelta(days=1)
+        context['booking_list'] = Booking.objects.prefetch_related() \
+            .filter(user=self.request.user) \
+            .order_by('-earliest_checkin_time') \
+            .annotate(reviewed=Exists(reviews)) \
+            .annotate(passed_one_day=Case(
+                When(latest_checkin_time__lte=one_day_ago, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )) \
+            .annotate(can_cancel=Case(
+                When(
+                    earliest_checkin_time__gt=timezone.now(),
+                    then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ))
+        return context
 
-class WalletView(LoginRequiredMixin, FormView):
-    form_class = WalletForm
-    template_name = 'dashboard/wallet.html'
-    success_url = reverse_lazy('dashboard:wallet')
+    def profile_form_valid(self, form):
+        form.save(self.request)
+        return redirect('dashboard:dashboard')
 
-    def form_valid(self, form):
+    def create_profile_form(self, **kwargs):
+        return ProfileForm(instance=self.request.user, **kwargs)
+
+    def create_password_change_form(self, **kwargs):
+        return PasswordChangeForm(user=self.request.user, **kwargs)
+
+    def password_change_form_valid(self, form):
+        form.save()
+        update_session_auth_hash(self.request, form.user)
+        return redirect('dashboard:dashboard')
+
+    def wallet_form_valid(self, form):
         recharge = form.cleaned_data.get('recharge_amount')
         self.request.user.credits = F('credits') + recharge
         self.request.user.save()
-        return super().form_valid(form)
+        return redirect('dashboard:dashboard')
 
 
 class PropertyItemReviewMixin(AccessMixin):
@@ -80,15 +251,6 @@ class PropertyItemReviewMixin(AccessMixin):
                 return super().dispatch(request, *args, **kwargs)
             else:
                 return self.handle_no_permission()
-
-
-class ListingListView(LoginRequiredMixin, ListView):
-    model = Property
-    template_name = 'dashboard/property_listings.html'
-
-    def get_queryset(self, **kwargs):
-        return Property.objects.prefetch_related().filter(
-            host=self.request.user)
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):
@@ -132,41 +294,6 @@ class ListingUpdate(LoginRequiredMixin, UpdateView):
 
 class ListingDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('dashboard:dashboard')
-
-
-class BookingListView(LoginRequiredMixin, ListView):
-    model = Booking
-    template_name = 'dashboard/booking_history.html'
-
-    def get_queryset(self):
-        """
-        Return a QuerySet of Booking annotated with:
-
-        1. reviewed: if a booking is reviewed by the user
-        2. passed_one_day: True if a day has passed since the booking date
-        3. can_cancel: True if the user can cancel this booking
-        """
-        reviews = PropertyItemReview.objects.filter(
-            booking=OuterRef('pk'), booking__user=self.request.user)
-        # today >= booking.latest_checkin_time.date + 1 day
-        # so latest_checkin_time <= today - 1 day
-        one_day_ago = timezone.now() - timedelta(days=1)
-        return Booking.objects.prefetch_related() \
-            .filter(user=self.request.user) \
-            .order_by('-earliest_checkin_time') \
-            .annotate(reviewed=Exists(reviews)) \
-            .annotate(passed_one_day=Case(
-                When(latest_checkin_time__lte=one_day_ago, then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
-            )) \
-            .annotate(can_cancel=Case(
-                When(
-                    earliest_checkin_time__gt=timezone.now(),
-                    then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
-            ))
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
