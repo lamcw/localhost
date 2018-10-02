@@ -1,5 +1,5 @@
 /**
- * @brief Activates a suburb search autocomplete and stores the location
+ * @brief Activates a location search autocomplete and stores the location
  *        of selected entries
  *
  * @param id_search The id of the search input field to inject the
@@ -10,11 +10,10 @@
  *                  stored
  * @param form      The form to submit on completion
  * */
-function activateSuburbSearch(id_search, id_lat, id_lng, form) {
+function activateSearch(id_search, id_lat, id_lng, form) {
   var search_input = document.getElementById(id_search);
 
   var search_options = {
-    types: ['(cities)'],
     componentRestrictions: {country: 'au'}
   };
 
