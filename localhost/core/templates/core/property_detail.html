@@ -50,7 +50,7 @@
       <div class="card-body d-flex">
         <div class="d-flex flex-column align-items-start col-md-10">
           <h3>{{ property.title }}</h3>
-          <div class="d-flex flex-row align-items-center"> 
+          <div class="d-flex flex-row align-items-center">
             <strong class="text-success">{{ property.address }}</strong>
           </div>
           <h5>Description</h5>
@@ -127,14 +127,16 @@
         <h4>{{ item.title }}</h4>
         Capacity: {{ item.capacity }}
         <span class="mx-2 inline-divider"></span>
-        Amenities: 
+        Amenities:
         {% for amenity in item.amenities.all %}
         <i class="fas {{ amenity.icon|safe }}"></i>
         {% endfor %}
       </div>
       <!-- Price -->
       <div class="align-self-center p-1">
+        <span id="bid-current-{{item.id}}">
         {{ item.current_price }}
+        </span>
       </div>
       <!-- View button -->
       <div class="align-self-center p-2">
@@ -177,7 +179,7 @@
                           {% if item.current_session %}
                           <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
                           <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
-                          <h3>Current bid: $<span id="bid-current">{{ item.current_price }}</span></h3>
+                          <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
                           <small class="small">
                             {% if item.has_bid %}
                             <span id="highest-bidder">
@@ -200,11 +202,11 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text">$</span>
                             </div>
-                            <input id="bid-amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                            <input id="amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
                             <div class="input-group-append">
                               <span class="input-group-text">.00</span>
                             </div>
-                            <button id="bid-place-ttb-{{ item.id }}" type="button" class="btn btn-success mb-0">Place</button>
+                            <button id="{{ item.id }}" onclick="sendBid(this)" type="button" class="btn btn-success mb-0">Place</button>
                           </div>
                         </div>
                       </div>
@@ -298,27 +300,30 @@
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>
-  var roomName = {{ property_item.id }};
   var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
   csocket.open();
 
   var handler = function(data) {
     var new_bid = data.amount;
-    $('#bid-current').text(new_bid);
+    console.log(new_bid)
+    $('#bid-current-'+data.property_item_id).text(new_bid);
+    $('#bid-current-modal-'+data.property_item_id).text(new_bid);
   }
 
   csocket.register_handler('bid', handler);
-  csocket.subscribe('property_item', roomName);
-
-  $('#bid-place').click(function() {
-    var amount = $('#bid-amount').val();
-    if (amount) {
-      if (!isNaN(amount)) {
-        csocket.bid(roomName, amount);
-      }
+  {% for property_item in property.property_item.all %}
+    csocket.subscribe('property_item', {{property_item.id}});
+  {% endfor %}
+</script>
+<script>
+function sendBid (button) {
+  var amount = $('#amount-ttb-' + button.id).val()
+  if (amount) {
+    if (!isNaN(amount)) {
+      csocket.bid(button.id, amount);
     }
-  });
-
+  }
+}
 </script>
 <script>
   function initMap() {

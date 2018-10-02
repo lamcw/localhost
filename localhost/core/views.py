@@ -40,7 +40,7 @@ class PropertyDetailView(DetailView):
                 propertyitem=property_item)
             property_item.current_session = qs1.union(qs2).first()
             try:
-                property_item.current_price = property_item.bids.latest()
+                property_item.current_price = property_item.bids.latest().amount
                 property_item.has_bid = True
             except Bid.DoesNotExist:
                 property_item.current_price = property_item.min_price
