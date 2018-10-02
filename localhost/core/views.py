@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from django.conf import settings
@@ -9,6 +10,8 @@ from django.views.generic import DetailView, ListView
 from localhost.core.models import (Bid, BiddingSession, Property,
                                    PropertyItemReview)
 from localhost.core.utils import parse_address
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyDetailView(DetailView):
@@ -24,10 +27,18 @@ class PropertyDetailView(DetailView):
             property_item.reviews = reviews.order_by('-rating')
             property_item.rating = reviews.aggregate(
                 Avg('rating'))['rating__avg']
-            property_item.current_session = BiddingSession.objects.filter(
-                propertyitem=property_item,
-                start_time__lte=timezone.now().time(),
-                end_time__gt=timezone.now().time()).first()
+            now = timezone.localtime()
+            qs1 = BiddingSession.objects.filter(
+                Q(start_time__lte=F('end_time')),
+                Q(start_time__lte=now),
+                end_time__gte=now,
+                propertyitem=property_item)
+            qs2 = BiddingSession.objects.filter(
+                Q(start_time__gt=F('end_time')),
+                Q(start_time__lte=now)
+                | Q(end_time__gte=now),
+                propertyitem=property_item)
+            property_item.current_session = qs1.union(qs2).first()
             try:
                 property_item.current_price = property_item.bids.latest()
                 property_item.has_bid = True
@@ -68,20 +79,33 @@ class SearchResultsView(ListView):
         properties = self.model.objects.within(latitude, longitude)
 
         if bid_now == 'on':
+            now = timezone.localtime()
+
             # filter if checkin times are on same day
-            q1 = properties.filter(
-                Q(earliest_checkin_time__lt=F('latest_checkin_time')),
+            qs1 = properties.filter(
+                Q(earliest_checkin_time__lte=F('latest_checkin_time')),
                 Q(earliest_checkin_time__lte=checkin),
                 latest_checkin_time__gt=checkin)
+
             # filter if checkin times cross midnight
-            q2 = properties.filter(
+            qs2 = properties.filter(
                 Q(earliest_checkin_time__gt=F('latest_checkin_time')),
                 Q(earliest_checkin_time__lte=checkin)
                 | Q(latest_checkin_time__gt=checkin))
 
-            properties = (q1 | q2).filter(
-                property_item__session__end_time__gt=timezone.now().time(),
-                property_item__session__start_time__lte=timezone.now().time(),
+            qs3 = properties.filter(
+                Q(property_item__session__start_time__lte=F('end_time')),
+                Q(property_item__session__start_time__lte=now),
+                property_item__session__end_time__gte=now)
+
+            qs4 = (properties.filter(
+                Q(property_item__session__start_time__gt=F('end_time')),
+                Q(property_item__session__start_time__lte=now)
+                | Q(property_item__session__end_time__gte=now)))
+
+            properties = (qs1 | qs2) & (qs3 | qs4).filter(
+                property_item__session__end_time__gt=now,
+                property_item__session__start_time__lte=now,
                 property_item__available=True,
                 property_item__capacity__gte=guests).distinct()
 
