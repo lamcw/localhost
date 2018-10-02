@@ -181,10 +181,9 @@
                           <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
                           <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
                           <small class="small">
-                            {% if item.has_bid %}
+                            {% if item.has_bid and item.highest_bidder == request.user%}
                             <span id="highest-bidder">
-                              {{ item.highest_bidder }}
-                            </span> has the highest bid!
+                            </span> You have the highest bid!
                             {% else %}
                             No one has bidded yet!
                             {% endif %}

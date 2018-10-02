@@ -42,6 +42,7 @@ class PropertyDetailView(DetailView):
             try:
                 property_item.current_price = property_item.bids.latest().amount
                 property_item.has_bid = True
+                property_item.highest_bidder = property_item.bids.latest().bidder
             except Bid.DoesNotExist:
                 property_item.current_price = property_item.min_price
                 property_item.has_bid = False
