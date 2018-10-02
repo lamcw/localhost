@@ -161,10 +161,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     'data': {
                         'property_item_id': property_item_id,
                         'amount': str(amount),
-                        'user': {
-                            'id': self.scope['user'].id,
-                            'name': self.scope['user'].first_name
-                        }
+                        'user_id': self.scope['user'].id
                     }
                 })
 
