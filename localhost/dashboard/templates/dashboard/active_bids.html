@@ -1,7 +1,8 @@
 {% extends "dashboard/dashboard_base.html" %}
 
 {% block content %}
-<div class="bg-light px-0 py-2 d-flex flex-grow-1 justify-content-center">
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
+  {% if property_items|length > 0 %}
   <ul class="list-group w-100 px-2">
     {% for item in property_items %}
     <li class="list-group-item">
@@ -16,5 +17,8 @@
     </li>
     {% endfor %}
   </ul>
+  {% else %}
+  <p class="text-primary align-self-center">No recent activity</p>
+  {% endif %}
 </div>
 {% endblock %}
