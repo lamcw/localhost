@@ -8,7 +8,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
 from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview)
+                                   PropertyItemReview, Message)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
@@ -126,3 +126,19 @@ class ProfileView(DetailView):
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
+
+
+class MessagingView(ListView):
+    template_name = 'core/messaging.html'
+    model = Message
+
+    def get_queryset(self, **kwargs):
+        self.request.GET.get('recipient')
+        queryset = Message.objects.filter(
+                Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipient'] = self.request.GET.get('recipient')
+        return context

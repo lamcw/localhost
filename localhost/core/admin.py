@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from localhost.core.models import (Amenity, BiddingSession, Booking, Property,
                                    PropertyImage, PropertyItem,
-                                   PropertyItemImage)
+                                   PropertyItemImage, Message)
 
 
 class PropertyItemImageInline(admin.StackedInline):
@@ -37,4 +37,9 @@ class AmenityAdmin(admin.ModelAdmin):
 
 @admin.register(BiddingSession)
 class BiddingSessionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
     pass

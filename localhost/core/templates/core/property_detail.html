@@ -64,6 +64,10 @@
             <button type="button" class="btn btn-secondary">
               Message Owner
             </button>
+            <form id="id" method="get" action="{% url 'core:messages' %}">
+              <input type="hidden" id="recipient" name="recipient" value="{{property.host.id}}">
+              <input type="submit" value="Send Message">
+            </form>
           </a>
         </div>
       </div>

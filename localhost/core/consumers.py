@@ -10,7 +10,9 @@ from decimal import Decimal
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.utils import timezone
-from localhost.core.models import Bid, BiddingSession, PropertyItem
+from django.contrib.auth import get_user_model
+
+from localhost.core.models import Bid, BiddingSession, PropertyItem, Message
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +91,11 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 property_item_id = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
                 self.request_bid(property_item_id, amount)
+            elif req == 'message':
+                print(content['data'])
+                recipient_id = content['data']['recipient_id']
+                message = content['data']['message']
+                self.request_conversation(recipient_id, message)
         except KeyError:
             logger.exception('Invalid JSON format')
 
@@ -111,7 +118,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         Handles a bid request
         """
         time_now = timezone.localtime().time()
-        property_item = PropertyItem.objects.get(pk=property_item_id)
+        property_item = PropertyItem.objects.get(id=property_item_id)
 
         try:
             # The minimum next bid is either
@@ -119,10 +126,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             # * The next dollar amount if there is a bid
             latest_bid = property_item.bids.latest('amount')
             min_next_bid = latest_bid.amount + 1
-            bid_exists = True
         except Bid.DoesNotExist:
             min_next_bid = property_item.min_price
-            bid_exists = False
 
         current_session = BiddingSession.objects.filter(
             propertyitem=property_item,
@@ -165,7 +170,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 })
 
-            if not bid_exists:
+            if not property_item.bids.exists():
                 self.scope['user'].credits -= amount
                 self.scope['user'].save()
             elif latest_bid.bidder == self.scope['user']:
@@ -181,6 +186,45 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 property_item=property_item,
                 bidder=self.scope['user'],
                 amount=amount)
+
+    def request_conversation(self, recipient_id, message):
+        """
+        Handles a conversation request
+        """
+        sender_id = self.scope['user'].id
+        print(sender_id)
+        Message.objects.create(
+            sender=self.scope['user'],
+            recipient=get_user_model().objects.get(id=recipient_id),
+            time=timezone.localtime().time(),
+            msg=message
+        )
+
+        async_to_sync(self.channel_layer.group_send)(
+            f'inbox_{recipient_id}', {
+                'type': 'propagate',
+                'identifier_type': 'message',
+                'data': {
+                    'message': message,
+                    'user': {
+                        'id': self.scope['user'].id,
+                        'name': self.scope['user'].first_name
+                    }
+                }
+            })
+
+        async_to_sync(self.channel_layer.group_send)(
+            f'inbox_{sender_id}', {
+                'type': 'propagate',
+                'identifier_type': 'message',
+                'data': {
+                    'message': message,
+                    'user': {
+                        'id': self.scope['user'].id,
+                        'name': self.scope['user'].first_name
+                    }
+                }
+            })
 
     def propagate(self, event):
         """

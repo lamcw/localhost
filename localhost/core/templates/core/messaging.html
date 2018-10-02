@@ -1,0 +1,62 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div id="conversation-module" class="messaging-module container-fluid d-flex flex-column flex-grow-1 justify-content-center">
+  <body>
+    <textarea id="chat-log" cols="100" rows="20">
+    {% for message in message_list %}
+      {{ message.sender.first_name }}: {{ message.msg }}
+    {% endfor %}
+    </textarea>
+    <input id="chat-message-input" type="text" size="100"/><br/>
+    <input id="chat-message-submit" type="button" value="Send"/>
+  </body>
+</div>
+{{message_list}}
+{{recipient}}
+<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
+<script>
+  var roomName = {{ user.id }};
+  var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
+  csocket.open();
+
+  var handler = function(data) {
+    var user = data.user.name;
+    var message = data.message;
+    document.querySelector('#chat-log').value += (user + ': ' + message + '\n');
+  }
+
+  csocket.register_handler('message', handler);
+  csocket.subscribe('inbox', roomName);
+
+  document.querySelector('#chat-message-input').focus();
+  document.querySelector('#chat-message-input').onkeyup = function(e) {
+      if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+      }
+  };
+
+  document.querySelector('#chat-message-submit').onclick = function(e) {
+      var messageInputDom = document.querySelector('#chat-message-input');
+      var message = messageInputDom.value;
+      var recipient_id = 2
+      console.log(recipient_id);
+      console.log(message)
+      if (message) {
+        csocket.message(recipient_id, message)
+      }
+      messageInputDom.value = '';
+  };
+
+</script>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+{% endblock %}
+
