@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from django.conf import settings
@@ -9,6 +10,8 @@ from django.views.generic import DetailView, ListView
 from localhost.core.models import (Bid, Property, PropertyItem,
                                    PropertyItemReview)
 from localhost.core.utils import parse_address
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyDetailView(DetailView):
@@ -48,6 +51,7 @@ class SearchResultsView(ListView):
 
     def get_queryset(self, **kwargs):
         args = self.request.GET
+        logger.debug(args)
 
         try:
             latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))

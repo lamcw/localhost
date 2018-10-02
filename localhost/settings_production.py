@@ -7,7 +7,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '54.206.61.115', 'h11a.xyz', 'websock
 
 # Security
 # >= 50 characters & > 5 unique characters
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = False
 
@@ -33,9 +33,9 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': os.environ.get('DB_NAME', 'localhost_db'),
-       'USER': os.environ.get('DB_USER'),
-       'PASSWORD': os.environ.get('DB_PW'),
+       'NAME': os.getenv('DB_NAME', 'localhost_db'),
+       'USER': os.getenv('DB_USER'),
+       'PASSWORD': os.getenv('DB_PW'),
        'HOST': '127.0.0.1',
        'PORT': '5432',
    }
