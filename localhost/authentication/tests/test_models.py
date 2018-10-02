@@ -41,7 +41,7 @@ class UserTest(TestCase):
         self.assertFalse(self.test_user.is_superuser)
 
     def test_get_full_name(self):
-        self.assertEqual('Test User', self.test_user.get_full_name())
+        self.assertEqual('Test User', self.test_user.full_name)
 
     def test_str(self):
         self.assertEqual(self.email, self.test_user.__str__())
