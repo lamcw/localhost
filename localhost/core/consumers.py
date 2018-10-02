@@ -95,7 +95,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 print(content['data'])
                 recipient_id = content['data']['recipient_id']
                 message = content['data']['message']
-                self.request_conversation(recipient_id, message)
+                self.request_inbox(recipient_id, message)
         except KeyError:
             logger.exception('Invalid JSON format')
 
