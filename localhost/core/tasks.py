@@ -22,7 +22,7 @@ def cleanup_bids(pk):
         pk: primary key of the property item
     """
     property_item = PropertyItem.objects.get(pk=pk)
-    logger.info(f'cleaning up bids for property item: {property_item.title}')
+    logger.info(f'Cleaning up bids for property item: {property_item.title}')
     try:
         max_bid = property_item.bids.latest()
         now = timezone.now()
@@ -41,7 +41,7 @@ def cleanup_bids(pk):
         property_item.save()
         property_item.bids.all().delete()
     except Bid.DoesNotExist:
-        logger.info('No bids in this session')
+        logger.exception('No bids in this session')
 
 
 @shared_task

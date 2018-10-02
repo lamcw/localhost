@@ -64,6 +64,7 @@ class SearchResultsView(ListView):
 
     def get_queryset(self, **kwargs):
         args = self.request.GET
+        logger.debug(args)
 
         try:
             latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))

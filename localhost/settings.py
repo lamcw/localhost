@@ -20,8 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'dev-only'
-GMAPS_KEY = os.environ.get('GMAPS_KEY',
-                           'AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50')
+GMAPS_KEY = os.getenv('GMAPS_KEY', 'AIzaSyDCBj4Chl7AzKrHNPQvwwi7j7CgXLiXk50')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,9 +85,9 @@ WSGI_APPLICATION = 'localhost.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'localhost_db'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PW'),
+        'NAME': os.getenv('DB_NAME', 'localhost_db'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PW'),
         'HOST': 'localhost',
     }
 }
@@ -176,3 +175,24 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     'visibility_timeout': 43200
 }
 CELERY_TIMEZONE = TIME_ZONE
+
+DEFAULT_LOGGING = {
+    'handlers': ['console'],
+    'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+    'propagate': True,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'localhost.core': DEFAULT_LOGGING,
+        'localhost.dashboard': DEFAULT_LOGGING,
+        'localhost.authentication': DEFAULT_LOGGING
+    },
+}
