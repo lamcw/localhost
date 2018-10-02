@@ -21,12 +21,12 @@
       <h2 class="text-center p-1">Dashboard</h2>
       <!-- <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3> -->
       <span class="divider"></span>
-      <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}">Activity</a>
-      <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
-      <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}">Booking History</a>
-      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}">Listings</a>
-      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}">Security</a>
-      <a href="{% url 'dashboard:wallet' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">Wallet</a>
+      <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}"><i class="fas fa-bullhorn"></i>Activity</a>
+      <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><i class="fas fa-user"></i>Profile</a>
+      <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}"><i class="fas fa-history"></i>Booking History</a>
+      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}"><i class="fas fa-home"></i>Listings</a>
+      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}"><i class="fas fa-lock"></i>Security</a>
+      <a href="{% url 'dashboard:wallet' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}"><i class="fas fa-wallet"></i>Wallet</a>
     </div>
   <!-- </div> -->
   <div class="bg-light d-flex flex-column flex-grow-1">
