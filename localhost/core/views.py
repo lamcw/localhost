@@ -8,7 +8,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
 from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview)
+                                   PropertyItemReview, Message)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
@@ -126,3 +126,36 @@ class ProfileView(DetailView):
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
+
+
+class MessagingView(ListView):
+    template_name = 'core/messaging.html'
+    model = Message
+
+    # def get_queryset(self, **kwargs):
+    #     queryset = Message.objects.filter(
+    #             Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
+    #     return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipient'] = self.request.GET.get('recipient')
+        contact_list = []
+        message_list = []
+        queryset = Message.objects.filter(
+                Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
+        for message in queryset.reverse():
+            if message.sender != self.request.user and message.sender not in contact_list:
+                contact_list.append(message.sender)
+            elif message.recipient != self.request.user and message.recipient not in contact_list:
+                contact_list.append(message.recipient)
+        print(contact_list)
+        for user in contact_list:
+            conversation = []
+            for message in queryset:
+                if message.sender == user or message.recipient == user:
+                    conversation.append(message)
+            message_list.append(conversation)
+        context['contact_list'] = contact_list
+        context['message_list'] = message_list
+        return context
