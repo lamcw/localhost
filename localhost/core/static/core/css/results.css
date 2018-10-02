@@ -31,3 +31,15 @@ h4 {
 .card-footer {
   padding: .25rem 1.25rem;
 }
+
+.pagination a {
+  color: white !important;
+}
+
+.pagination a:hover {
+  color: black !important;
+}
+
+.active a:hover {
+  color: white !important;
+}
