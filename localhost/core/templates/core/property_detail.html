@@ -293,8 +293,7 @@
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
-  // TODO time
-  var session_end = new Date('{% now "DATE_FORMAT" %} 13:00:00').getTime();
+  var session_end = new Date('{% now "F j, Y" %} {{ session_end|time:"H:i:s" }}').getTime();
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>

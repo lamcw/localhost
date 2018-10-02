@@ -17,6 +17,14 @@ logger = logging.getLogger(__name__)
 class PropertyDetailView(DetailView):
     queryset = Property.objects.prefetch_related('property_item')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        property = self.get_object()
+        property_item = property.property_item.all()[0]
+        if property_item:
+            context['session_end'] = property_item.current_session.end_time
+        return context
+
     def get_object(self, queryset=None):
         property = super().get_object(queryset)
         # note that this is extremely inefficient, as the db hits grows
