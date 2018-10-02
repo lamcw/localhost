@@ -35,9 +35,9 @@
     {% include "core/include/header.html" %}
     <div class="tab-content d-flex flex-grow-1" id="v-pills-tabContent">
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
-        {% if property_items|length > 0 %}
+        {% if active_bids %}
         <ul class="list-group w-100 px-2">
-          {% for item in property_items %}
+          {% for item in active_bids %}
           <li class="list-group-item">
             <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
             <div class="d-inline float-right">
@@ -57,18 +57,18 @@
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
         <div class="panel p-2">
           <a class="btn btn-secondary" href="{% url 'core:profile' request.user.id %}">View Public Profile</a>
-          <form id="change-bio" method="post" class="p-2 w-100">
+          <form id="change-bio" method="post" class="profile p-2 w-100" action="{% url 'dashboard:dashboard' %}">
             {% csrf_token %}
             <div class="form-group">
-              <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
-              {% render_field form.bio class="form-control" rows="3" %}
+              <label for="{{ forms.profile.bio.id_for_label }}">{{ forms.profile.bio.label }}</label>
+              {% render_field forms.profile.bio class="form-control" rows="3" %}
             </div>
-            <input class="btn btn-primary" type="submit" value="Apply">
+            <button name="action" class="btn btn-primary" type="submit" value="profile">Apply</button>
           </form>
         </div>
       </div>
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="booking-history" role="tabpanel">
-        {% if booking_list|length > 0 %}
+        {% if booking_list %}
         <ul class="list-group w-100 px-2">
           {% for booking in booking_list %}
           <li class="list-group-item">
@@ -100,7 +100,7 @@
       </div>
       <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
         <div class="accordion w-100" id="accordion">
-          {% for property in property_list %}
+          {% for property in request.user.property_set.all %}
           <div class="card w-100">
             <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
               <h5 class="mb-0 pl-2">
@@ -128,24 +128,24 @@
         <form id="change-password" method="post" class="panel">
           {% csrf_token %}
           <div class="form-group">
-            {% for field in form %}
-            {% include "core/include/form_field.html" with form=form field=field %}
+            {% for field in forms.password_change %}
+            {% include "core/include/form_field.html" with form=forms.password_change field=field %}
             {% endfor %}
           </div>
           <div class="form-group">
-            <input type="submit" value="Apply" class="btn btn-primary">
+            <button type="submit" value="password_change" name="action" class="btn btn-primary">Apply</button>
           </div>
         </form>
       </div>
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="wallet" role="tabpanel">
-        <form id="change-wallet" method="post" class="panel">
+        <form id="change-wallet" method="post" class="wallet panel" action="{% url 'dashboard:dashboard' %}">
           <p><u>Current balance:</u> ${{ request.user.credits }}</p>
           {% csrf_token %}
-          {% for field in form %}
-          {% include "core/include/form_field.html" with form=form field=field %}
+          {% for field in forms.wallet %}
+          {% include "core/include/form_field.html" with form=forms.wallet field=field %}
           {% endfor %}
           <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Add">
+            <button type="submit" name="action" class="btn btn-primary" value="wallet">Add</button>
           </div>
         </form>
       </div>

@@ -155,7 +155,7 @@ class PropertyItem(models.Model):
     available = models.BooleanField(default=True)
 
     def get_absolute_url(self):
-        return reverse('core:property-item-detail', args=[str(self.id)])
+        return reverse('core:property-detail', args=[str(self.property.id)])
 
     def __str__(self):
         return f"{self.title}"
