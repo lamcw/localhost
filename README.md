@@ -123,6 +123,10 @@ To run the tests you must specify the batch size used for the testing database:
 $ BATCH_SIZE=100 python manage.py test localhost.core.tests
 ```
 
+#### Logging
+To set logging level, use `DJANGO_LOG_LEVEL` environment variable. See the list
+of logging levels [here](https://docs.python.org/3/library/logging.html#logging-levels).
+
 #### Linters
 
 Strongly recommended is the [ALE](https://github.com/w0rp/ale) plugin for *vim* and *neovim*.
