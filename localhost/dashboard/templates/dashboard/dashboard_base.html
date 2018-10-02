@@ -42,9 +42,9 @@
             <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
             <div class="d-inline float-right">
               <span class="mx-2 divider"></span>
-              Your bid: ${{ item.user_bid }}
+              Your bid: $<span id="user_bid_item_{{ item.id }}">{{ item.user_bid }}</span>
               <span class="mx-2 divider"></span>
-              Current bid: ${{ item.current_bid }}
+              Current bid: $<span id="bid_item_{{ item.id }}">{{ item.current_bid }}</span>
               <span class="mx-2 divider"></span>
             </div>
           </li>
@@ -152,4 +152,28 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
+<script>
+  var self = {{ request.user.id }};
+  var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
+  csocket.open();
+
+  var handler = function(data) {
+    $('#' + 'bid_item_' + data.property_item_id).text(data.amount);
+    if (data.user_id == self) {
+      $('#' + 'user_bid_item_' + data.property_item_id).text(data.amount);
+    }
+  }
+  csocket.register_handler('bid', handler);
+
+  {% if active_bids %}
+    {% for item in active_bids %}
+      csocket.subscribe('property_item', {{ item.id }});
+    {% endfor %}
+  {% endif %}
+
+</script>
 {% endblock %}
