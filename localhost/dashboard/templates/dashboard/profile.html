@@ -2,12 +2,10 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="col-md-10 bg-light px-0 py-2">
-  <div class="col-md-5 p-2">
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
+  <div class="panel p-2">
     <a class="btn btn-secondary" href="{% url 'core:profile' request.user.id %}">View Public Profile</a>
-  </div>
-  <div class="col-md-7 p-2">
-    <form method="post" class="p-2 w-100">
+    <form id="change-bio" method="post" class="p-2 w-100">
       {% csrf_token %}
       <div class="form-group">
         <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>

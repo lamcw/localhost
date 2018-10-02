@@ -19,6 +19,10 @@ form {
   color: grey !important;
 }
 
+header .masthead-brand {
+  display: none;
+}
+
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
   color: black !important;
@@ -28,25 +32,24 @@ form {
   padding-bottom: 0 !important;
 }
 
-span {
+.divider {
   border-left: 1px solid rgba(0, 0, 0, 0.125);
-}
-
-.flex-grow-1 {
-  flex-grow: 1;
 }
 
 .list-nav {
   max-width: 250px;
+  width: 250px;
 }
 
 .list-nav a {
   color: gray;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  text-transform: none;
+  font-size: 1rem !important;
 }
 
-.divider {
+.header-divider {
   width: calc(100% - 2rem);
   margin-left: 1rem;
   border: 1px solid rgba(180, 180, 180, 0.3);
@@ -58,4 +61,35 @@ span {
 
 .panel {
   box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.tab-content > .active {
+  display: flex;
+}
+
+.list-nav > .active {
+  color: #fff !important;
+  background-color: #009688 !important;
+  border-color: #009688 !important;
+  border-radius: 0;
+}
+
+.list-nav > .nav-link:hover {
+  color: #495057 !important;
+  text-decoration: none;
+  background-color: #f8f9fa !important;
+  border-radius: 0;
+}
+
+.nav-link {
+  transition: 0.2s;
+}
+
+a i {
+  padding-right: 1rem;
+}
+
+a span {
+  position: absolute;
+  left: 4rem;
 }

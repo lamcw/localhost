@@ -1,7 +1,7 @@
 {% extends "dashboard/dashboard_base.html" %}
 
 {% block content %}
-<div class="p-2 d-flex flex-column flex-grow-1 justify-content-between">
+<div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
   <div class="accordion w-100" id="accordion">
     {% for property in property_list %}
     <div class="card w-100">
@@ -19,18 +19,6 @@
             </small>
           </div>
         </h5>
-      </div>
-      <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
-        <div class="card-body p-2">
-          <ul class="list-group">
-            {% for item in property.property_item.all %}
-            <li class="list-group-item">
-              <p class="text-primary ml-2 mb-0">{{ item.title }}</p>
-              <!-- <a href="{{ item.get_absolute_url }}">{{ item.title }}</a> -->
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
       </div>
     </div>
     {% endfor %}

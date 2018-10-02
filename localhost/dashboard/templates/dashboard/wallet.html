@@ -1,8 +1,8 @@
 {% extends "dashboard/dashboard_base.html" %}
 
 {% block content %}
-<div class="p-2 d-flex flex-grow-1 justify-content-center">
-  <form method="post" class="panel">
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="security" role="tabpanel">
+  <form id="change-wallet" method="post" class="panel">
     <p><u>Current balance:</u> ${{ request.user.credits }}</p>
     {% csrf_token %}
     {% for field in form %}

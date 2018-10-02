@@ -1,11 +1,12 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
 {% endblock %}
 
 {% block title %} {{ block.super }} - Dashboard {% endblock %}
@@ -16,22 +17,139 @@
 
 {% block body_wrapped %}
 <div class="container-fluid d-flex flex-row flex-wrap flex-grow-1 justify-content-center p-0">
-  <!-- <div class="p-0"> -->
-    <div class="list-group list-nav py-3">
+  <div class="d-flex flex-column py-3 justify-content-between" id="v-pills-tab" role="tablist"">
+    <div class="d-flex flex-column list-nav nav nav-pills">
       <h2 class="text-center p-1">Dashboard</h2>
-      <!-- <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3> -->
-      <span class="divider"></span>
-      <a href="{% url 'dashboard:bids' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'bids' %}active{% endif %}"><i class="fas fa-bullhorn"></i>Activity</a>
-      <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><i class="fas fa-user"></i>Profile</a>
-      <a href="{% url 'dashboard:booking-history' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'booking-history' %}active{% endif %}"><i class="fas fa-history"></i>Booking History</a>
-      <a href="{% url 'dashboard:listing-list' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'listing-list' %}active{% endif %}"><i class="fas fa-home"></i>Listings</a>
-      <a href="{% url 'dashboard:password-change' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'password-change' %}active{% endif %}"><i class="fas fa-lock"></i>Security</a>
-      <a href="{% url 'dashboard:wallet' %}" class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}"><i class="fas fa-wallet"></i>Wallet</a>
+      <span class="header-divider"></span>
+      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Activity</span></a>
+      <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"><i class="fas fa-user"></i><span>Profile</span></a>
+      <a class="nav-link" id="booking-history-tab" data-toggle="pill" href="#booking-history" role="tab"><i class="fas fa-history"></i><span>Booking History</span></a>
+      <a class="nav-link" id="listings-tab" data-toggle="pill" href="#listings" role="tab"><i class="fas fa-home"></i><span>Listings</span></a>
+      <a class="nav-link" id="security-tab" data-toggle="pill" href="#security" role="tab"><i class="fas fa-lock"></i><span>Security</span></a>
+      <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab"><i class="fas fa-wallet"></i><span>Wallet</span></a>
     </div>
-  <!-- </div> -->
-  <div class="bg-light d-flex flex-column flex-grow-1">
+    <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3>
+  </div>
+
+  <div class="bg-light d-flex flex-column flex-grow-1 text-dark">
     {% include "core/include/header.html" %}
-    {% block content %}{% endblock %}
+    <div class="tab-content d-flex flex-grow-1" id="v-pills-tabContent">
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
+        {% if property_items|length > 0 %}
+        <ul class="list-group w-100 px-2">
+          {% for item in property_items %}
+          <li class="list-group-item">
+            <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
+            <div class="d-inline float-right">
+              <span class="mx-2 divider"></span>
+              Your bid: ${{ item.user_bid }}
+              <span class="mx-2 divider"></span>
+              Current bid: ${{ item.current_bid }}
+              <span class="mx-2 divider"></span>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-primary align-self-center">No recent activity</p>
+        {% endif %}
+      </div>
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
+        <div class="panel p-2">
+          <a class="btn btn-secondary" href="{% url 'core:profile' request.user.id %}">View Public Profile</a>
+          <form id="change-bio" method="post" class="p-2 w-100">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+              {% render_field form.bio class="form-control" rows="3" %}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Apply">
+          </form>
+        </div>
+      </div>
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="booking-history" role="tabpanel">
+        {% if booking_list|length > 0 %}
+        <ul class="list-group w-100 px-2">
+          {% for booking in booking_list %}
+          <li class="list-group-item">
+            <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
+            <div class="d-inline float-right">
+              <span class="mx-2 divider"></span>
+              ${{ booking.price }}
+              <span class="mx-2 divider"></span>
+              {{ booking.earliest_checkin_time|date }}
+              <span class="mx-2 divider"></span>
+              {{ booking.earliest_checkin_time|time }}
+              <span class="mx-2 divider"></span>
+              {{ booking.latest_checkin_time|time }}
+              <span class="mx-2 divider"></span>
+              {% if booking.can_cancel %}
+              <a href="" class="btn">Cancel Booking</a>
+              {% elif booking.reviewed or not booking.passed_one_day %}
+              <button class="btn" disabled>Review</button>
+              {% else %}
+              <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-primary align-self-center">No previous bookings</p>
+        {% endif %}
+      </div>
+      <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
+        <div class="accordion w-100" id="accordion">
+          {% for property in property_list %}
+          <div class="card w-100">
+            <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+              <h5 class="mb-0 pl-2">
+                <div class="d-inline">
+                  <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
+                    <strong class="text-primary">{{ property.title }}</strong>
+                  </a>
+                  <div class="d-inline float-right">
+                    <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
+                  </div>
+                  <small class="d-block text-secondary">
+                    {{ property.address }}
+                  </small>
+                </div>
+              </h5>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="align-self-end p-2">
+          <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
+        </div>
+      </div>
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="security" role="tabpanel">
+        <form id="change-password" method="post" class="panel">
+          {% csrf_token %}
+          <div class="form-group">
+            {% for field in form %}
+            {% include "core/include/form_field.html" with form=form field=field %}
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            <input type="submit" value="Apply" class="btn btn-primary">
+          </div>
+        </form>
+      </div>
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="wallet" role="tabpanel">
+        <form id="change-wallet" method="post" class="panel">
+          <p><u>Current balance:</u> ${{ request.user.credits }}</p>
+          {% csrf_token %}
+          {% for field in form %}
+          {% include "core/include/form_field.html" with form=form field=field %}
+          {% endfor %}
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Add">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
