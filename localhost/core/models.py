@@ -219,7 +219,7 @@ class Review(ShowFieldType, PolymorphicModel):
 
 
 class PropertyItemReview(Review):
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
 
 
 class UserReview(Review):
