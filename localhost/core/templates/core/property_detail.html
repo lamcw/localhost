@@ -36,7 +36,7 @@
     <div id="feature-imgs" class="col-md-4 pl-1 p-0">
       {% for image in property.images.all|slice:":2" %}
       <div class="row {% if forloop.first %}pb-1{% endif %} align-items-start">
-        <img class="d-block w-100" src="https://a0.muscache.com/4ea/air/v2/pictures/fc8e5efc-16ab-4ac7-8d5e-6570645e9355.jpg" alt="Second slide">
+        <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter|add:"1" }}">
       </div>
       {% empty %}
       No images
