@@ -1,14 +1,14 @@
 /**
  * @brief Injects a countdown onto the page
  *
- * @param inject_id     The id of the element to inject the countdown in
+ * @param inject_class  The class of the element to inject the countdown in
  * @param datetime      The date and time to countdown to
  * @param finish_string The string to write once finished
  *
  * @note Updates the countdown every second
  * @note Once the time is reached, writes CLOSED
  * */
-function register_countdown(inject_id, datetime, finish_string) {
+function register_countdown(inject_class, datetime, finish_string) {
   var interval = setInterval(function() {
     var current_datetime = new Date().getTime();
     if (datetime < current_datetime) {
@@ -22,7 +22,7 @@ function register_countdown(inject_id, datetime, finish_string) {
     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    $('#' + inject_id).html(days + "d " + hours + "h " + minutes + "m " + seconds + " seconds ");
+    $('.' + inject_class).html(days + "d " + hours + "h " + minutes + "m " + seconds + " seconds ");
 
   }, 1000);
 }
