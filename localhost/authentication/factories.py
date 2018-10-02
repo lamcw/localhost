@@ -7,7 +7,7 @@ class UserFactory(factory.DjangoModelFactory):
         model = get_user_model()
         django_get_or_create = ('email', )
 
-    first_name = factory.Faker('first_name')
-    last_name = factory.Faker('last_name')
-    email = factory.Faker('email')
+    first_name = 'a'
+    last_name = 'b'
+    email = 'c@c.com'
     gender = 'M'

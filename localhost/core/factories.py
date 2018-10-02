@@ -12,18 +12,11 @@ class PropertyItemFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.PropertyItem
 
-    title = factory.Faker('sentence', nb_words=6)
-    description = factory.Faker('text', max_nb_chars=600)
+    title = 'a'
+    description = 'b'
     min_price = 50
     buyout_price = 70
     capacity = 5
-
-
-class PropertyImageFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = models.PropertyImage
-
-    img = factory.django.ImageField()
 
 
 class PropertyFactory(factory.DjangoModelFactory):
@@ -32,9 +25,9 @@ class PropertyFactory(factory.DjangoModelFactory):
 
     host = factory.SubFactory(UserFactory)
     property_item = factory.RelatedFactory(PropertyItemFactory, 'property')
-    title = factory.Faker('sentence', nb_words=6)
-    description = factory.Faker('text', max_nb_chars=600)
-    address = factory.Faker('address')
+    title = 'a'
+    description = 'b'
+    address = 'c'
     latitude = factory.Faker(
         'geo_coordinate',
         center=settings.DEFAULT_SEARCH_COORD[0],
@@ -47,4 +40,3 @@ class PropertyFactory(factory.DjangoModelFactory):
         'date_time_this_year', tzinfo=timezone.get_current_timezone())
     latest_checkin_time = factory.LazyAttribute(
         lambda o: o.earliest_checkin_time + datetime.timedelta(hours=5))
-    images = factory.RelatedFactory(PropertyImageFactory, 'property')
