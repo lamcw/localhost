@@ -238,7 +238,7 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
         for session in sessions:
             schedule, _ = CrontabSchedule.objects.get_or_create(
                 minute=session.end_time.minute, hour=session.end_time.hour)
-            PeriodicTask.objects.create(
+            PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
                 name=f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
@@ -255,7 +255,7 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
 def property_item_pre_save(sender, instance, **kwargs):
     schedule, _ = CrontabSchedule.objects.get_or_create(hour=12)
     try:
-        PeriodicTask.objects.create(
+        PeriodicTask.objects.get_or_create(
             crontab=schedule,
             task='localhost.core.tasks.enable_bids',
             name=f'Daily bids enable {instance.id}',
