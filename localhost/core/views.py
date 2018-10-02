@@ -60,7 +60,7 @@ class PropertyDetailView(DetailView):
 class SearchResultsView(ListView):
     model = Property
     template_name = 'core/search_results.html'
-    paginate_by = 20
+    paginate_by = 18
 
     def get_queryset(self, **kwargs):
         args = self.request.GET
