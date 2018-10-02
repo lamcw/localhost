@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load subtract %}
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
@@ -18,21 +19,17 @@
     <div class="container">
       <div class="row">
       {% for property in property_list %}
-        <div class="col-md-4">
-          <div class="card mb-4 box-shadow">
+        <div class="col-md-4 mb-4">
+          <div class="card box-shadow h-100">
             <img class="card-img-top" src="https://a0.muscache.com/4ea/air/v2/pictures/9e0349e6-cc24-4590-a20c-9cf94d1c34c8.jpg" alt="Card image cap">
             <div class="card-body">
               <h4 class="card-title">{{ property.title }}</h4>
-              <p class="card-text">{{ property.description }}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">{{ property.address }}</small>
-              </div>
-              <div class="d-flex justify-content-end align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn">Map</button>
-                  <a href="{{ property.get_absolute_url }}" type="button" class="btn">View</a>
-                </div>
-              </div>
+              <small class="text-muted">{{ property.address }}</small>
+            </div>
+            <div class="card-footer text-center">
+              <small class="text-muted">  
+                <a href="{{ property.get_absolute_url }}" type="button" class="btn">View</a>
+              </small>
             </div>
           </div>
         </div>
@@ -52,7 +49,11 @@
 
           {% with ''|center:page_obj.paginator.num_pages as range %}
           {% for _ in range %}
+          {% if forloop.counter|subtract:page_obj.number < -2 %}
+          {% elif forloop.counter|subtract:page_obj.number > 2 %}
+          {% else %}
           <li class="page-item {% if page_obj.number == forloop.counter %}active{% endif %}"><a class="page-link" href="?page={{ forloop.counter }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ forloop.counter }}</a></li>
+          {% endif %}
           {% endfor %}
           {% endwith %}
 
