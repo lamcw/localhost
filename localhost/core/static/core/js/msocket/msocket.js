@@ -216,9 +216,9 @@ class ClientSocket extends MSocket {
    *                        sent to
    * @param message         The message to be sent
    * */
-  message(conversation_id, message) {
+    message(recipient_id, message) {
     var payload = {
-      'conversation_id': conversation_id,
+      'recipient_id': recipient_id,
       'message': message
     };
     this.send('message', payload);

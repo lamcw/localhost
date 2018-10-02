@@ -14,6 +14,7 @@ urlpatterns = [
         'property/<int:pk>',
         views.PropertyDetailView.as_view(),
         name='property-detail'),
-    path('search/', views.SearchResultsView.as_view(), name='search-results'),
-    path('profile/<int:pk>', views.ProfileView.as_view(), name='profile')
+    path('search/', views.SearchResultsView.as_view(), name='search_results'),
+    path('profile/<int:pk>', views.ProfileView.as_view(), name='profile'),
+    path('messages/', views.MessagingView.as_view(), name='messages')
 ]

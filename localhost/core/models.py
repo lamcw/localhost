@@ -262,3 +262,21 @@ def property_item_pre_save(sender, instance, **kwargs):
             args=json.dumps([instance.id]))
     except IntegrityError as e:
         logger.exception('Task already exists. Task creation ignored.', e)
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.PROTECT,
+        related_name='sender'
+    )
+    recipient = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.PROTECT,
+        related_name='recipient'
+    )
+    time = models.DateTimeField(auto_now_add=True)
+    msg = models.TextField()
+
+    class Meta:
+        ordering = ['time']
