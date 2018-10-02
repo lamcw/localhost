@@ -6,6 +6,30 @@
 
 <div id="conversation-module" class="messaging-module container-fluid d-flex flex-column flex-grow-1 justify-content-center">
   <body>
+
+    <div>
+      <ul>
+        {% for contact in contact_list %}
+          <li id="contact-{{contact.id}}">{{contact.first_name}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div>
+
+    {% for conversation in message_list %}
+      <ul>
+        {% for message in conversation %}
+          <li>
+            <span>{{message.time}}</span>
+            <span>{{message.sender.first_name}}</span>
+            <span>{{message.msg}}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+    </div>
+
     <textarea id="chat-log" cols="100" rows="20">
     {% for message in message_list %}
       {{ message.sender.first_name }}: {{ message.msg }}
@@ -16,7 +40,6 @@
   </body>
 </div>
 {{message_list}}
-{{recipient}}
 <script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
   var roomName = {{ user.id }};
