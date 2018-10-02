@@ -182,7 +182,7 @@
                         <div class="card-body d-flex flex-column align-items-center">
                           {% if item.current_session %}
                           <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
-                          <strong id="countdown" class="d-inline-block mb-2 text-warning text-uppercase"></strong>
+                          <strong class="countdown d-inline-block mb-2 text-warning text-uppercase"></strong>
                           <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
                           <small class="small">
                             {% if item.has_bid and item.highest_bidder == request.user%}
