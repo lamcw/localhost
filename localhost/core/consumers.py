@@ -103,7 +103,16 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         Handles a request to subscribe to a group
         """
-        if not self.is_subscribed(group):
+
+        sub_message = group.split('_')
+        print(sub_message[0])
+        print(sub_message[1])
+        print(group)
+        print(self.scope['user'].id)
+        if sub_message[0] is 'inbox' and sub_message[1] is not self.scope['user'].id:
+            print("failed")
+            self.close()
+        elif not self.is_subscribed(group):
             self.subscribe(group)
 
     def request_unsubscribe(self, group):
@@ -187,12 +196,11 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 bidder=self.scope['user'],
                 amount=amount)
 
-    def request_conversation(self, recipient_id, message):
+    def request_inbox(self, recipient_id, message):
         """
-        Handles a conversation request
+        Handles a inbox request
         """
         sender_id = self.scope['user'].id
-        print(sender_id)
         Message.objects.create(
             sender=self.scope['user'],
             recipient=get_user_model().objects.get(id=recipient_id),
