@@ -56,3 +56,9 @@ have the Property as the landing page from the search results and then all of
 the individual listings inside the property will pop up as a modal. To account
 for mobile user functionality, there will be a persistent button to close the 
 modal and return to the Property listing page.
+
+// Midsem break
+Completed the property page beta so that all property items within that 
+property are displayed on one page. Viewing a property item now appears in a
+modal with the option to bid. Added a floating button for mobile users to close
+the modal. Also made the page mobile friendly.
