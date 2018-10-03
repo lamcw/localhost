@@ -202,7 +202,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             recipient=get_user_model().objects.get(id=recipient_id),
             time=timezone.localtime().time(),
             msg=message)
-        print(message_object.time)
+
         async_to_sync(self.channel_layer.group_send)(
             f'inbox_{recipient_id}', {
                 'type': 'propagate',
