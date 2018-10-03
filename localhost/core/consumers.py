@@ -197,7 +197,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         Handles a inbox request
         """
         sender_id = self.scope['user'].id
-        Message.objects.create(
+        message_object = Message.objects.create(
             sender=self.scope['user'],
             recipient=get_user_model().objects.get(id=recipient_id),
             time=timezone.localtime().time(),
@@ -208,7 +208,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
-                    'message': message,
+                    'message': message_object.msg,
+                    'time': str(message_object.time),
                     'user': {
                         'id': self.scope['user'].id,
                         'name': self.scope['user'].first_name
@@ -221,7 +222,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
-                    'message': message,
+                    'message': message_object.msg,
+                    'time': str(message_object.time),
                     'user': {
                         'id': self.scope['user'].id,
                         'name': self.scope['user'].first_name
