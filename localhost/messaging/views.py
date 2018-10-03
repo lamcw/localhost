@@ -4,7 +4,7 @@ from django.views.generic import ListView
 from localhost.messaging.models import Message
 
 class MessagingView(ListView):
-    template_name = 'core/messaging.html'
+    template_name = 'messaging/messaging.html'
     model = Message
 
     def get_context_data(self, **kwargs):

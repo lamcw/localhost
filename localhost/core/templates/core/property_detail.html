@@ -46,7 +46,7 @@
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#map-modal">
             Map
           </button>
-          <form id="id" method="get" action="{% url 'core:messages' %}">
+          <form id="id" method="get" action="{% url 'messaging:messages' %}">
             <input type="hidden" id="recipient" name="recipient" value="{{property.host.id}}">
             <button class="btn btn-secondary" type="submit">Message Owner</button>
           </form>
