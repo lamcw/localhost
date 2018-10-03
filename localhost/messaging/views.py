@@ -11,7 +11,8 @@ class MessagingView(ListView):
         context = super().get_context_data(**kwargs)
         context['recipient'] = self.request.GET.get('recipient')
         contact_list = []
-        message_list = []
+        conversations = []
+
         queryset = Message.objects.filter(
             Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
         for message in queryset.reverse():
@@ -19,14 +20,16 @@ class MessagingView(ListView):
                     and message.sender not in contact_list):
                 contact_list.append(message.sender)
             elif (message.recipient != self.request.user
-                  and message.recipient not in contact_list):
+                    and message.recipient not in contact_list):
                 contact_list.append(message.recipient)
         for user in contact_list:
-            conversation = []
+            conversation = [user]
+            messages = []
             for message in queryset:
                 if message.sender == user or message.recipient == user:
-                    conversation.append(message)
-            message_list.append(conversation)
-        context['contact_list'] = contact_list
-        context['message_list'] = message_list
+                    messages.append(message)
+            conversation.append(messages)
+            conversations.append(conversation)
+        print(conversations)
+        context['conversations'] = conversations
         return context
