@@ -2,7 +2,7 @@
 
 tput setaf 6; echo "Installing nginx config..."
 sudo ln -fs $PWD/nginx.conf /etc/nginx/sites-available/localhost.conf
-sudo ln -fs /etc/nginx/sites-enabled/localhost.conf /etc/nginx/sites-available/localhost.conf
+sudo ln -fs /etc/nginx/sites-available/localhost.conf /etc/nginx/sites-enabled/localhost.conf
 
 tput setaf 6; echo "Restarting nginx..."
 sudo /etc/init.d/nginx stop
