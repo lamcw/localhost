@@ -4,7 +4,6 @@ from localhost.core.models import (Amenity, BiddingSession, Booking, Property,
                                    PropertyImage, PropertyItem,
                                    PropertyItemImage, Message)
 
-
 class PropertyItemImageInline(admin.StackedInline):
     model = PropertyItemImage
 
@@ -24,6 +23,9 @@ class PropertyItemInline(admin.StackedInline):
 class PropertyAdmin(admin.ModelAdmin):
     inlines = [PropertyItemInline, PropertyImageInline]
 
+@admin.register(PropertyItem)
+class PropertyAdmin(admin.ModelAdmin):
+    inlines = [PropertyItemImageInline]
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
