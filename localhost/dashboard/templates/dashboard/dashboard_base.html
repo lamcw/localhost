@@ -24,6 +24,7 @@
       <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Activity</span></a>
       <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"><i class="fas fa-user"></i><span>Profile</span></a>
       <a class="nav-link" id="booking-history-tab" data-toggle="pill" href="#booking-history" role="tab"><i class="fas fa-history"></i><span>Booking History</span></a>
+      <a class="nav-link" id="guest-history-tab" data-toggle="pill" href="#guest-history" role="tab"><i class="fas fa-history"></i><span>Guest History</span></a>
       <a class="nav-link" id="listings-tab" data-toggle="pill" href="#listings" role="tab"><i class="fas fa-home"></i><span>Listings</span></a>
       <a class="nav-link" id="security-tab" data-toggle="pill" href="#security" role="tab"><i class="fas fa-lock"></i><span>Security</span></a>
       <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab"><i class="fas fa-wallet"></i><span>Wallet</span></a>
@@ -96,6 +97,20 @@
         </ul>
         {% else %}
         <p class="text-primary align-self-center">No previous bookings</p>
+        {% endif %}
+      </div>
+      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="guest-history" role="tabpanel">
+        {% if guest_booking_list %}
+        <ul class="list-group w-100 px-2">
+          {% for booking in guest_booking_list%}
+          <li class="list-group-item">
+            <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
+            <a href="/profile/{{ booking.user.id }}" class="align-middle">{{ booking.user.first_name }}</a>
+            {{ booking.earliest_checkin_time|date }}
+            {{ booking.user.id }}
+          </li>
+          {% endfor %}
+        </ul>
         {% endif %}
       </div>
       <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
