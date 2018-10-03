@@ -1,3 +1,6 @@
+"""
+This module sets up Celery (scheduled tasks) for Django.
+"""
 import logging
 import os
 

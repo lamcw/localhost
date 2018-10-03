@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -15,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class PropertyDetailView(DetailView):
+    """
+    View that shows property and its property items.
+    """
     queryset = Property.objects.prefetch_related('property_item')
 
     def get_context_data(self, **kwargs):
@@ -65,12 +69,17 @@ class SearchResultsView(ListView):
     paginate_by = 18
 
     def get_queryset(self, **kwargs):
+        """
+        Parses url parameters and display a list of property as a result,
+        sorted by distance, filtered by number of guests, check-in times.
+        """
         args = self.request.GET
         logger.debug(args)
 
         try:
-            latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-            longitude = float(
+            latitude = Decimal(
+                args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            longitude = Decimal(
                 args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
             address = args.get('address')

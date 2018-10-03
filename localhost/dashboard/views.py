@@ -41,6 +41,17 @@ class MultiFormMixin(ContextMixin):
         return self.form_classes
 
     def get_forms(self, form_classes, form_names=None, bind_all=False):
+        """
+        Instantiate all forms in view.
+
+        Args:
+            form_classes: a dict of form classes
+            form_names: list of form names
+            bind_all: True if instantiate forms with POST or PUT
+
+        Return:
+            dict containing form instances
+        """
         return dict([(key,
                       self._create_form(key, klass,
                                         (form_names and key in form_names)
@@ -48,6 +59,16 @@ class MultiFormMixin(ContextMixin):
                      for key, klass in form_classes.items()])
 
     def get_form_kwargs(self, form_name, bind_form=False):
+        """
+        Generate form kwargs.
+
+        Args:
+            form_name: name of form
+            bind_form: True if instantiate form with POST or PUT
+
+        Return:
+            dict containing form init kwargs
+        """
         kwargs = {}
         kwargs.update({'initial': self.get_initial(form_name)})
         kwargs.update({'prefix': self.get_prefix(form_name)})
@@ -58,6 +79,20 @@ class MultiFormMixin(ContextMixin):
         return kwargs
 
     def forms_valid(self, forms, form_name):
+        """
+        Call form_valid() in a form.
+
+        Args:
+            forms: dict of forms containing form to be validated, with
+                form_name as key of the form
+            form_name: name of form. This method looks for
+                [form_name]_form_valid in subclass and call it. If method is
+                not found, it redirects to success_url of form_name
+
+        Return:
+            either return value of [form_name]_form_valid() or redirects to
+            success_url of form_name
+        """
         form_valid_method = '%s_form_valid' % form_name
         if hasattr(self, form_valid_method):
             return getattr(self, form_valid_method)(forms[form_name])
@@ -65,9 +100,21 @@ class MultiFormMixin(ContextMixin):
             return redirect(self.get_success_url(form_name))
 
     def forms_invalid(self, forms):
+        """
+        Renders to form invalid.
+        """
         return self.render_to_response(self.get_context_data(forms=forms))
 
     def get_initial(self, form_name):
+        """
+        Get initial data of form_name.
+
+        Args:
+            form_name: name of form to get initial data from
+
+        Return:
+            initial data
+        """
         initial_method = 'get_%s_initial' % form_name
         if hasattr(self, initial_method):
             return getattr(self, initial_method)()
@@ -75,12 +122,41 @@ class MultiFormMixin(ContextMixin):
             return self.initial.copy()
 
     def get_prefix(self, form_name):
+        """
+        Get prefix of form.
+
+        Args:
+            form_name: name of form
+
+        Return:
+            prefix of form
+        """
         return self.prefixes.get(form_name, self.prefix)
 
     def get_success_url(self, form_name=None):
+        """
+        Get success url of form.
+
+        Args:
+            form_name: name of form
+
+        Return:
+            success url of form_name
+        """
         return self.success_urls.get(form_name, self.success_url)
 
     def _create_form(self, form_name, klass, bind_form):
+        """
+        Instantiate form given form class and form name
+
+        Args:
+            form_name: name of form
+            klass: class (not instance) of form
+            bind_form: True if bind form with data
+
+        Return:
+            new form instance
+        """
         form_kwargs = self.get_form_kwargs(form_name, bind_form)
         form_create_method = 'create_%s_form' % form_name
         if hasattr(self, form_create_method):
@@ -90,6 +166,9 @@ class MultiFormMixin(ContextMixin):
         return form
 
     def _bind_form_data(self):
+        """
+        Bind data to form.
+        """
         if self.request.method in ('POST', 'PUT'):
             return {
                 'data': self.request.POST,
@@ -99,13 +178,24 @@ class MultiFormMixin(ContextMixin):
 
 
 class ProcessMultipleFormsView(ProcessFormView):
+    """
+    View that can process multiple forms.
+    """
+
     def get(self, request, *args, **kwargs):
+        """
+        Generate forms and chuck them in context.
+        """
         form_classes = self.get_form_classes()
         forms = self.get_forms(form_classes)
         return self.render_to_response(self.get_context_data(forms=forms))
 
     def post(self, request, *args, **kwargs):
+        """
+        Process forms from POST request data.
+        """
         form_classes = self.get_form_classes()
+        # form submite button must have name="action"
         form_name = request.POST.get('action')
         if self._individual_exists(form_name):
             return self._process_individual_form(form_name, form_classes)
@@ -257,6 +347,9 @@ class PropertyItemReviewMixin(AccessMixin):
 
 
 class ListingCreate(LoginRequiredMixin, CreateView):
+    """
+    CreateView that combines both ModelForm and InlineModelFormSet.
+    """
     model = Property
     form_class = PropertyForm
     template_name = 'dashboard/listing/listing_create.html'
@@ -264,11 +357,15 @@ class ListingCreate(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # add formset to context
         context['property_item_formset'] = PropertyItemFormSet(
             self.request.POST or None, self.request.FILES or None)
         return context
 
     def form_valid(self, form):
+        """
+        Overrides default form_valid to save form and formset.
+        """
         context = self.get_context_data()
         property_item_formset = context.get('property_item_formset')
         if form.is_valid() and property_item_formset.is_valid():

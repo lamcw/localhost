@@ -1,9 +1,11 @@
+"""
+All scheduled tasks in core.
+"""
 import logging
 from datetime import datetime
 
-from django.utils import timezone
-
 from celery import shared_task
+from django.utils import timezone
 from localhost.core.models import Bid, Booking, PropertyItem
 
 logger = logging.getLogger(__name__)
