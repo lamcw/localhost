@@ -302,7 +302,7 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
                         CreateView):
     model = PropertyItemReview
-    success_url = reverse_lazy('dashboard:booking-history')
+    success_url = reverse_lazy('dashboard:dashboard')
     fields = (
         'rating',
         'description',
