@@ -1,6 +1,4 @@
-from django.contrib.auth import views as auth_views
-from django.urls import path, reverse_lazy
-from django.views.generic import RedirectView
+from django.urls import path
 
 from . import views
 
@@ -23,11 +21,5 @@ urlpatterns = [
     path(
         'review/listing/<int:pk>',
         views.ListingReviewView.as_view(),
-        name='listing-review'),
-    path(
-        'password-change',
-        auth_views.PasswordChangeView.as_view(
-            template_name='dashboard/settings.html',
-            success_url=reverse_lazy('dashboard:profile')),
-        name='password-change')
+        name='listing-review')
 ]
