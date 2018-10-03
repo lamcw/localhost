@@ -198,7 +198,6 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         sender_id = self.scope['user'].id
         time_now = timezone.localtime()
-        print(time_now.strftime("%m-%d %H:%M"))
         message_object = Message.objects.create(
             sender=self.scope['user'],
             recipient=get_user_model().objects.get(id=recipient_id),
