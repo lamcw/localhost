@@ -1,0 +1,19 @@
+.container-fluid {
+  height: 100vh;
+}
+
+.messages {
+  overflow-y: auto;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.min-height-0 {
+  min-height: 0;
+}
+
+textarea {
+  resize: none;
+}
