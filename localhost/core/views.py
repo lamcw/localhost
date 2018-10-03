@@ -7,8 +7,8 @@ from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
-from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview, Message)
+from localhost.core.models import (Bid, BiddingSession, Message, Property,
+                                   PropertyItemReview)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
@@ -48,9 +48,11 @@ class PropertyDetailView(DetailView):
                 propertyitem=property_item)
             property_item.current_session = qs1.union(qs2).first()
             try:
-                property_item.current_price = property_item.bids.latest().amount
+                property_item.current_price = \
+                    property_item.bids.latest().amount
                 property_item.has_bid = True
-                property_item.highest_bidder = property_item.bids.latest().bidder
+                property_item.highest_bidder = \
+                    property_item.bids.latest().bidder
             except Bid.DoesNotExist:
                 property_item.current_price = property_item.min_price
                 property_item.has_bid = False
@@ -132,24 +134,21 @@ class MessagingView(ListView):
     template_name = 'core/messaging.html'
     model = Message
 
-    # def get_queryset(self, **kwargs):
-    #     queryset = Message.objects.filter(
-    #             Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
-    #     return queryset
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['recipient'] = self.request.GET.get('recipient')
         contact_list = []
         message_list = []
         queryset = Message.objects.filter(
-                Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
+            Q(sender=self.request.user.id) | Q(recipient=self.request.user.id))
         for message in queryset.reverse():
-            if message.sender != self.request.user and message.sender not in contact_list:
+            if (message.sender != self.request.user
+                    and message.sender not in contact_list):
                 contact_list.append(message.sender)
-            elif message.recipient != self.request.user and message.recipient not in contact_list:
+            elif (message.recipient != self.request.user
+                  and message.recipient not in contact_list):
                 contact_list.append(message.recipient)
-        print(contact_list)
+        logger.debug(contact_list)
         for user in contact_list:
             conversation = []
             for message in queryset:

@@ -34,20 +34,15 @@ class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
         Subscribes the consumer to a group.
         """
         self.groups.append(group)
-        async_to_sync(self.channel_layer.group_add)(
-            group,
-            self.channel_name
-        )
+        async_to_sync(self.channel_layer.group_add)(group, self.channel_name)
 
     def unsubscribe(self, group):
         """
         Unsubscribes the consumer from a group.
         """
         self.groups.remove(group)
-        async_to_sync(self.channel_layer.group_discard)(
-            group,
-            self.channel_name
-        )
+        async_to_sync(self.channel_layer.group_discard)(group,
+                                                        self.channel_name)
 
     def is_subscribed(self, group):
         """
@@ -92,7 +87,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 amount = Decimal(content['data']['amount'])
                 self.request_bid(property_item_id, amount)
             elif req == 'message':
-                print(content['data'])
+                logger.debug(content['data'])
                 recipient_id = content['data']['recipient_id']
                 message = content['data']['message']
                 self.request_inbox(recipient_id, message)
@@ -105,12 +100,12 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
 
         sub_message = group.split('_')
-        print(sub_message[0])
-        print(sub_message[1])
-        print(group)
-        print(self.scope['user'].id)
-        if sub_message[0] is 'inbox' and sub_message[1] is not self.scope['user'].id:
-            print("failed")
+        logger.debug(sub_message)
+        logger.debug(group)
+        logger.debug(self.scope['user'].id)
+        if (sub_message[0] is 'inbox'
+                and sub_message[1] is not self.scope['user'].id):
+            logger.info("failed")
             self.close()
         elif not self.is_subscribed(group):
             self.subscribe(group)
@@ -205,8 +200,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             sender=self.scope['user'],
             recipient=get_user_model().objects.get(id=recipient_id),
             time=timezone.localtime().time(),
-            msg=message
-        )
+            msg=message)
 
         async_to_sync(self.channel_layer.group_send)(
             f'inbox_{recipient_id}', {
