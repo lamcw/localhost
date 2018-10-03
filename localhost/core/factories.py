@@ -1,12 +1,12 @@
 import datetime
 
 import factory
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
-from localhost.core import models
 from localhost.authentication.factories import UserFactory
+from localhost.core import models
 
 User = get_user_model()
 
