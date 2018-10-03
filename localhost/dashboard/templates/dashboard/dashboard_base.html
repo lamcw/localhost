@@ -56,7 +56,7 @@
       </div>
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
         <div class="panel p-2">
-          <a class="btn btn-secondary" href="{% url 'core:profile' request.user.id %}">View Public Profile</a>
+          <a class="btn btn-secondary" href="{% url 'core:profile' user.id %}">View Public Profile</a>
           <form id="change-bio" method="post" class="profile p-2 w-100" action="{% url 'dashboard:dashboard' %}">
             {% csrf_token %}
             <div class="form-group">
@@ -100,7 +100,7 @@
       </div>
       <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
         <div class="accordion w-100" id="accordion">
-          {% for property in request.user.property_set.all %}
+          {% for property in user.property_set.all %}
           <div class="card w-100">
             <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
               <h5 class="mb-0 pl-2">
@@ -139,7 +139,7 @@
       </div>
       <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="wallet" role="tabpanel">
         <form id="change-wallet" method="post" class="wallet panel" action="{% url 'dashboard:dashboard' %}">
-          <p><u>Current balance:</u> ${{ request.user.credits }}</p>
+          <p><u>Current balance:</u> ${{ user.credits }}</p>
           {% csrf_token %}
           {% for field in forms.wallet %}
           {% include "core/include/form_field.html" with form=forms.wallet field=field %}
@@ -157,7 +157,7 @@
 {% block js %}
 <script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
-  var self = {{ request.user.id }};
+  var self = {{ user.id }};
   var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
   csocket.open();
 
