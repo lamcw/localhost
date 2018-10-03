@@ -21,13 +21,13 @@
       {% for property in property_list %}
         <div class="col-md-4 mb-4">
           <div class="card box-shadow h-100">
-            <img class="card-img-top" src="https://a0.muscache.com/4ea/air/v2/pictures/9e0349e6-cc24-4590-a20c-9cf94d1c34c8.jpg" alt="Card image cap">
+            <img class="card-img-top" src="{{property.images.all.0.img.url}}"  alt="Card image cap">
             <div class="card-body">
               <h4 class="card-title">{{ property.title }}</h4>
               <small class="text-muted">{{ property.address }}</small>
             </div>
             <div class="card-footer text-center">
-              <small class="text-muted">  
+              <small class="text-muted">
                 <a href="{{ property.get_absolute_url }}" type="button" class="btn">View</a>
               </small>
             </div>
