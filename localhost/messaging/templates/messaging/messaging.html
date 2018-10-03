@@ -1,31 +1,80 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 
 <div id="conversation-module" class="messaging-module container-fluid d-flex flex-column flex-grow-1 justify-content-center">
-  <div id="conversation-control-bar" class="d-flex flex-row">
-    <select class="selectpicker" data-show-subtext="true" data-live-search="true">
-      <option data-subtext="Rep California">Tom Foolery</option>
-      <option data-subtext="Sen California">Bill Gordon</option>
-      <option data-subtext="Sen Massacusetts">Elizabeth Warren</option>
-      <option data-subtext="Rep Alabama">Mario Flores</option>
-      <option data-subtext="Rep Alaska">Don Young</option>
-    </select>
-  </div>
-  <ul id="conversation-content" class="d-flex flex-column flex-grow-1">
-    <li class="message-sent align-self-end">
-      <p class="message">This is just a sending message</p>
-    </li>
-    <li class="message-recieved">
-      <p class="message">This is just a recieving message</p>
-    </li>
-  </ul>
-  <div id="conversation-input" class="d-flex flex-row">
-    <textarea class="d-flex flex-col flex-grow-1">
+  <body>
+
+    <div>
+      <ul>
+        {% for contact in contact_list %}
+          <li id="contact-{{contact.id}}">{{contact.first_name}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div>
+
+    {% for conversation in message_list %}
+      <ul>
+        {% for message in conversation %}
+          <li>
+            <span>{{message.time}}</span>
+            <span>{{message.sender.first_name}}</span>
+            <span>{{message.msg}}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+    </div>
+
+    <textarea id="chat-log" cols="100" rows="20">
+    {% for message in message_list %}
+      {{ message.sender.first_name }}: {{ message.msg }}
+    {% endfor %}
     </textarea>
-  </div>
+    <input id="chat-message-input" type="text" size="100"/><br/>
+    <input id="chat-message-submit" type="button" value="Send"/>
+  </body>
 </div>
+{{message_list}}
+<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
+<script>
+  var roomName = {{ user.id }};
+  var csocket = new ClientSocket('ws://' + window.location.host + '/ws/realtime/');
+  csocket.open();
+
+  var handler = function(data) {
+    var user = data.user.name;
+    var message = data.message;
+    document.querySelector('#chat-log').value += (user + ': ' + message + '\n');
+  }
+
+  csocket.register_handler('message', handler);
+  csocket.subscribe('inbox', roomName);
+
+  document.querySelector('#chat-message-input').focus();
+  document.querySelector('#chat-message-input').onkeyup = function(e) {
+      if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+      }
+  };
+
+  document.querySelector('#chat-message-submit').onclick = function(e) {
+      var messageInputDom = document.querySelector('#chat-message-input');
+      var message = messageInputDom.value;
+      var recipient_id = 2
+      console.log(recipient_id);
+      console.log(message)
+      if (message) {
+        csocket.message(recipient_id, message)
+      }
+      messageInputDom.value = '';
+  };
+
+</script>
 
 {% include "core/include/footer.html" %}
 {% endblock %}
@@ -33,3 +82,4 @@
 {% block js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 {% endblock %}
+

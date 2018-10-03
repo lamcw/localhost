@@ -12,7 +12,8 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
-from localhost.core.models import Bid, BiddingSession, PropertyItem, Message
+from localhost.core.models import Bid, BiddingSession, PropertyItem
+from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
 

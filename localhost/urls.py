@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('localhost.authentication.urls')),
     path('dashboard/', include('localhost.dashboard.urls')),
     path('report/', include('localhost.report.urls')),
+    path('messages/', include('localhost.messaging.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
   + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
