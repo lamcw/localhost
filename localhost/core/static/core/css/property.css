@@ -52,7 +52,7 @@ small {
 }
 
 /* --for mobile-- */
-.carousel.slide.ttb {
+img {
   width: 100%;
 }
 
@@ -87,9 +87,9 @@ small {
 .modal-close,
 .modal-close:hover {
   display: none;
-  position: fixed; 
+  position: fixed;
   bottom: 20px;
-  right: 20px; 
+  right: 20px;
   margin-bottom: 0;
   z-index: 3000 !important;
 }
@@ -113,8 +113,8 @@ small {
     max-width: 750px;
   }
 
-  .carousel.slide.ttb {
-    width: calc(100%/5); 
+  img {
+    width: calc(100%/5);
     min-width: calc(100%/5);
   }
 
