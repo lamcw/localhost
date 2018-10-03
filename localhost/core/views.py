@@ -21,7 +21,7 @@ class PropertyDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         property = self.get_object()
         property_item = property.property_item.all()[0]
-        if property_item:
+        if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
         return context
 
