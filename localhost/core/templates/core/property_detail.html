@@ -60,15 +60,10 @@
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#map-modal">
             Map
           </button>
-          <a href="#">
-            <button type="button" class="btn btn-secondary">
-              Message Owner
-            </button>
-            <form id="id" method="get" action="{% url 'core:messages' %}">
-              <input type="hidden" id="recipient" name="recipient" value="{{property.host.id}}">
-              <input type="submit" value="Send Message">
-            </form>
-          </a>
+          <form id="id" method="get" action="{% url 'core:messages' %}">
+            <input type="hidden" id="recipient" name="recipient" value="{{property.host.id}}">
+            <button class="btn btn-secondary" type="submit">Message Owner</button>
+          </form>
         </div>
       </div>
     </div>
@@ -139,7 +134,7 @@
       <!-- Price -->
       <div class="align-self-center p-1">
         <span id="bid-current-{{item.id}}">
-        {{ item.current_price }}
+          {{ item.current_price }}
         </span>
       </div>
       <!-- View button -->
@@ -322,18 +317,18 @@
 
   csocket.register_handler('bid', handler);
   {% for property_item in property.property_item.all %}
-    csocket.subscribe('property_item', {{property_item.id}});
+  csocket.subscribe('property_item', {{property_item.id}});
   {% endfor %}
 </script>
 <script>
-function sendBid (button) {
-  var amount = $('#amount-ttb-' + button.id).val()
-  if (amount) {
-    if (!isNaN(amount)) {
-      csocket.bid(button.id, amount);
+  function sendBid (button) {
+    var amount = $('#amount-ttb-' + button.id).val()
+    if (amount) {
+      if (!isNaN(amount)) {
+        csocket.bid(button.id, amount);
+      }
     }
   }
-}
 </script>
 <script>
   function initMap() {
