@@ -122,6 +122,11 @@ To export data in database,
 ./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
 ```
 
+To export data in database,
+```sh
+./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
+```
+
 #### Testing
 
 To run the tests you must specify the batch size used for the testing database:
