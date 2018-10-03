@@ -43,6 +43,10 @@ small {
   margin: 0;
 }
 
+.items {
+  margin-top: 1.5rem;
+}
+
 .items > div:nth-of-type(odd) {
   background-color: white;
 }
@@ -68,15 +72,8 @@ img {
 .card-body {
   flex-direction: column;
 }
+
 /* --end for mobile-- */
-
-.divider {
-   border: 1px solid grey;
-   width: 100%;
-   margin-top: .75rem;
-   margin-bottom: .75rem;
-}
-
 .inline-divider {
   border: 1px solid rgba(0, 0, 0, 0.125);
 }
