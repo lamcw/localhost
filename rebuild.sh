@@ -63,12 +63,7 @@ fi
 tput setaf 5; echo "Dropping database..."
 dropdb $1
 
-if [ $s = y ]; then
-    # server fix because Ubuntu package maintainers need to be euthanized
-    fd migrations | grep localhost | xargs rm -rf || true
-else
-    find . -name "migrations" | grep localhost | xargs rm -rf || true
-fi
+find . -name "migrations" | grep localhost | xargs rm -rf || true
 
 tput setaf 5; echo "Creating database..."
 createdb $1
