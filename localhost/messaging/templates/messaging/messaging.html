@@ -41,7 +41,7 @@
             <li class="incoming p-2">
             {% endif %}
               <p class="m-0">{{ message.msg }}</p>
-              <small class="text-muted">{{ message.time }}</small>
+              <small class="text-muted">{{ message.time|date:"M d, P" }}</small>
             </li>
             {% endfor %}
           </ul>
