@@ -202,6 +202,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             recipient=get_user_model().objects.get(id=recipient_id),
             time=timezone.localtime().time(),
             msg=message)
+        recipient = get_user_model().objects.get(id=recipient_id)
 
         async_to_sync(self.channel_layer.group_send)(
             f'inbox_{recipient_id}', {
@@ -210,9 +211,13 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 'data': {
                     'message': message_object.msg,
                     'time': str(message_object.time),
-                    'user': {
+                    'sender': {
                         'id': self.scope['user'].id,
                         'name': self.scope['user'].first_name
+                    },
+                    'recipient': {
+                        'id': recipient_id,
+                        'name': recipient.first_name
                     }
                 }
             })
@@ -224,9 +229,13 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 'data': {
                     'message': message_object.msg,
                     'time': str(message_object.time),
-                    'user': {
+                    'sender': {
                         'id': self.scope['user'].id,
                         'name': self.scope['user'].first_name
+                    },
+                    'recipient': {
+                        'id': recipient_id,
+                        'name': recipient.first_name
                     }
                 }
             })
