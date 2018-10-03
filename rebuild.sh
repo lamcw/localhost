@@ -2,8 +2,8 @@
 # saner programming env: these switches turn some bugs into errors
 set -o errexit -o pipefail -o noclobber -o nounset
 
-OPTIONS=Mmsl:
-LONGOPTS=makemigrations,migrate,server,loaddata:
+OPTIONS=Mmsl
+LONGOPTS=makemigrations,migrate,server,loaddata
 
 # -use ! and PIPESTATUS to get exit code with errexit set
 # -temporarily store output to be able to check for errors
@@ -17,7 +17,7 @@ if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
 fi
 eval set -- "$PARSED"
 
-M=n m=n s=n data=-
+M=n m=n s=n l=n
 while true; do
     case "$1" in
         -M|--makemigrations)
@@ -29,13 +29,13 @@ while true; do
             shift
             ;;
         -l|--loaddata)
-            data="$2"
-            shift 2
+            l=y
+            shift
             ;;
         -s|--server)
             s=y
             shift
-            ;; 
+            ;;
         --)
             shift
             break
@@ -91,12 +91,14 @@ if [ $m = y ]; then
     fi
 fi
 
-if [ $data != - ]; then
+data1='testdata'
+data2='propertyimages'
+if [ $l = y ]; then
     tput setaf 5; echo "Loading data..."
     if [ $s = y ]; then
-        ./manage.py loaddata $data --settings localhost.settings_production
+        ./manage.py loaddata $data1 $data2 --settings localhost.settings_production
     else
-        ./manage.py loaddata $data
+        ./manage.py loaddata $data1 $data2
     fi
 fi
 

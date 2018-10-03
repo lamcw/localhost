@@ -112,9 +112,10 @@ $ ./rebuild.sh [database name] -Mmsl [data name]
 * `-M` is short for `--Makemigrations`
 * `-m` is short for `--migrate`
 * `-s` is short for `--server` and should only be used on the server deployment
-* `-l` is short for `--loaddata` and implies a further `[data name]` argument
+* `-l` is short for `--loaddata` and loads both `testdata` and `propertyimages`
 
-This can be used immediately after *Setup* with `./rebuild.sh localhost_db -Mml testdata`.
+This can be used immediately after *Setup* with `./rebuild.sh localhost_db -Mml`.
+If only one of the test sets is required, simply omit `-l` and load the set manually.
 
 #### Testing
 
