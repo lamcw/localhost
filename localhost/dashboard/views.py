@@ -203,6 +203,9 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
                 default=Value(False),
                 output_field=BooleanField()
             ))
+        context['guest_booking_list'] = Booking.objects.prefetch_related() \
+            .filter(property_item__property__host=self.request.user) \
+            .order_by('-earliest_checkin_time')
         return context
 
     def profile_form_valid(self, form):
