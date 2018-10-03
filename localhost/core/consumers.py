@@ -9,8 +9,8 @@ from decimal import Decimal
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
-from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from localhost.core.models import Bid, BiddingSession, PropertyItem
 from localhost.messaging.models import Message
