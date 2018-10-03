@@ -307,7 +307,7 @@
   function initMap() {
     var property = {lat: {{ property.latitude }}, lng: {{ property.longitude }}};
     var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 12, center: property});
+      document.getElementById('map'), {zoom: 14, center: property});
     var marker = new google.maps.Marker({position: property, map: map});
   }
 </script>
