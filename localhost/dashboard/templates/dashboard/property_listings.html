@@ -1,0 +1,30 @@
+{% extends "dashboard/dashboard_base.html" %}
+
+{% block content %}
+<div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
+  <div class="accordion w-100" id="accordion">
+    {% for property in property_list %}
+    <div class="card w-100">
+      <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+        <h5 class="mb-0 pl-2">
+          <div class="d-inline">
+            <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
+              <strong class="text-primary">{{ property.title }}</strong>
+            </a>
+            <div class="d-inline float-right">
+              <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
+            </div>
+            <small class="d-block text-secondary">
+              {{ property.address }}
+            </small>
+          </div>
+        </h5>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="align-self-end p-2">
+    <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
+  </div>
+</div>
+{% endblock %}

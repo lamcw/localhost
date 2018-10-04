@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/login.css" %}">
+{% endblock %}
+
+{% block title %} {{ block.super }} - Register {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<form method="post" class="panel" novalidate>
+  <h3 class="">localhost</h3>
+  {% csrf_token %}
+  {% for field in form %}
+    {% if field.label != 'Gender' %}
+      {% include "core/include/form_field.html" with form=form field=field %}
+    {% endif %}
+  {% endfor %}
+  {% for radio in form.gender %}
+    {{ radio.tag }}
+    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+  {% endfor %}
+  {% for error in form.gender.errors %}
+    <div class="invalid-feedback">
+      {{ error|escape }}
+    </div>
+  {% endfor %}
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+</form>
+{% include "core/include/footer.html" %}
+{% endblock %}

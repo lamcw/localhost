@@ -1,0 +1,97 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static "core/css/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+
+{% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container">
+  {% block form %}
+  <form class="panel" enctype="multipart/form-data" method="post" novalidate>
+    {% csrf_token %}
+    <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
+    {% include "dashboard/listing/property_form.html" with form=form image_formset=image_formset %}
+
+    {{ property_item_formset.management_form }}
+    {% for error in property_item_formset.non_form_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endfor %}
+
+    {% for form in property_item_formset %}
+    <div id="property_item-0" class="dynamic-form">
+      <h2>{% block sub_item_title %}New Item{% endblock %}</h2>
+      {% include 'dashboard/listing/property_item_form.html' with form=form %}
+    </div>
+    {% endfor %}
+    <button type="button" class="btn btn-success" onclick="listing_item_clone(); return false;">+ Add Item</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+  </form>
+  {% endblock %}
+</div>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  function update_element_name_id(elem, attr, new_id) {
+    var id_str = elem.prop(attr);
+    id_str = id_str.replace(/\d+/, new_id);
+    elem.prop(attr, id_str);
+  }
+
+  function listing_item_clone() {
+    /* Calculating the next id */
+    var latest_item = $('form .dynamic-form:last');
+    var newid = latest_item.attr('id').match(/\d+$/);
+    newid++;
+
+    /* Constructing the new item form */
+    var new_item = latest_item.clone();
+    new_item.children().each(function(i, elem) {
+      var tag = $(this).prop('tagName').toLowerCase();
+      switch (tag) {
+        case 'label':
+          update_element_name_id($(this), 'for', newid);
+          break;
+        case 'input':
+        case 'textarea':
+          update_element_name_id($(this), 'id', newid);
+          update_element_name_id($(this), 'name', newid);
+          break;
+      }
+    });
+
+    new_item.find('.form-group, .form-check').children().each(function() {
+      var tag = $(this).prop('tagName').toLowerCase();
+      switch (tag) {
+        case 'label':
+          update_element_name_id($(this), 'for', newid);
+          break;
+        case 'input':
+        case 'textarea':
+        case 'select':
+          update_element_name_id($(this), 'id', newid);
+          update_element_name_id($(this), 'name', newid);
+          break;
+      }
+    });
+
+    $('#id_property_item-TOTAL_FORMS').prop('value', newid+1);
+
+    /* Inserting the new item form into the page */
+    update_element_name_id(new_item, 'id', newid);
+    new_item.insertAfter(latest_item);
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/address_search.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activatePlacesSearch"></script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% comment %}
+Populate a standard form field.
+
+Context args:
+  form: form where the field belongs to
+  field: the form field to be populated.
+{% endcomment %}
+{% load widget_tweaks %}
+
+<div class="form-group {{ field_extra_css }}">
+  <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
+  {% if form.is_bound %}
+    {% if field.errors %}
+      {% render_field field class="form-control is-invalid" placeholder=field.label%}
+      {% for error in field.errors %}
+        <div class="invalid-feedback">
+          {{ error|escape }}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% render_field field class="form-control is-valid" placeholder=field.label %}
+    {% endif %}
+  {% else %}
+    {% render_field field class="form-control" placeholder=field.label %}
+  {% endif %}
+
+  {% if field.help_text %}
+    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+  {% endif %}
+</div>

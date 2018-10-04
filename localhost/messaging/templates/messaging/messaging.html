@@ -1,0 +1,124 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/messaging.css" %}">
+{% endblock %}
+
+{% block title %} {{ block.super }} - Messages {% endblock %}
+
+{% block main-flex-wrapper %}
+<div id="main-flex-wrapper" class="container-fluid d-flex flex-column justify-content-between p-0">
+{% endblock %}
+
+{% block body_wrapped %}
+<div class="d-flex flex-row flex-grow-1 justify-content-center p-0 min-height-0">
+  <div class="d-flex flex-column py-3 justify-content-between min-height-0" id="v-pills-tab" role="tablist">
+    <div class="d-flex flex-column list-nav nav nav-pills">
+      <h2 class="text-center p-1">Messages</h2>
+      <span class="header-divider"></span>
+      {% for contact, conversation in conversations %}
+      <a id="contact-{{ contact.id }}" class="nav-link" data-toggle="pill" href="#messages-panel-{{ contact.id }}" role="tab">{{ contact.first_name }}</a>
+      {% endfor %}
+    </div>
+    <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3>
+  </div>
+
+  <div class="bg-light d-flex flex-column flex-grow-1 text-dark min-height-0">
+  {% include "core/include/header.html" %}
+    <div class="tab-content d-flex flex-grow-1 min-height-0" id="v-pills-tabContent">
+      {% for contact, conversation in conversations %}
+      <div class="flex-column flex-grow-1 min-height-0 tab-pane fade" id="messages-panel-{{ contact.id }}" role="tabpanel">
+        <div class="d-flex flex-column flex-grow-1 justify-content-end min-height-0">
+          <ul id="messages-list-{{ contact.id }}" class="messages px-4">
+            {% for message in conversation %}
+            {% if message.sender.id == user.id %}
+            <li class="text-right p-2">
+            {% else %}
+            <li class="incoming p-2">
+            {% endif %}
+              <p class="m-0">{{ message.msg }}</p>
+              <small class="text-muted">{{ message.time|date:"M d, P" }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    <div class="d-flex">
+      <textarea id="chat-message-input" class="w-100" type="text" rows="3"></textarea>
+      <input id="chat-message-submit" class="" type="button" value="Send"/>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
+<script>
+  var roomName = {{ user.id }};
+
+  var uri;
+  if (window.location.protocol === "https:") {
+    uri = "wss";
+  } else {
+    uri = "ws";
+  }
+
+  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
+  csocket.open();
+
+  var handler = function(data) {
+    var user = data.sender.name;
+    var message = data.message;
+    var panelID;
+
+    if (data.sender.id == roomName) {
+      panelID = data.recipient.id;
+    } else {
+      panelID = data.sender.id;
+    }
+
+    if (data.sender.id === roomName) {
+      $("#messages-list-" + panelID).append('<li class="text-right p-2"><p class="m-0">' + message + '</p><small class="text-muted">' + data.time + '</small></li>');
+    } else {
+      $("#messages-list-" + panelID).append('<li class="incoming p-2"><p class="m-0">' + message + '</p><small class="text-muted">' + data.time + '</small></li>');
+    }
+    $('#messages-list-' + panelID).scrollTop($('#messages-list-' + panelID)[0].scrollHeight);
+  }
+
+  csocket.register_handler('message', handler);
+  csocket.subscribe('inbox', roomName);
+
+  document.querySelector('#chat-message-input').focus();
+  document.querySelector('#chat-message-input').onkeyup = function(e) {
+      if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+      }
+  };
+
+  document.querySelector('#chat-message-submit').onclick = function(e) {
+      var messageInputDom = document.querySelector('#chat-message-input');
+      var message = messageInputDom.value;
+      var recipient_id = $('.active').attr('id').match(/\d+$/)[0];
+      console.log("id" + recipient_id);
+      console.log(message)
+      if (message) {
+        csocket.message(recipient_id, message)
+      }
+      messageInputDom.value = '';
+  };
+
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var chatWindow = document.querySelector('.messages');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  });
+</script>
+{% endblock %}
+

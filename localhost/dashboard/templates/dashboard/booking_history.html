@@ -1,0 +1,35 @@
+{% extends "dashboard/dashboard_base.html" %}
+
+{% block content %}
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="booking-history" role="tabpanel">
+  {% if booking_list|length > 0 %}
+  <ul class="list-group w-100 px-2">
+    {% for booking in booking_list %}
+    <li class="list-group-item">
+      <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
+      <div class="d-inline float-right">
+        <span class="mx-2"></span>
+        ${{ booking.price }}
+        <span class="mx-2"></span>
+        {{ booking.earliest_checkin_time|date }}
+        <span class="mx-2"></span>
+        {{ booking.earliest_checkin_time|time }}
+        <span class="mx-2"></span>
+        {{ booking.latest_checkin_time|time }}
+        <span class="mx-2"></span>
+        {% if booking.can_cancel %}
+        <a href="" class="btn">Cancel Booking</a>
+        {% elif booking.reviewed or not booking.passed_one_day %}
+        <button class="btn" disabled>Review</button>
+        {% else %}
+        <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-primary align-self-center">No previous bookings</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
+
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  color: black;
+  background: #f5f5f5;
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.masthead {
+  margin-bottom: 0;
+}
+
+.success-banner .btn,
+.success-banner .btn:hover,
+.success-banner .btn:focus,
+.success-banner .btn:active {
+  color: white;
+}
+
+.success-banner {
+  width: 100%;
+  background: var(--green);
+  text-transform: uppercase;
+  color: white;
+}
+
+.card {
+  box-shadow: none;
+}
+
+small {
+  font-size: 14px !important;
+}
+
+.row {
+  margin: 0;
+}
+
+.items {
+  margin-top: 1.5rem;
+}
+
+.items > div:nth-of-type(odd) {
+  background-color: white;
+}
+
+.items > div:nth-of-type(even) {
+  background-color: #fafafa;
+}
+
+/* --for mobile-- */
+img {
+  width: 100%;
+  height: 100%;
+}
+
+.items > div {
+  flex-direction: column;
+}
+
+#feature-imgs {
+  display: none;
+}
+
+.card-body {
+  flex-direction: column;
+}
+
+/* --end for mobile-- */
+.inline-divider {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+#map {
+  min-height: 20em;
+}
+
+.modal-close,
+.modal-close:hover {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  margin-bottom: 0;
+  z-index: 3000 !important;
+}
+
+.alert {
+  display: none;
+}
+
+@media (min-width: 576px) {
+  .modal-close,
+  .modal-close:hover {
+    bottom: 33px;
+    right: calc(50% - 245px);
+  }
+
+  .modal-lg {
+    width: 500px;
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .modal-lg {
+    width: 750px;
+    max-width: 750px;
+  }
+
+  img {
+    width: calc(100%/5);
+    min-width: calc(100%/5);
+  }
+
+  .items > div {
+    flex-direction: row;
+  }
+
+  #feature-imgs {
+    display: block;
+  }
+
+  .card-body {
+    flex-direction: row;
+  }
+
+  .modal-close,
+  .modal-close:hover {
+    bottom: 33px;
+    right: calc(50% - 370px);
+  }
+}
+
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 970px;
+    max-width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .modal-lg {
+    width: 1170px;
+    max-width: 1170px;
+  }
+}

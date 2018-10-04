@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css?family=Lobster');
+
+.masthead-brand {
+  text-align: center;
+}
+
+.masthead-brand a {
+  color: white;
+  font-family: 'Lobster', cursive;
+}
+
+.nav-masthead .nav-link {
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .5);
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .masthead-brand {
+    float: left;
+  }
+  .nav-masthead {
+    float: right;
+  }
+  .nav-masthead .nav-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %} {{ block.super }} - Review {% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    {% include "core/include/form_field.html" with form=form field=field %}
+    {% endfor %}
+    <input type="submit" value="Save">
+  </form>
+</div>
+
+{% include "core/include/footer.html" %}
+{% endblock %}
