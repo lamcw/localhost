@@ -16,4 +16,21 @@ ul {
 
 textarea {
   resize: none;
+  border: none;
+  overflow-x: hidden;
+}
+
+textarea:focus {
+  border: none;
+  outline: none;
+}
+
+#chat-message-submit {
+  background-color: white;
+  min-width: 5rem;
+  border-radius: 0;
+}
+
+#chat-message-submit:hover {
+  background-color: grey;
 }
