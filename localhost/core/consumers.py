@@ -117,18 +117,25 @@ class BiddingConsumer(BaseConsumer):
         try:
             req = content['type']
             if req == 'bid':
-                property_item_id = content['data']['property_item_id']
+                pk = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
-                self.request_bid(property_item_id, amount)
+                property_item = PropertyItem.objects.get(pk=pk)
+                self.request_bid(property_item, amount)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
+        except PropertyItem.DoesNotExist:
+            logger.exception(
+                'Property item does not exist. JSON may be tampered.')
+        except PropertyItem.MultipleObjectsReturned:
+            logger.exception(
+                'More than one property item found. JSON may be tampered.')
 
-    def request_bid(self, property_item_id, amount):
+    def request_bid(self, property_item, amount):
         """
         Handles a bid request
         """
         time_now = timezone.localtime().time()
-        property_item = PropertyItem.objects.get(id=property_item_id)
+        user = self.scope['user']
 
         try:
             # The minimum next bid is either
@@ -151,7 +158,7 @@ class BiddingConsumer(BaseConsumer):
                     'description': 'Bidding session expired'
                 }
             })
-        elif amount > self.scope['user'].credits:
+        elif amount > user.credits:
             self.send_json({
                 'type': 'alert',
                 'data': {
@@ -170,29 +177,27 @@ class BiddingConsumer(BaseConsumer):
 
         else:
             async_to_sync(self.channel_layer.group_send)(
-                f'property_item_{property_item_id}', {
+                f'property_item_{property_item.id}', {
                     'type': 'propagate',
                     'identifier_type': 'bid',
                     'data': {
-                        'property_item_id': property_item_id,
+                        'property_item_id': property_item.id,
                         'amount': str(amount),
-                        'user_id': self.scope['user'].id
+                        'user_id': user.id
                     }
                 })
 
             if not property_item.bids.exists():
-                self.scope['user'].credits -= amount
-                self.scope['user'].save()
-            elif latest_bid.bidder == self.scope['user']:
-                self.scope['user'].credits -= amount - latest_bid.amount
-                self.scope['user'].save()
+                user.credits -= amount
+            elif latest_bid.bidder == user:
+                user.credits -= amount - latest_bid.amount
             else:
                 latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
-                self.scope['user'].credits -= amount
-                self.scope['user'].save()
+                user.credits -= amount
+            updated_user = user.save()
 
             Bid.objects.create(
                 property_item=property_item,
-                bidder=self.scope['user'],
+                bidder=updated_user,
                 amount=amount)

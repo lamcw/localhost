@@ -30,55 +30,57 @@ class ChatConsumer(BaseConsumer):
             req = content['type']
             if req == 'message':
                 logger.debug(content['data'])
-                recipient_id = content['data']['recipient_id']
+                pk = content['data']['recipient_id']
                 message = content['data']['message']
-                self.request_inbox(recipient_id, message)
+                recipient = User.objects.get(pk=pk)
+                self.request_inbox(recipient, message)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
+        except User.DoesNotExist:
+            logger.exception(
+                'User in request does not exist. JSON may be tampered.')
+        except User.MultipleObjectsReturned:
+            logger.exception('More than one user found. JSON may be tampered.')
 
-    def request_inbox(self, recipient_id, message):
+    def request_inbox(self, recipient, message):
         """
-        Handles a inbox request
+        Handles an inbox request
         """
-        sender_id = self.scope['user'].id
+        sender = self.scope['user']
         time_now = timezone.localtime()
         message_object = Message.objects.create(
-            sender=self.scope['user'],
-            recipient=User.objects.get(id=recipient_id),
-            time=time_now,
-            msg=message)
-        recipient = User.objects.get(id=recipient_id)
+            sender=sender, recipient=recipient, time=time_now, msg=message)
         async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{recipient_id}', {
+            f'inbox_{recipient.id}', {
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
                     'message': message_object.msg,
                     'time': str(time_now),
                     'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
+                        'id': sender.id,
+                        'name': sender.first_name
                     },
                     'recipient': {
-                        'id': recipient_id,
+                        'id': recipient.id,
                         'name': recipient.first_name
                     }
                 }
             })
 
         async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{sender_id}', {
+            f'inbox_{sender.id}', {
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
                     'message': message_object.msg,
                     'time': time_now.strftime("%b %d, %-H:%M %P"),
                     'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
+                        'id': sender.id,
+                        'name': sender.first_name
                     },
                     'recipient': {
-                        'id': recipient_id,
+                        'id': recipient.id,
                         'name': recipient.first_name
                     }
                 }
