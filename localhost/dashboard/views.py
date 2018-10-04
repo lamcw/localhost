@@ -407,5 +407,5 @@ class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
     template_name = 'dashboard/property_item_review.html'
 
     def form_valid(self, form):
-        form.instance.booking = Booking.objects.get(id=self.kwargs.get('pk'))
+        form.instance.booking = Booking.objects.get(pk=self.kwargs.get('pk'))
         return super().form_valid(form)

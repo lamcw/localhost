@@ -49,7 +49,7 @@ class ChatConsumer(BaseConsumer):
         sender = self.scope['user']
         time_now = timezone.localtime()
         message_object = Message.objects.create(
-            sender=sender, recipient=recipient, time=time_now, msg=message)
+            sender=sender, recipient=recipient, msg=message)
         async_to_sync(self.channel_layer.group_send)(
             f'inbox_{recipient.id}', {
                 'type': 'propagate',
