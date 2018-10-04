@@ -1,18 +1,13 @@
-{% extends "dashboard/dashboard_base.html" %}
-{% load widget_tweaks %}
-
-{% block content %}
 <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="security" role="tabpanel">
   <form id="change-password" method="post" class="panel">
     {% csrf_token %}
     <div class="form-group">
-      {% for field in form %}
-      {% include "core/include/form_field.html" with form=form field=field %}
+      {% for field in forms.password_change %}
+      {% include "core/include/form_field.html" with form=forms.password_change field=field %}
       {% endfor %}
     </div>
     <div class="form-group">
-      <input type="submit" value="Apply" class="btn btn-primary"></input>
+      <button type="submit" value="password_change" name="action" class="btn btn-primary">Apply</button>
     </div>
   </form>
 </div>
-{% endblock %}
