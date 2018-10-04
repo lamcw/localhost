@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
-from . import consumers
+from localhost.core import consumers
 
 websocket_urlpatterns = [
-    url(r'^ws/realtime/', consumers.Consumer),
+    path('ws/bid/', consumers.BiddingConsumer)
 ]

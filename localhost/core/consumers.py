@@ -13,9 +13,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from localhost.core.models import Bid, BiddingSession, PropertyItem
-from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
@@ -52,7 +52,7 @@ class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
         return group in self.groups
 
 
-class Consumer(MultiplexJsonWebsocketConsumer):
+class BaseConsumer(MultiplexJsonWebsocketConsumer):
     """
     Generalised variant of MultiplexJsonWebsocketConsumer for use by all
     socket connections.
@@ -69,7 +69,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
     """
 
     def connect(self):
-        if self.scope['user'].is_authenticated:
+        user = self.scope.get('user')
+        if user and user.is_authenticated:
             self.accept()
         else:
             self.close()
@@ -83,32 +84,14 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             elif req == 'unsubscribe':
                 group = content['data']['group']
                 self.request_unsubscribe(group)
-            elif req == 'bid':
-                property_item_id = content['data']['property_item_id']
-                amount = Decimal(content['data']['amount'])
-                self.request_bid(property_item_id, amount)
-            elif req == 'message':
-                logger.debug(content['data'])
-                recipient_id = content['data']['recipient_id']
-                message = content['data']['message']
-                self.request_inbox(recipient_id, message)
-        except KeyError:
-            logger.exception('Invalid JSON format')
+        except KeyError as e:
+            logger.exception('Invalid JSON format.', exc_info=e)
 
     def request_subscribe(self, group):
         """
         Handles a request to subscribe to a group
         """
-
-        sub_message = group.split('_')
-        logger.debug(sub_message)
-        logger.debug(group)
-        logger.debug(self.scope['user'].id)
-        if (sub_message[0] is 'inbox'
-                and sub_message[1] is not self.scope['user'].id):
-            logger.info("failed")
-            self.close()
-        elif not self.is_subscribed(group):
+        if not self.is_subscribed(group):
             self.subscribe(group)
 
     def request_unsubscribe(self, group):
@@ -117,6 +100,28 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
+
+    def propagate(self, event):
+        """
+        Propagates a message to the client
+        """
+        self.send_json({
+            'type': event.get('identifier_type'),
+            'data': event.get('data')
+        })
+
+
+class BiddingConsumer(BaseConsumer):
+    def receive_json(self, content, **kwargs):
+        super().receive_json(content, **kwargs)
+        try:
+            req = content['type']
+            if req == 'bid':
+                property_item_id = content['data']['property_item_id']
+                amount = Decimal(content['data']['amount'])
+                self.request_bid(property_item_id, amount)
+        except KeyError as e:
+            logger.exception('Invalid JSON format.', exc_info=e)
 
     def request_bid(self, property_item_id, amount):
         """
@@ -191,60 +196,3 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 property_item=property_item,
                 bidder=self.scope['user'],
                 amount=amount)
-
-    def request_inbox(self, recipient_id, message):
-        """
-        Handles a inbox request
-        """
-        sender_id = self.scope['user'].id
-        time_now = timezone.localtime()
-        message_object = Message.objects.create(
-            sender=self.scope['user'],
-            recipient=get_user_model().objects.get(id=recipient_id),
-            time=time_now,
-            msg=message)
-        recipient = get_user_model().objects.get(id=recipient_id)
-        async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{recipient_id}', {
-                'type': 'propagate',
-                'identifier_type': 'message',
-                'data': {
-                    'message': message_object.msg,
-                    'time': str(time_now),
-                    'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
-                    },
-                    'recipient': {
-                        'id': recipient_id,
-                        'name': recipient.first_name
-                    }
-                }
-            })
-
-        async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{sender_id}', {
-                'type': 'propagate',
-                'identifier_type': 'message',
-                'data': {
-                    'message': message_object.msg,
-                    'time': time_now.strftime("%b %d, %-H:%M %P"),
-                    'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
-                    },
-                    'recipient': {
-                        'id': recipient_id,
-                        'name': recipient.first_name
-                    }
-                }
-            })
-
-    def propagate(self, event):
-        """
-        Propagates a message to the client
-        """
-        self.send_json({
-            'type': event['identifier_type'],
-            'data': event['data']
-        })
