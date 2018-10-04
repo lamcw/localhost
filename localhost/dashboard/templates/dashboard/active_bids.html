@@ -1,18 +1,15 @@
-{% extends "dashboard/dashboard_base.html" %}
-
-{% block content %}
 <div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
-  {% if property_items|length > 0 %}
+  {% if active_bids %}
   <ul class="list-group w-100 px-2">
-    {% for item in property_items %}
+    {% for item in active_bids %}
     <li class="list-group-item">
       <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
       <div class="d-inline float-right">
-        <span class="mx-2"></span>
-        Your bid: ${{ item.user_bid }}
-        <span class="mx-2"></span>
-        Current bid: ${{ item.current_bid }}
-        <span class="mx-2"></span>
+        <span class="mx-2 divider"></span>
+        Your bid: $<span id="user_bid_item_{{ item.id }}">{{ item.user_bid }}</span>
+        <span class="mx-2 divider"></span>
+        Current bid: $<span id="bid_item_{{ item.id }}">{{ item.current_bid }}</span>
+        <span class="mx-2 divider"></span>
       </div>
     </li>
     {% endfor %}
@@ -21,4 +18,3 @@
   <p class="text-primary align-self-center">No recent activity</p>
   {% endif %}
 </div>
-{% endblock %}

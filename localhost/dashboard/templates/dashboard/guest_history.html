@@ -1,0 +1,14 @@
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="guest-history" role="tabpanel">
+  {% if guest_booking_list %}
+  <ul class="list-group w-100 px-2">
+    {% for booking in guest_booking_list%}
+    <li class="list-group-item">
+      <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
+      <a href="/profile/{{ booking.user.id }}" class="align-middle">{{ booking.user.first_name }}</a>
+      {{ booking.earliest_checkin_time|date }}
+      {{ booking.user.id }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

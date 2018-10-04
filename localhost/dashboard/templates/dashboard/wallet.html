@@ -1,16 +1,12 @@
-{% extends "dashboard/dashboard_base.html" %}
-
-{% block content %}
-<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="security" role="tabpanel">
-  <form id="change-wallet" method="post" class="panel">
-    <p><u>Current balance:</u> ${{ request.user.credits }}</p>
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="wallet" role="tabpanel">
+  <form id="change-wallet" method="post" class="wallet panel" action="{% url 'dashboard:dashboard' %}">
+    <p><u>Current balance:</u> ${{ user.credits }}</p>
     {% csrf_token %}
-    {% for field in form %}
-    {% include "core/include/form_field.html" with form=form field=field %}
+    {% for field in forms.wallet %}
+    {% include "core/include/form_field.html" with form=forms.wallet field=field %}
     {% endfor %}
     <div class="form-group">
-      <input type="submit" class="btn btn-primary" value="Add"></input>
+      <button type="submit" name="action" class="btn btn-primary" value="wallet">Add</button>
     </div>
   </form>
 </div>
-{% endblock %}
