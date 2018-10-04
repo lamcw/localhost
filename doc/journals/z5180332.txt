@@ -6,3 +6,90 @@ board, and BitBucket repository. Managed each of the tasks on Trello and
 assigned them to respective team members. Organised a second meeting to be
 held on Wednesdays. Drafted the abstract, and project methodology sections of
 the proposal document.
+
+# Week 3
+
+The group finished the project proposal. Compiled each of the sections for
+the shared google docs page into a latex file and submitted for the group. Had
+our first out of class meeting on Wednesday to discuss the direction of the
+project. Further disussed what platforms and technologies to use and we decided
+on the bootstrap and django frameworks with AWS for hosting. Everyone committed
+to complete certain tasks within the next two weeks.
+
+# Week 4
+
+Official meetings ran successfully on Wednesday and Thursday. I organised
+another unofficial meeting on Friday night that hopes to run weekly. This
+week the team spent several hours discussing the different conceptual problems
+with the current model and the model was changed accordingly with unanimously
+agreed upon solutions. Steven and I focussed primarly on designing the user
+interfaces and together we sketched a proposed design for each of the website
+pages and presented them to the group for feedback. Together we implemented the
+first version of the website homepage incorporating a search bar and researched
+different APIs that can be used for the location autocomplete the project
+requires.
+
+# Week 5
+
+Official meetings ran successfully on Wednesday and Thursday. The unofficial
+friday night meetings are now running weekly. I worked on the homepage and
+refactored much of the existing code so that the codebase is more modular. I
+added features such as randomly generated search bar placeholder text and
+randomly chosen wallpapers.
+
+# Week 6
+
+Official meetings ran, again, successfully on Wednesday and Thursday. The
+unofficial friday meeting also went ahead. In order to meet the goal of the
+sprint, I proposed another meeting on Sunday and we put in 20+ man hours extra.
+
+This week I refactored the front end to depend on a fluxbox layout and with the
+help of Steven migrated all the previous pages to the new codebase.
+Additionally, I developed the log in, register and password reset pages.
+
+Progress is on track.
+
+# Week 7
+
+During the unofficial Friday meeting this week, the conceptual design and
+problem domain was made stricter to prioritise refined features over being
+feature rich. This was done in a way that still meets the proposal
+specifications but relieves pressure on the developers. I spent several hours
+working through this with the team. A project "codename" was finally decided.
+I also designed a prototype messaging page. Along with Tom, who is working on
+the back end of the project, we designed and implemented the page that allows
+users to create listings.
+
+# Week 8
+
+Official meetings ran on Wednesday and Thursday. The fortnightly demo happened
+the Thursday meeting. This week I merged the front end development branch into
+the primary development branch. In addition, I refactored a number of the pages
+to be significantly more modular and dependent on Django includes. Over the
+week, Ed and I researched different technologies and tools we could use for
+the real time bidding feature of the website. We settled on using Redis over
+Django channels and on Friday night we worked together on a prototype branch
+and implemented a proof of concept. At the end of the week I applied for AWS
+Educate so that we would have access to a server for development, testing and
+the final demonstration.
+
+# Week 9
+
+Official meetings ran as per usual. On Monday, I started, finished, and merged
+a major UI upgrade (12+ consecutive man hours). Later in the week I configured
+the AWS server. I wrote a number of bash scripts to to configure the nginx web
+server, to configure the web server gateway, to restart services, and to
+automate dropping, migrating and repopulation of the database, I also bought a
+domain for the web server (h11a.xyz) and configured the server to use HTTPS
+through the Lets Encrypt platform. During the Wednesday meeting I worked with
+Ed to define the protocol used for socket communication between the clients
+and server.
+
+# Mid-semester break
+
+Over the mid-semester break I investigated different libraries and frameworks
+that could be used for real-time communication. I ended up writing a
+cooperative multiplex socket library in JavaScript and two Python classes for
+the server. Together they enable clients and the server to communicate almost
+instantly. I migrated the current bidding page to use the library. Afterwards,
+I configured the server for Django Channels and enabled SSL for web sockets.

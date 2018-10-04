@@ -9,3 +9,43 @@ Week 3
 
 We finalized and submitted the proposal. I started setting up the project with
 Django framework and PostgreSQL.
+
+Week 4
+
+Had meetings on Wednesday and Thursday. Discussed about problems with our
+current design and how to improve them. We then have a hack night on Friday
+which we have finalized system design and started implementing them. Me and
+Edward created ER model of our system and then mapped them to Django models.
+
+Week 5
+
+Finished backend for user sign up, log in, log out, reset password. Modified
+models to reflect property hierachy, i.e. Property -> Room -> Bed. User can now
+create listings.
+
+Week 6
+
+Listing creation page is completed. Integrated front-end stuff to django
+framework. Wrote extensive tests for models. Modified user model so that we uses
+email to authenticate users.
+
+Week 7
+
+Redesigned most of the model in backend. Migrate changes in model to views and
+templates. Property details could be accessed through URL.
+
+Week 8
+
+Property reviews page is done. Rewrote property search by using natively
+supported SQL expressions and functions. Listing creations backend is finished.
+
+Week 9
+
+Dashboard completed. Helped Jasper with server configuration. Set up test data
+auto-generation for search profiling.
+
+Mid-sem break
+
+Implemented a way so that tasks can be scheduled after a certain period of time.
+This is useful for removing bids after auction ends. Also added factories to
+generate test data. Finished backend for user profile as well.

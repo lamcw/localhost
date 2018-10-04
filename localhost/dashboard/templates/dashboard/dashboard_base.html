@@ -35,135 +35,20 @@
   <div class="bg-light d-flex flex-column flex-grow-1 text-dark">
     {% include "core/include/header.html" %}
     <div class="tab-content d-flex flex-grow-1" id="v-pills-tabContent">
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
-        {% if active_bids %}
-        <ul class="list-group w-100 px-2">
-          {% for item in active_bids %}
-          <li class="list-group-item">
-            <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
-            <div class="d-inline float-right">
-              <span class="mx-2 divider"></span>
-              Your bid: $<span id="user_bid_item_{{ item.id }}">{{ item.user_bid }}</span>
-              <span class="mx-2 divider"></span>
-              Current bid: $<span id="bid_item_{{ item.id }}">{{ item.current_bid }}</span>
-              <span class="mx-2 divider"></span>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-primary align-self-center">No recent activity</p>
-        {% endif %}
-      </div>
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
-        <div class="panel p-2">
-          <a class="btn btn-secondary" href="{% url 'core:profile' user.id %}">View Public Profile</a>
-          <form id="change-bio" method="post" class="profile p-2 w-100" action="{% url 'dashboard:dashboard' %}">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="{{ forms.profile.bio.id_for_label }}">{{ forms.profile.bio.label }}</label>
-              {% render_field forms.profile.bio class="form-control" rows="3" %}
-            </div>
-            <button name="action" class="btn btn-primary" type="submit" value="profile">Apply</button>
-          </form>
-        </div>
-      </div>
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="booking-history" role="tabpanel">
-        {% if booking_list %}
-        <ul class="list-group w-100 px-2">
-          {% for booking in booking_list %}
-          <li class="list-group-item">
-            <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
-            <div class="d-inline float-right">
-              <span class="mx-2 divider"></span>
-              ${{ booking.price }}
-              <span class="mx-2 divider"></span>
-              {{ booking.earliest_checkin_time|date }}
-              <span class="mx-2 divider"></span>
-              {{ booking.earliest_checkin_time|time }}
-              <span class="mx-2 divider"></span>
-              {{ booking.latest_checkin_time|time }}
-              <span class="mx-2 divider"></span>
-              {% if booking.can_cancel %}
-              <a href="" class="btn">Cancel Booking</a>
-              {% elif booking.reviewed or not booking.passed_one_day %}
-              <button class="btn" disabled>Review</button>
-              {% else %}
-              <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
-              {% endif %}
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-primary align-self-center">No previous bookings</p>
-        {% endif %}
-      </div>
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="guest-history" role="tabpanel">
-        {% if guest_booking_list %}
-        <ul class="list-group w-100 px-2">
-          {% for booking in guest_booking_list%}
-          <li class="list-group-item">
-            <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
-            <a href="/profile/{{ booking.user.id }}" class="align-middle">{{ booking.user.first_name }}</a>
-            {{ booking.earliest_checkin_time|date }}
-            {{ booking.user.id }}
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-      <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
-        <div class="accordion w-100" id="accordion">
-          {% for property in user.property_set.all %}
-          <div class="card w-100">
-            <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-              <h5 class="mb-0 pl-2">
-                <div class="d-inline">
-                  <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
-                    <strong class="text-primary">{{ property.title }}</strong>
-                  </a>
-                  <div class="d-inline float-right">
-                    <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
-                  </div>
-                  <small class="d-block text-secondary">
-                    {{ property.address }}
-                  </small>
-                </div>
-              </h5>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        <div class="align-self-end p-2">
-          <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
-        </div>
-      </div>
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="security" role="tabpanel">
-        <form id="change-password" method="post" class="panel">
-          {% csrf_token %}
-          <div class="form-group">
-            {% for field in forms.password_change %}
-            {% include "core/include/form_field.html" with form=forms.password_change field=field %}
-            {% endfor %}
-          </div>
-          <div class="form-group">
-            <button type="submit" value="password_change" name="action" class="btn btn-primary">Apply</button>
-          </div>
-        </form>
-      </div>
-      <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="wallet" role="tabpanel">
-        <form id="change-wallet" method="post" class="wallet panel" action="{% url 'dashboard:dashboard' %}">
-          <p><u>Current balance:</u> ${{ user.credits }}</p>
-          {% csrf_token %}
-          {% for field in forms.wallet %}
-          {% include "core/include/form_field.html" with form=forms.wallet field=field %}
-          {% endfor %}
-          <div class="form-group">
-            <button type="submit" name="action" class="btn btn-primary" value="wallet">Add</button>
-          </div>
-        </form>
-      </div>
+      <!-- Activity -->
+      {% include "dashboard/active_bids.html" %}
+      <!-- Profile -->
+      {% include "dashboard/profile.html" %}
+      <!-- Booking History -->
+      {% include "dashboard/booking_history.html" %}
+      <!-- Guest History -->
+      {% include "dashboard/guest_history.html" %}
+      <!-- Property Listings -->
+      {% include "dashboard/property_listings.html" %}
+      <!-- Settings -->
+      {% include "dashboard/settings.html" %}
+      <!-- Wallet -->
+      {% include "dashboard/wallet.html" %}
     </div>
   </div>
 </div>

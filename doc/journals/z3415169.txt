@@ -1,11 +1,37 @@
 Edward Dai
 
 Week 2
-Agreed to do project 3. Initial idea is to incorporate a meta-search system into the current home rental websites like Airbnb. This would allow users to access properties listed on multiple websites on a single website. Allocated general roles for the project, such as scrum master and who's in charge of front end and back end. Tom and I were allocated back end. Tom and I were also in charge of writing up the epics for the proposal.
+Agreed to do project 3. 
+Initial idea is to incorporate a meta-search system into the current home rental websites like Airbnb. This would allow users to access properties listed on multiple websites on a single website. 
+Allocated general roles for the project, such as scrum master and who's in charge of front end and back end. Tom and I were allocated back end. Tom and I were also in charge of writing up the epics for the proposal.
 
 Week 3
-We changed our concept to a bidding concept for last minute bookings. I wrote initial 6 epics, and Tom corrected my epics and added a few more. Proposal was completed on Saturday and submitted Sunday. 
-
+We changed our concept to a bidding concept for last minute bookings. 
+I wrote initial 6 epics, and Tom corrected my epics and added a few more. Proposal was completed on Saturday and submitted Sunday. 
 
 Week 4
+Setup my working environment. Finished designing the database with Tom. 
+Began coding the backend on Friday night hack sesh. Began implementing our database design into Django. 
 
+Week 5
+Changed database design to incorporate a Property->Room->Bed hierarchy. Tried different implementations of this design using abstraction and inheritance. 
+
+Week 6
+Setup a live messaging system using Django Channels. Working and integrated with backend.
+Messaging put on hold until more important tasks are completed. 
+Began working on filtering the search results by range.
+
+Week 7
+Search results done, sorts all properties by closest distance to search point.
+Filters properties by current session, checkin time, guests and host's earliest and latest checkin times
+
+Week 8
+Bidding module working, search results refined. Added more data to testdata
+
+Week 9
+Began working on messaging, remodelled messaging database
+Bidding will be restructured for multiplexing by Jasper
+
+Mid-sem Break
+Re-wrote backend for bidding and messaging after Jasper added his socket multiplexing library
+Began populating the database with dummy properties, property items and images

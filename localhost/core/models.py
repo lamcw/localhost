@@ -140,8 +140,6 @@ class PropertyItem(models.Model):
         _('description'), max_length=600, help_text=_('Character limit: 600'))
     min_price = models.PositiveIntegerField(
         _('min price'), help_text=_('Starting price of the auction.'))
-    # buyout_price = models.PositiveIntegerField(
-    #     _('buyout price'), help_text=_('Buyout price during auction.'))
     session = models.ManyToManyField(
         BiddingSession,
         verbose_name=_('bidding session'),

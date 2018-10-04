@@ -1,9 +1,6 @@
-{% extends "dashboard/dashboard_base.html" %}
-
-{% block content %}
 <div class="p-2 flex-column flex-grow-1 justify-content-between tab-pane fade" id="listings" role="tabpanel">
   <div class="accordion w-100" id="accordion">
-    {% for property in property_list %}
+    {% for property in user.property_set.all %}
     <div class="card w-100">
       <div class="card-header" id="heading{{ forloop.counter }}" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
         <h5 class="mb-0 pl-2">
@@ -27,4 +24,3 @@
     <a href="{% url 'dashboard:listing-create' %}" class="btn">Add Property</a>
   </div>
 </div>
-{% endblock %}
