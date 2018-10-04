@@ -123,12 +123,14 @@ class BiddingConsumer(BaseConsumer):
                 self.request_bid(property_item, amount)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
-        except PropertyItem.DoesNotExist:
+        except PropertyItem.DoesNotExist as e:
             logger.exception(
-                'Property item does not exist. JSON may be tampered.')
-        except PropertyItem.MultipleObjectsReturned:
+                'Property item does not exist. JSON may be tampered.',
+                exc_info=e)
+        except PropertyItem.MultipleObjectsReturned as e:
             logger.exception(
-                'More than one property item found. JSON may be tampered.')
+                'More than one property item found. JSON may be tampered.',
+                exc_info=e)
 
     def request_bid(self, property_item, amount):
         """

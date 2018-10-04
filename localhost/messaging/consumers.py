@@ -36,11 +36,13 @@ class ChatConsumer(BaseConsumer):
                 self.request_inbox(recipient, message)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
-        except User.DoesNotExist:
+        except User.DoesNotExist as e:
             logger.exception(
-                'User in request does not exist. JSON may be tampered.')
-        except User.MultipleObjectsReturned:
-            logger.exception('More than one user found. JSON may be tampered.')
+                'User in request does not exist. JSON may be tampered.',
+                exc_info=e)
+        except User.MultipleObjectsReturned as e:
+            logger.exception(
+                'More than one user found. JSON may be tampered.', exc_info=e)
 
     def request_inbox(self, recipient, message):
         """
