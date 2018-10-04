@@ -97,12 +97,13 @@
       <!-- Price -->
       <div class="align-self-center p-1">
         <span id="bid-current-{{item.id}}">
-          {{ item.current_price }}
+          ${{ item.current_price }}
         </span>
       </div>
       <!-- View button -->
       <div class="align-self-center p-2">
-        <button type="button" class="btn btn-primary view-item" data-toggle="modal" data-target="#property-item-{{ item.id }}">
+        <span class="mx-2 inline-divider"></span>
+        <button type="button" class="m-0 btn btn-primary view-item" data-toggle="modal" data-target="#property-item-{{ item.id }}">
           View
         </button>
 
@@ -117,7 +118,7 @@
                 </button>
               </div>
               <div class="modal-body">
-                <div class="row">
+                <div class="row m-0">
                   <!-- Property details modules -->
                   <!-- Bidding module -->
                   <div class="col-lg-4 pl-2 order-lg-2">
