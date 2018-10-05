@@ -1,3 +1,21 @@
-.col-md-8 {
-  border-left: 1px solid rgba(0, 0, 0, 0.125);
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  color: black;
+  background: var(--light);
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+li {
+  padding-left: 2.25rem !important;
+  padding-right: 2.25rem !important;
+}
+
+li:nth-child(odd) {
+  background-color: var(--light);
 }
