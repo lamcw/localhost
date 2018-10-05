@@ -68,6 +68,7 @@ img {
 /* --end for mobile-- */
 .inline-divider {
   border: 1px solid rgba(0, 0, 0, 0.125);
+  height: 1.5em;
 }
 
 #map {
@@ -86,6 +87,11 @@ img {
 
 .alert {
   display: none;
+}
+
+a button {
+  max-width: 8em;
+  white-space: normal !important;
 }
 
 @media (min-width: 576px) {
@@ -139,4 +145,9 @@ img {
     width: 1170px;
     max-width: 1170px;
   }
+}
+
+.review {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /*padding-top: 1rem;*/
 }
