@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/localhost
+Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"
+ExecStart=/home/ubuntu/localhost/venv/bin/gunicorn --error-logfile /tmp/gunicorn_error.log --access-logfile /tmp/gunicorn_access.log --capture-output --log-level info --bind unix:/home/ubuntu/localhost.sock localhost.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
