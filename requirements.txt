@@ -20,6 +20,7 @@ django-widget-tweaks==1.4.3
 factory-boy==2.11.1
 Faker==0.9.1
 googlemaps==3.0.2
+gunicorn==19.9.0
 hiredis==0.2.0
 hyperlink==18.0.0
 idna==2.7
