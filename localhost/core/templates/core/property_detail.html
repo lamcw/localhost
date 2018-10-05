@@ -255,12 +255,7 @@
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>
-  var uri;
-  if (window.location.protocol === "https:") {
-    uri = "wss";
-  } else {
-    uri = "ws";
-  }
+  var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
   var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
   csocket.open();

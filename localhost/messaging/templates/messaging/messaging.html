@@ -62,12 +62,7 @@
 <script>
   var roomName = {{ user.id }};
 
-  var uri;
-  if (window.location.protocol === "https:") {
-    uri = "wss";
-  } else {
-    uri = "ws";
-  }
+  var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
   var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/chat/');
   csocket.open();
