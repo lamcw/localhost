@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -15,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class PropertyDetailView(DetailView):
+    """
+    View that shows property and its property items.
+    """
     queryset = Property.objects.prefetch_related('property_item')
 
     def get_context_data(self, **kwargs):
@@ -35,18 +39,8 @@ class PropertyDetailView(DetailView):
             property_item.reviews = reviews.order_by('-rating')
             property_item.rating = reviews.aggregate(
                 Avg('rating'))['rating__avg']
-            now = timezone.localtime()
-            qs1 = BiddingSession.objects.filter(
-                Q(start_time__lte=F('end_time')),
-                Q(start_time__lte=now),
-                end_time__gte=now,
-                propertyitem=property_item)
-            qs2 = BiddingSession.objects.filter(
-                Q(start_time__gt=F('end_time')),
-                Q(start_time__lte=now)
-                | Q(end_time__gte=now),
-                propertyitem=property_item)
-            property_item.current_session = qs1.union(qs2).first()
+            property_item.current_session = \
+                BiddingSession.current_session_of(property_item)
             try:
                 property_item.current_price = \
                     property_item.bids.latest().amount
@@ -60,17 +54,25 @@ class PropertyDetailView(DetailView):
 
 
 class SearchResultsView(ListView):
+    """
+    View that display search results.
+    """
     model = Property
     template_name = 'core/search_results.html'
     paginate_by = 18
 
     def get_queryset(self, **kwargs):
+        """
+        Parses url parameters and display a list of property as a result,
+        sorted by distance, filtered by number of guests, check-in times.
+        """
         args = self.request.GET
         logger.debug(args)
 
         try:
-            latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-            longitude = float(
+            latitude = Decimal(
+                args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            longitude = Decimal(
                 args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
             address = args.get('address')
@@ -125,6 +127,9 @@ class SearchResultsView(ListView):
 
 
 class ProfileView(DetailView):
+    """
+    View that display user public profile.
+    """
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'

@@ -44,6 +44,11 @@ class PropertyForm(ModelForm):
         exclude = ('host', )
 
     def clean(self):
+        """
+        Clean latest_checkin_time and earliest_checkin_time.
+
+        Ensure that earliest_checkin_time < latest_checkin_time.
+        """
         cleaned_data = super().clean()
         earliest_checkin_time = cleaned_data.get('earliest_checkin_time')
         latest_checkin_time = cleaned_data.get('latest_checkin_time')

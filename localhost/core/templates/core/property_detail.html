@@ -279,14 +279,9 @@
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>
-  var uri;
-  if (window.location.protocol === "https:") {
-    uri = "wss";
-  } else {
-    uri = "ws";
-  }
+  var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
+  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
   csocket.open();
 
   var handler = function(data) {
@@ -298,7 +293,7 @@
 
   csocket.register_handler('bid', handler);
   {% for property_item in property.property_item.all %}
-  csocket.subscribe('property_item', {{property_item.id}});
+  csocket.subscribe('property_item', {{ property_item.id }});
   {% endfor %}
 
   var alert_handler = function(data) {

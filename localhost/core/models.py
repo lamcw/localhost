@@ -4,9 +4,11 @@ import logging
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import IntegrityError, models
+from django.db.models import F, Q
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from polymorphic.models import PolymorphicModel
@@ -36,6 +38,21 @@ class Amenity(models.Model):
 class BiddingSession(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+    @classmethod
+    def current_session_of(cls, property_item):
+        now = timezone.localtime().time()
+        qs1 = cls.objects.filter(
+            Q(start_time__lte=F('end_time')),
+            Q(start_time__lte=now),
+            end_time__gte=now,
+            propertyitem=property_item)
+        qs2 = cls.objects.filter(
+            Q(start_time__gt=F('end_time')),
+            Q(start_time__lte=now)
+            | Q(end_time__gte=now),
+            propertyitem=property_item)
+        return qs1.union(qs2).first()
 
     def __str__(self):
         return f"""{self.start_time.strftime('%I:%M %p')} -
@@ -81,10 +98,11 @@ class DistanceManager(models.Manager):
         <QuerySet [<Foo: ...>]>
 
         Args:
-            latitude: latitude of the given location
-            longitude: longitude of the given location
+            latitude: Latitude of the given location
+            longitude: Longitude of the given location
+
         Returns:
-            queryset with annotated distance between the given location and
+            A queryset with annotated distance between the given location and
             objects
         """
         radlat = Radians(latitude)  # given latitude

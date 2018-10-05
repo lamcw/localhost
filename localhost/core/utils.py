@@ -7,7 +7,7 @@ def parse_address(address):
     Parses address using Google Maps Geocode API.
 
     Args:
-        address: address in string
+        address: Address in string
 
     Returns:
         (latitude, longitude)

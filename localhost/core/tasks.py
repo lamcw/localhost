@@ -1,9 +1,11 @@
+"""
+All scheduled tasks in core.
+"""
 import logging
 from datetime import datetime
 
-from django.utils import timezone
-
 from celery import shared_task
+from django.utils import timezone
 from localhost.core.models import Bid, Booking, PropertyItem
 
 logger = logging.getLogger(__name__)
@@ -19,7 +21,7 @@ def cleanup_bids(pk):
     property item.
 
     Args:
-        pk: primary key of the property item
+        pk: Primary key of the property item
     """
     property_item = PropertyItem.objects.get(pk=pk)
     logger.info(f'Cleaning up bids for property item: {property_item.title}')
@@ -50,7 +52,7 @@ def enable_bids(pk):
     Enable bids for a property item at 12:00nn.
 
     Args:
-        pk: primary key of the property item
+        pk: Primary key of the property item
     """
     property_item = PropertyItem.objects.get(pk=pk)
     property_item.available = True
