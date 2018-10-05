@@ -283,6 +283,13 @@
   var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
   csocket.open();
 
+  var notification_handler = function(data) {
+    var notify_class = data.notify_class;
+    var notify_message = data.notify_message;
+    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href="#">' + notify_message + '</a>');
+  }
+  csocket.register_handler('notification', notification_handler);
+
   var handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)
