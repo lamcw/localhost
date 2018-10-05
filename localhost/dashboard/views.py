@@ -254,6 +254,9 @@ class MultiFormsView(TemplateResponseMixin, BaseMultipleFormsView):
 
 
 class DashboardView(LoginRequiredMixin, MultiFormsView):
+    """
+    View that display user dashboard. User must be logged in to see this page.
+    """
     template_name = 'dashboard/dashboard_base.html'
     form_classes = {
         'wallet': WalletForm,
