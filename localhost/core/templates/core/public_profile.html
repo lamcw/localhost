@@ -12,6 +12,10 @@
 {% include "core/include/header.html" %}
 <div class="container-fluid">
   <h1 class="tag-line">{{ user.full_name }}</h1>
+  <form id="id" class="m-0" method="get" action="{% url 'messaging:messages' %}">
+    <input type="hidden" id="recipient" name="recipient" value="{{ user.id }}">
+    <button class="btn btn-secondary" type="submit">Message</button>
+  </form>
   <div class="container-fluid">
     <div class="flex-row">
       <div class="card flex-md-row mb-4 h-md-250">
