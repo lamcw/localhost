@@ -115,10 +115,27 @@
 
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', function(){
+   // Open existing or create new chat if redirected from a property page
+    var url = new URL(window.location.href);
+    var newRecipient = url.searchParams.get("recipient");
+    // console.log(newRecipient);
+    if (newRecipient) {
+      if ($('#contact-' + newRecipient).length == 0) {
+        console.log("need a new tab...");
+        $('#v-pills-tab span').after('<a id="contact-' + newRecipient + '" class="nav-link" data-toggle="pill" href="#messages-panel-' + newRecipient + '" role="tab">');
+        $('#v-pills-tabContent').prepend('<div class="flex-column flex-grow-1 min-height-0 tab-pane fade" id="messages-panel-' + newRecipient + '" role="tabpanel"><div class="d-flex flex-column flex-grow-1 justify-content-end min-height-0"><ul id="messages-list-' + newRecipient + '" class="messages px-4"></ul></div></div>');
+      }
+      $('#contact-' + newRecipient).toggleClass('active show');
+      $('#messages-panel-' + newRecipient).toggleClass('active show');
+    } else {
+      // Else, display first conversation
+      $('#v-pills-tab div').children('a:first').toggleClass('active show');
+      $('#v-pills-tabContent').children(':first').toggleClass('active show');
+    }
+    
+    // Scroll message panels to the bottom (most recent message)
     var chatWindow = document.querySelector('.messages');
     chatWindow.scrollTop = chatWindow.scrollHeight;
-  });
 </script>
 {% endblock %}
 
