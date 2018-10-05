@@ -11,15 +11,13 @@ class MessagingView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['recipient'] = self.request.GET.get('recipient')
-        conversations = []
 
         auth_user = self.request.user
         messages = self.model.objects.filter(
             Q(sender=auth_user) | Q(recipient=auth_user))
         contacts = messages.values('sender', 'recipient').distinct() \
             .exclude(sender=auth_user, recipient=auth_user)
-        for user in contacts:
-            conversation = (user, messages.filter(sender=user, recipient=user))
-            conversations.append(conversation)
+        conversations = [(user, messages.filter(sender=user, recipient=user))
+                         for user in contacts]
         context['conversations'] = conversations
         return context
