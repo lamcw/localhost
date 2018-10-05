@@ -6,7 +6,7 @@
       <a class="nav-link" href="{% url 'authentication:register' %}">Register</a>
       <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
       {% else %}
-      <div class="notifications btn-group">
+      <div id="notifications" class="btn-group">
         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Notifications
         </button>

@@ -21,11 +21,11 @@
   color: white;
 }
 
-.notifications {
+#notifications {
   margin: 0;
 }
 
-.notifications button {
+#notifications button {
   margin: 0;
   font-weight: 700;
   font-size: 1rem;
