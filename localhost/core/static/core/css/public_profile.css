@@ -7,6 +7,15 @@ body {
   font-family: 'Roboto', sans-serif;
   height: 100%;
   color: black;
-  background: #f5f5f5;
+  background: var(--light);
   background: rgba(0, 0, 0, 0.6) !important;
+}
+
+li {
+  padding-left: 2.25rem !important;
+  padding-right: 2.25rem !important;
+}
+
+li:nth-child(odd) {
+  background-color: var(--light);
 }

@@ -12,7 +12,7 @@
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 <div class="d-flex flex-column flex-grow-1">
-  <div class="card mb-4 p-5">
+  <div class="card mb-4 p-4">
     <div class="card-body d-flex flex-column align-items-start">
       <h1 class="align-self-center">{{ user.full_name }}</h1>
       <form id="id" class="m-0 align-self-center" method="get" action="{% url 'messaging:messages' %}">
@@ -29,16 +29,16 @@
     </div>
   </div>
   <div class="card mb-4">
-    <div class="card-body d-flex flex-column">
+    <div class="card-body d-flex flex-column px-0 pb-0">
       <h3 class="m-3 align-self-center">Listings</h3>
       <ul class="list-group w-100 pb-0">
         {% for property in user.property_set.all %}
         <li class="list-group-item">
           <div class="w-100 row m-0">
-            <div class="col-md-4 m-0">
+            <div class="col-md-6 m-0">
               <a href="{{ property.get_absolute_url }}" class="align-middle">{{ property.title }}</a>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6 text-muted">
               {{ property.address }}
             </div>
           </div>
