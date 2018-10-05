@@ -38,7 +38,7 @@ class PropertyDetailView(DetailView):
                 booking__property_item=property_item)
             property_item.reviews = reviews.order_by('-rating')
             property_item.rating = reviews.aggregate(
-                Avg('rating'))['rating__avg']
+                Avg('rating'))['rating__avg'] or 0
             property_item.current_session = \
                 BiddingSession.current_session_of(property_item)
             try:
