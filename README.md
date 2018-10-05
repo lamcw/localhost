@@ -163,6 +163,9 @@ let g:ale_linters = {
 
 Not all the linters provided in the *ALE* documentation are good quality and some may not run well alongside others. Add each linter one at a time and watch for unacceptable performance drops before continuing.
 
+#### Style Guide
+Python code should follow [PEP 8](https://www.python.org/dev/peps/pep-0008/?) and docstring should follow [Google style](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
+
 #### Branches and pull requests
 
 * `master` contains the latest stable release.
