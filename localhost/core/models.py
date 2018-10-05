@@ -11,8 +11,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
-from polymorphic.models import PolymorphicModel
-from polymorphic.showfields import ShowFieldType
 
 logger = logging.getLogger(__name__)
 
@@ -226,25 +224,10 @@ class Booking(models.Model):
         return f"{self.user} booked {self.property_item}"
 
 
-class Review(ShowFieldType, PolymorphicModel):
+class PropertyItemReview(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(choices=[(i, i) for i in range(6)])
     description = models.TextField(_('description'))
-
-    class Meta:
-        abstract = True
-
-
-class PropertyItemReview(Review):
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
-
-
-class UserReview(Review):
-    reviewer = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        related_name='received_reviews')
 
 
 @receiver(m2m_changed, sender=PropertyItem.session.through)
@@ -257,7 +240,8 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
             PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
-                name=f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
+                name=
+                f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
                 args=json.dumps([instance.id]))
     elif action == 'post_remove':
         names = [
