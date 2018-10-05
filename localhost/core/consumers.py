@@ -185,11 +185,13 @@ def check_bid(property_item,
               latest_bid=None):
     current_session = BiddingSession.current_session_of(property_item)
     if not current_session:
-        raise SessionExpiredError('Bidding session expired')
+        raise SessionExpiredError('Bidding session expired.')
     elif (latest_bid and user == latest_bid.bidder
-          and incoming_bid_amount > user.credits + latest_bid.amount
-          or incoming_bid_amount > user.credits):
+          and incoming_bid_amount > user.credits + latest_bid.amount):
         raise WalletOperationError(
-            'Not enough credits! Go to Dashboard to add credits')
+            'Not enough credits! Go to Dashboard to add credits.')
+    elif not latest_bid and incoming_bid_amount > user.credits:
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')
     elif incoming_bid_amount < min_next_bid:
         raise BidAmountError('Your bid is too low.')
