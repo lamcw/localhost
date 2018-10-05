@@ -39,18 +39,8 @@ class PropertyDetailView(DetailView):
             property_item.reviews = reviews.order_by('-rating')
             property_item.rating = reviews.aggregate(
                 Avg('rating'))['rating__avg']
-            now = timezone.localtime()
-            qs1 = BiddingSession.objects.filter(
-                Q(start_time__lte=F('end_time')),
-                Q(start_time__lte=now),
-                end_time__gte=now,
-                propertyitem=property_item)
-            qs2 = BiddingSession.objects.filter(
-                Q(start_time__gt=F('end_time')),
-                Q(start_time__lte=now)
-                | Q(end_time__gte=now),
-                propertyitem=property_item)
-            property_item.current_session = qs1.union(qs2).first()
+            property_item.current_session = \
+                BiddingSession.current_session_of(property_item)
             try:
                 property_item.current_price = \
                     property_item.bids.latest().amount
@@ -64,6 +54,9 @@ class PropertyDetailView(DetailView):
 
 
 class SearchResultsView(ListView):
+    """
+    View that display search results.
+    """
     model = Property
     template_name = 'core/search_results.html'
     paginate_by = 18
@@ -134,6 +127,9 @@ class SearchResultsView(ListView):
 
 
 class ProfileView(DetailView):
+    """
+    View that display user public profile.
+    """
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'

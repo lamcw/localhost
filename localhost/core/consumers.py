@@ -10,8 +10,9 @@ from decimal import Decimal
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 
+from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
+                                       WalletOperationError)
 from localhost.core.models import Bid, BiddingSession, PropertyItem
 
 logger = logging.getLogger(__name__)
@@ -89,21 +90,21 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
 
     def request_subscribe(self, group):
         """
-        Handles a request to subscribe to a group
+        Handles a request to subscribe to a group.
         """
         if not self.is_subscribed(group):
             self.subscribe(group)
 
     def request_unsubscribe(self, group):
         """
-        Handles a request to unsubscribe to a group
+        Handles a request to unsubscribe to a group.
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
 
     def propagate(self, event):
         """
-        Propagates a message to the client
+        Propagates a message to the client.
         """
         self.send_json({
             'type': event.get('identifier_type'),
@@ -134,50 +135,21 @@ class BiddingConsumer(BaseConsumer):
 
     def request_bid(self, property_item, amount):
         """
-        Handles a bid request
+        Handles a bid request.
         """
-        time_now = timezone.localtime().time()
         user = self.scope['user']
-
         try:
             # The minimum next bid is either
             # * The starting price when there are no bids
             # * The next dollar amount if there is a bid
-            latest_bid = property_item.bids.latest('amount')
+            latest_bid = property_item.bids.latest()
             min_next_bid = latest_bid.amount + 1
         except Bid.DoesNotExist:
+            latest_bid = None
             min_next_bid = property_item.min_price
 
-        current_session = BiddingSession.objects.filter(
-            propertyitem=property_item,
-            end_time__gt=time_now,
-            start_time__lte=time_now)
-
-        if not current_session.exists():
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description': 'Bidding session expired'
-                }
-            })
-        elif amount > user.credits:
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description':
-                    'Not enough credits! Go to Dashboard to add credits.'
-                }
-            })
-
-        elif amount < min_next_bid:
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description': 'Your bid is too low.'
-                }
-            })
-
-        else:
+        try:
+            check_bid(property_item, user, amount, min_next_bid, latest_bid)
             async_to_sync(self.channel_layer.group_send)(
                 f'property_item_{property_item.id}', {
                     'type': 'propagate',
@@ -197,9 +169,27 @@ class BiddingConsumer(BaseConsumer):
                 latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
                 user.credits -= amount
-            updated_user = user.save()
+            user.save()
 
             Bid.objects.create(
-                property_item=property_item,
-                bidder=updated_user,
-                amount=amount)
+                property_item=property_item, bidder=user, amount=amount)
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError) as e:
+            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+
+
+def check_bid(property_item,
+              user,
+              incoming_bid_amount,
+              min_next_bid,
+              latest_bid=None):
+    current_session = BiddingSession.current_session_of(property_item)
+    if not current_session:
+        raise SessionExpiredError('Bidding session expired')
+    elif (latest_bid and user == latest_bid.bidder
+          and incoming_bid_amount > user.credits + latest_bid.amount
+          or incoming_bid_amount > user.credits):
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits')
+    elif incoming_bid_amount < min_next_bid:
+        raise BidAmountError('Your bid is too low.')
