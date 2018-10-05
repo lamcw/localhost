@@ -98,10 +98,11 @@ class DistanceManager(models.Manager):
         <QuerySet [<Foo: ...>]>
 
         Args:
-            latitude: latitude of the given location
-            longitude: longitude of the given location
+            latitude: Latitude of the given location
+            longitude: Longitude of the given location
+
         Returns:
-            queryset with annotated distance between the given location and
+            A queryset with annotated distance between the given location and
             objects
         """
         radlat = Radians(latitude)  # given latitude
