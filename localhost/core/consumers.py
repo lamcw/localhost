@@ -71,8 +71,11 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
 
     def connect(self):
         user = self.scope.get('user')
+        notifications_id = 'notifications_' + str(user.id)
+        print(notifications_id)
         if user and user.is_authenticated:
             self.accept()
+            self.request_subscribe(notifications_id)
         else:
             self.close()
 
