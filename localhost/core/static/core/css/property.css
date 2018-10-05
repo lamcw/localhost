@@ -94,6 +94,39 @@ a button {
   white-space: normal !important;
 }
 
+.modal-header {
+  background-color: #4caf50;
+  color: white;
+  border-radius: 0;
+  padding: 1em 1.5em !important;
+}
+
+.modal-header button {
+  padding: 0 0.25em 0 0 !important;
+  margin: 0 !important;
+}
+
+.modal-body {
+  padding: 0 !important;
+}
+
+.property-item-module {
+  padding: 0;
+}
+
+.bidding-module {
+  background-color: #f5f5f5;
+  padding: 0;
+}
+
+.item-description {
+  margin: 0;
+}
+
+.item-amneties {
+  min-width: 5rem;
+}
+
 @media (min-width: 576px) {
   .modal-close,
   .modal-close:hover {
