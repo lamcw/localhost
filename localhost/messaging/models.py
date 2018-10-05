@@ -16,3 +16,6 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['-time']
+
+    def __str__(self):
+        return f'{self.sender}->{self.recipient}: {self.msg}'

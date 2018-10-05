@@ -117,7 +117,7 @@
     if (newRecipient) {
       if ($('#contact-' + newRecipient).length == 0) {
         console.log("need a new tab...");
-        $('#v-pills-tab span').after('<a id="contact-' + newRecipient + '" class="nav-link" data-toggle="pill" href="#messages-panel-' + newRecipient + '" role="tab">' + {{ recipient.first_name }} + '</a>');
+        $('#v-pills-tab span').after('<a id="contact-' + newRecipient + '" class="nav-link" data-toggle="pill" href="#messages-panel-' + newRecipient + '" role="tab"> {{ recipient.first_name }}</a>');
         $('#v-pills-tabContent').prepend('<div class="flex-column flex-grow-1 min-height-0 tab-pane fade" id="messages-panel-' + newRecipient + '" role="tabpanel"><div class="d-flex flex-column flex-grow-1 justify-content-end min-height-0"><ul id="messages-list-' + newRecipient + '" class="messages px-4"></ul></div></div>');
       }
       $('#contact-' + newRecipient).toggleClass('active show');
