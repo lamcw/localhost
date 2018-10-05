@@ -50,25 +50,25 @@
           </li>
           {% endif %}
 
-{% with ''|center:page_obj.paginator.num_pages as range %}
-{% for _ in range %}
-{% if forloop.counter|subtract:page_obj.number < -2 %}
-{% elif forloop.counter|subtract:page_obj.number > 2 %}
-{% else %}
-<li class="page-item {% if page_obj.number == forloop.counter %}active{% endif %}"><a class="page-link" href="?page={{ forloop.counter }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ forloop.counter }}</a></li>
-{% endif %}
-{% endfor %}
-{% endwith %}
+          {% with ''|center:page_obj.paginator.num_pages as range %}
+          {% for _ in range %}
+          {% if forloop.counter|subtract:page_obj.number < -2 %}
+          {% elif forloop.counter|subtract:page_obj.number > 2 %}
+          {% else %}
+          <li class="page-item {% if page_obj.number == forloop.counter %}active{% endif %}"><a class="page-link" href="?page={{ forloop.counter }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ forloop.counter }}</a></li>
+          {% endif %}
+          {% endfor %}
+          {% endwith %}
 
-{% if page_obj.has_next %}
-<li class="page-item">
-  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
-</li>
-{% else %}
-<li class="page-item disabled">
-  <a class="page-link" href="#">Next</a>
-</li>
-{% endif %}
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">Next</a>
+          </li>
+          {% endif %}
         </ul>
       </nav>
     </div>
