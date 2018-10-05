@@ -284,9 +284,7 @@
   csocket.open();
 
   var notification_handler = function(data) {
-    var notify_class = data.notify_class;
-    var notify_message = data.notify_message;
-    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href="#">' + notify_message + '</a>');
+    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href="#">' + data.message + '</a>');
   }
   csocket.register_handler('notification', notification_handler);
 
