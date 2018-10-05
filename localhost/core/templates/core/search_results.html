@@ -24,7 +24,10 @@
             <img class="card-img-top" src="{{property.images.all.0.img.url}}"  alt="Card image cap">
             <div class="card-body">
               <h4 class="card-title">{{ property.title }}</h4>
-              <small class="text-muted">{{ property.address }}</small>
+              <div class="d-flex justify-content-between">
+                <small class="text-muted">{{ property.address }}</small>
+                <small class="text-muted">{{ property.distance|multiply:1000|floatformat:"0" }}m away</small>
+              </div>
             </div>
             <div class="card-footer text-center">
               <small class="text-muted">
@@ -33,7 +36,7 @@
             </div>
           </div>
         </div>
-      {% endfor %}
+        {% endfor %}
       </div>
       <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
