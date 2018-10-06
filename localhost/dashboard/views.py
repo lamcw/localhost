@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, time, timedelta
 
 from django.contrib.auth import update_session_auth_hash
@@ -6,6 +7,7 @@ from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import (BooleanField, Case, Exists, F, Max, OuterRef,
                               Subquery, Value, When)
+from django.db import DataError
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -20,6 +22,7 @@ from localhost.core.models import (Bid, Booking, Property, PropertyImage,
 from localhost.dashboard.forms import (ProfileForm, PropertyForm,
                                        PropertyItemFormSet, WalletForm)
 
+logger = logging.getLogger(__name__)
 
 class MultiFormMixin(ContextMixin):
     """
@@ -354,8 +357,15 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
 
     def wallet_form_valid(self, form):
         recharge = form.cleaned_data.get('recharge_amount')
-        self.request.user.credits = F('credits') + recharge
-        self.request.user.save()
+        user = self.request.user
+        try:
+            user.credits = user.credits + recharge
+            user.save()
+        except DataError:
+            logger.exception('Recharge amount out of range.')
+            form_classes = self.get_form_classes()
+            forms = self.get_forms(form_classes)
+            return self.render_to_response(self.get_context_data(forms=forms))
         return redirect('dashboard:dashboard')
 
 
