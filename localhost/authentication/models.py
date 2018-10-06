@@ -7,6 +7,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+def avatar_img_path(instance, filename):
+    return f"user_{instance.id}/avatar_{filename}"
+
+
 class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """
@@ -47,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, blank=False)
     email = models.EmailField(_('email address'), unique=True, blank=False)
+    avatar = models.ImageField(_('avatar'), upload_to=avatar_img_path)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
