@@ -8,8 +8,8 @@
   font-family: 'Raleway', sans-serif !important;
 }
 
-.tag-lines li:first-child {
-  font-family: 'Lobster', cursive;
+.tag-head {
+  font-family: 'Lobster', cursive !important;
 }
 
 .form-control::placeholder {
