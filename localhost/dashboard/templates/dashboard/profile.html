@@ -4,7 +4,7 @@
     <a class="btn btn-secondary" href="{% url 'core:profile' user.id %}">View Public Profile</a>
     <form id="change-bio" method="post" class="profile p-2 w-100" action="{% url 'dashboard:dashboard' %}">
       {% csrf_token %}
-      <div class="form-group">
+      <div class="form-group mb-0">
         <label for="{{ forms.profile.bio.id_for_label }}">{{ forms.profile.bio.label }}</label>
         {% render_field forms.profile.bio class="form-control" rows="3" %}
       </div>
