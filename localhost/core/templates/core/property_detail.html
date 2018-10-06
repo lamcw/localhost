@@ -40,17 +40,26 @@
             <strong class="text-success">{{ property.address }}</strong>
           </div>
           <p class="mb-1">{{ property.description }}</p>
+          <!-- Button trigger modal -->
           <button type="button" class="btn btn-primary m-0" data-toggle="modal" data-target="#map-modal">
             Map
           </button>
         </div>
-        <div class="align-self-center text-center">
-          <!-- Button trigger modal -->
-          <a href="{% url 'core:profile' property.host.id %}"><button class="btn btn-secondary">View Host Profile</button></a>
-          <form id="id" class="m-0 align-self-center" method="get" action="{% url 'messaging:messages' %}">
-            <input type="hidden" id="recipient" name="recipient" value="{{ user.id }}">
-            <button class="btn btn-primary" type="submit">Send a Message</button>
-          </form>
+        <div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center host">
+          <img class="avatar" src="{{ property.images.all.0.img.url }}">
+          {{ property.host.short_name }}
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">Contact</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'core:profile' property.host.id %}">View host profile</a>
+                <form id="id" class="dropdown-item m-0 py-0" method="get" action="{% url 'messaging:messages' %}">
+                  <input type="hidden" id="recipient" name="recipient" value="{{ user.id }}">
+                  <button class="dropdown-item p-0" type="submit">Send a message</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
