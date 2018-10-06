@@ -1,60 +1,66 @@
 # User Test Template
 ***
 ###### Version 0.1.0 - 06 Oct, 2018
-###### Supervisor:
-###### Tester:
-###### Completion Date:
-###### Completion Time (24HR):
+###### Supervisor: Thomas Lam
+###### Tester: Weilon Ying
+###### Completion Date: 06-10-2018
+###### Completion Time (24HR): 14:00:00
 
 # Instruction Set
 1. **Create a user account and login**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 4
 *Supervisor comments*:
+Didn't know that the date field is for date of birth
 
 2. **Add $150 to your wallet**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 5
 *Supervisor comments*:
 
 3. **Search for a listing in kingsford**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 5
 *Supervisor comments*:
+Search bar is hard to see. Recommendation by user: make background darker.
 
 4. **Submit a bid on first listing in first property in search results**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 3
 *Supervisor comments*:
 
 5. **Find the list of user's currently active bids**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 5
 *Supervisor comments*:
 
 6. **Navigate to the listing that was previously bid on without searching the location**
-*user difficulty rating (out of 5):*
+*user difficulty rating (out of 5):* 5
 *supervisor comments*:
 
 7. **Message owner of the listing previously bid on**
-*user difficulty rating (out of 5):*
+*user difficulty rating (out of 5):* N/A
 *supervisor comments*:
 
 8. **Create a listing**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 4
 *Supervisor comments*:
+Cannot remove property item if accidentally press +add button.
 
 9. **Navigate to the home page**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 5
 *Supervisor comments*:
 
 10. **Find the listing that was created without searching the location**
-*User difficulty rating (Out of 5):*
+*User difficulty rating (Out of 5):* 5
 *Supervisor comments*:
 
 11. **Edit user profile**
-*user difficulty rating (out of 5):*
+*user difficulty rating (out of 5):* 5
 *supervisor comments*:
 
 12. **View user profile**
-*user difficulty rating (out of 5):*
+*user difficulty rating (out of 5):* 5
 *supervisor comments*:
 
 # Overall Thoughts
 *Supervisor comments*:
+User likes the minimalistic design.
+
 *User comments*:
+User suggested to propagate ?next from login to registration.
