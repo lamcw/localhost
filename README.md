@@ -65,7 +65,7 @@ localhost_db=# \q
 $ git clone git@bitbucket.org:jtalowell/localhost.git && cd localhost
 $ python -m venv venv
 $ source venv/bin/activate
-$ (venv) pip install -r requirements.txt
+$ (venv) pip install -r requirements_dev.txt  # use requirements.txt if in production
 ```
 
 #### Celery
@@ -108,12 +108,12 @@ If only one of the test sets is required, simply omit `-l` and load the set manu
 
 To export data in database,
 ```sh
-./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
+./manage.py dumpdata --indent=2 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
 ```
 
 To export data in database,
 ```sh
-./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
+./manage.py dumpdata --indent=2 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
 ```
 
 #### Testing
