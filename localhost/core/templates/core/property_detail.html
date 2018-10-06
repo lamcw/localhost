@@ -46,7 +46,7 @@
           </button>
         </div>
         <div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center host">
-          <img class="avatar" src="{{ property.images.all.0.img.url }}">
+          <img class="avatar" src="{{ user.avatar.url }}">
           {{ property.host.short_name }}
           <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -93,7 +93,7 @@
     </button>
     {% for item in property.property_item.all %}
     <div class="d-flex justify-content-between">
-      <img src="{{ item.images.all.0.img.url }}">
+      <img src="{{ item.images.first.img.url }}">
       <!-- Title, capacity, glyphs -->
       <div class="align-self-center text-center p-2 w-100">
         <h4>{{ item.title }}</h4>
