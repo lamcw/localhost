@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Raleway');
 
 :root {
     --foreground: #c7cece;
@@ -19,6 +19,14 @@ body {
 
 body > .container, body > .container-fluid {
   min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif !important;
+}
+
+p {
+  font-family: 'Roboto', sans-serif !important;
 }
 
 /* Manually importing flex-grow classes from mainline bootstrap */

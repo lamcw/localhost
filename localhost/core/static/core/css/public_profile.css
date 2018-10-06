@@ -1,21 +1,15 @@
-html {
-  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
-  background-size: cover;
-}
+@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto');
 
 body {
-  font-family: 'Roboto', sans-serif;
-  height: 100%;
   color: black;
-  background: var(--light);
-  background: rgba(0, 0, 0, 0.6) !important;
 }
 
-li {
-  padding-left: 2.25rem !important;
-  padding-right: 2.25rem !important;
+.card {
 }
 
-li:nth-child(odd) {
-  background-color: var(--light);
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
 }
