@@ -1,68 +1,60 @@
 # User Test Template
 ***
-###### Version 0.0.1 - 16 Sep, 2018
+###### Version 0.1.0 - 06 Oct, 2018
 ###### Supervisor:
 ###### Tester:
 ###### Completion Date:
 ###### Completion Time (24HR):
 
 # Instruction Set
-1. **Create a user account**
+1. **Create a user account and login**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-2. **Navigate to the dashboard**
+2. **Add $150 to your wallet**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-3. **Add $150 to your wallet**
+3. **Search for a listing in kingsford**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-4. **Search for a listing in kingsford**
+4. **Submit a bid on first listing in first property in search results**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-5. **Navigate to the listing closest to kingsford**
+5. **Find the list of user's currently active bids**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-6. **Navigate to the dashboard**
+6. **Navigate to the listing that was previously bid on without searching the location**
+*user difficulty rating (out of 5):*
+*supervisor comments*:
+
+7. **Message owner of the listing previously bid on**
+*user difficulty rating (out of 5):*
+*supervisor comments*:
+
+8. **Create a listing**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-7. **Find the list of currently active bids**
+9. **Navigate to the home page**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-8. **Navigate to the listing that was previously bid on without searching the location**
+10. **Find the listing that was created without searching the location**
 *User difficulty rating (Out of 5):*
 *Supervisor comments*:
 
-9. **Buy out the listing**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*:
+11. **Edit user profile**
+*user difficulty rating (out of 5):*
+*supervisor comments*:
 
-10. **Navigate to the dashboard**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*:
+12. **View user profile**
+*user difficulty rating (out of 5):*
+*supervisor comments*:
 
-11. **Navigate to the booking history**
-*User difficulty rating (Out of 5):*
+# Overall Thoughts
 *Supervisor comments*:
-
-12. **Leave a review for the property**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*:
-
-13. **Create a listing**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*:
-
-14. **Navigate to the home page**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*:
-
-15. **Find the listing that was created without searching the location**
-*User difficulty rating (Out of 5):*
-*Supervisor comments*: <Paste>
+*User comments*:
