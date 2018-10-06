@@ -33,20 +33,24 @@
   <!-- Description and amneties -->
   <div class="d-flex">
     <div class="card w-100">
-      <div class="card-body d-flex justify-content-between">
+      <div class="card-body d-flex justify-content-between pb-3">
         <div class="d-flex flex-column align-items-start">
           <h3>{{ property.title }}</h3>
           <div class="d-flex flex-row align-items-center">
             <strong class="text-success">{{ property.address }}</strong>
           </div>
-          <p>{{ property.description }}</p>
+          <p class="mb-1">{{ property.description }}</p>
+          <button type="button" class="btn btn-primary m-0" data-toggle="modal" data-target="#map-modal">
+            Map
+          </button>
         </div>
         <div class="align-self-center text-center">
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#map-modal">
-            Map
-          </button>
           <a href="{% url 'core:profile' property.host.id %}"><button class="btn btn-secondary">View Host Profile</button></a>
+          <form id="id" class="m-0 align-self-center" method="get" action="{% url 'messaging:messages' %}">
+            <input type="hidden" id="recipient" name="recipient" value="{{ user.id }}">
+            <button class="btn btn-primary" type="submit">Send a Message</button>
+          </form>
         </div>
       </div>
     </div>
