@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Lobster|Raleway');
 
+html {
+  background: url(../images/alex-king-690219-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
 .tag-lines {
   color: white;
   list-style-type: none;
-  text-align: right;
   padding-bottom: 2rem;
+  text-align: center;
   font-family: 'Raleway', sans-serif !important;
 }
 
