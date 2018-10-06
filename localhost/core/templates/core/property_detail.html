@@ -54,7 +54,7 @@
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'core:profile' property.host.id %}">View host profile</a>
                 <form id="id" class="dropdown-item m-0 py-0" method="get" action="{% url 'messaging:messages' %}">
-                  <input type="hidden" id="recipient" name="recipient" value="{{ user.id }}">
+                  <input type="hidden" id="recipient" name="recipient" value="{{ property_host.id }}">
                   <button class="dropdown-item p-0" type="submit">Send a message</button>
                 </form>
               </div>
