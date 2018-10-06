@@ -5,7 +5,9 @@ import logging
 from datetime import datetime
 
 from celery import shared_task
+from channels.layers import get_channel_layer
 from django.utils import timezone
+
 from localhost.core.models import Bid, Booking, PropertyItem
 
 logger = logging.getLogger(__name__)
@@ -39,6 +41,14 @@ def cleanup_bids(pk):
             price=max_bid.amount,
             earliest_checkin_time=earliest,
             latest_checkin_time=latest)
+        channel_layer = get_channel_layer()
+        channel_layer.group_send(
+            f'notification_{max_bid.bidder_id}', {
+                'type': 'notification',
+                'class': 'success',
+                'message': 'You won a bid!.'
+            }
+        )
         property_item.available = False
         property_item.save()
         property_item.bids.all().delete()
