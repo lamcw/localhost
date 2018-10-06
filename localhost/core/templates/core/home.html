@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/gmaps.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/home.css" %}">
+{% endblock %}
+
+{% block body_wrapped %}
+{% include "core/include/header.html" %}
+<main role="main">
+  <ul class="tag-lines">
+    <li>
+      <h1>We hope you enjoyed your stay at Kingsford!</h1>
+    </li>
+    <li>
+      <h4>Are you ready for your next adventure?</h4>
+    </li>
+  </ul>
+  <div class="input-group stylish-input-group">
+    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Where would you like to go?">
+  </div>
+  <form id="form-search" method="get" action="{% url 'core:search-results' %}">
+    <input type="hidden" id="suburb_search_lat" name="lat" value="">
+    <input type="hidden" id="suburb_search_lng" name="lng" value="">
+  </form>
+</main>
+{% include "core/include/footer.html" %}
+{% endblock %}
+
+{% block js %}
+<script>
+  function activateSearchCallback() {
+    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
+{% endblock %}
