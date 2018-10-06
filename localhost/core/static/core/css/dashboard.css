@@ -16,7 +16,7 @@ form {
 
 .masthead-brand a,
 .nav-link {
-  color: grey !important;
+  color: lightgrey !important;
 }
 
 header .masthead-brand {
@@ -42,7 +42,6 @@ header .masthead-brand {
 }
 
 .list-nav a {
-  color: gray;
   padding-left: 2rem !important;
   padding-right: 2rem !important;
   text-transform: none;
