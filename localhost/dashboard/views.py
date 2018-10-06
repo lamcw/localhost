@@ -1,10 +1,12 @@
+import logging
 from datetime import datetime, time, timedelta
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import (BooleanField, Case, Exists, F, Max, OuterRef,
+from django.db import DataError
+from django.db.models import (BooleanField, Case, Exists, Max, OuterRef,
                               Subquery, Value, When)
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
@@ -19,6 +21,8 @@ from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItemReview)
 from localhost.dashboard.forms import (ProfileForm, PropertyForm,
                                        PropertyItemFormSet, WalletForm)
+
+logger = logging.getLogger(__name__)
 
 
 class MultiFormMixin(ContextMixin):
@@ -40,7 +44,8 @@ class MultiFormMixin(ContextMixin):
     >>>         return {'email':'dave@dave.com'}
 
     >>>     def get_context_data(self, **kwargs):
-    >>>         context = super(SignupLoginView, self).get_context_data(**kwargs)
+    >>>         context = super(SignupLoginView, self) \
+    >>>             .get_context_data(**kwargs)
     >>>         context.update({"some_context_value": 'blah blah blah',
     >>>                         "some_other_context_value": 'blah'})
     >>>         return context
@@ -52,8 +57,8 @@ class MultiFormMixin(ContextMixin):
     >>>         )
 
     >>>     def signup_form_valid(self, form):
-                user = form.save(self.request)
-                return form.signup(self.request, user, self.get_success_url())
+    >>>         user = form.save(self.request)
+    >>>         return form.signup(self.request, user, self.get_success_url())
 
     Attributes:
         form_classes: A dict containing form classes in a view.
@@ -354,8 +359,15 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
 
     def wallet_form_valid(self, form):
         recharge = form.cleaned_data.get('recharge_amount')
-        self.request.user.credits = F('credits') + recharge
-        self.request.user.save()
+        user = self.request.user
+        try:
+            user.credits = user.credits + recharge
+            user.save()
+        except DataError:
+            logger.exception('Recharge amount out of range.')
+            form_classes = self.get_form_classes()
+            forms = self.get_forms(form_classes)
+            return self.render_to_response(self.get_context_data(forms=forms))
         return redirect('dashboard:dashboard')
 
 

@@ -1,8 +1,7 @@
-from decimal import Decimal
-
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -80,8 +79,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=GENDER_CHOICES,
         null=True,
         default=None)
-    credits = models.DecimalField(
-        _('credits'), max_digits=8, decimal_places=2, default=Decimal('0.0'))
+    credits = models.BigIntegerField(
+        _('credits'), default=0, validators=[MinValueValidator(0)])
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

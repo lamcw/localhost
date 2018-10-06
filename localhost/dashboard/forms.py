@@ -72,7 +72,8 @@ class PropertyForm(ModelForm):
 
 
 class WalletForm(forms.Form):
-    recharge_amount = forms.IntegerField(min_value=1)
+    recharge_amount = forms.IntegerField(
+        min_value=1, max_value=9223372036854775807)
 
     class Meta:
         labels = {
