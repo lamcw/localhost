@@ -11,9 +11,16 @@
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 <main role="main">
-  <h3 class="tag-line">Where would you like to stay?</h3>
+  <ul class="tag-lines">
+    <li>
+      <h1>Welcome to the next generation of lodging</h1>
+    </li>
+    <li>
+      <h4>Search &bull; Bid &bull; Stay</h4>
+    </li>
+  </ul>
   <div class="input-group stylish-input-group">
-    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try 'Kingsford'">
+    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try searching for 'Kingsford'">
   </div>
   <form id="form-search" method="get" action="{% url 'core:search-results' %}">
     <input type="hidden" id="suburb_search_lat" name="lat" value="">

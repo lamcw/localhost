@@ -1,15 +1,24 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+:root {
+    --foreground: #c7cece;
+    --background: #2a3432;
+    --accent: #7daab9;
+    --alternative-accent: #dcbdad;
+}
+
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
+
 body {
+  background: rgba(0, 0, 0, 0.4) !important;
   font-family: 'Roboto', sans-serif;
 }
 
-#main-flex-wrapper {
+body > .container {
   min-height: 100vh;
-}
-
-.card {
-  border-radius: 0;
 }
 
 /* Manually importing flex-grow classes from mainline bootstrap */
