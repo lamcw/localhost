@@ -1,21 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lobster|Raleway|Roboto');
 
-html {
-  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
-  background-size: cover;
-}
-
-body {
-  z-index: 1;
-  height: 100%;
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  background: rgba(0, 0, 0, 0.6) !important;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-}
-
 main {
   color: black;
 }
@@ -42,4 +26,19 @@ h4 {
 
 .active a:hover {
   color: white !important;
+}
+
+.card-meta {
+  text-align:right;
+}
+
+.card-meta small {
+  font-size: 1rem !important;
+}
+
+@media (max-width: 575.98px) {
+  .album > .container > .row > .col-md-4 {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
