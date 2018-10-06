@@ -78,12 +78,6 @@ $ (venv) pip install https://github.com/celery/billiard/zipball/master#egg=billi
 $ (venv) pip install https://github.com/celery/py-amqp/zipball/master#egg=amqp
 $ (venv) pip install https://github.com/celery/kombu/zipball/master#egg=kombu
 $ (venv) pip install https://github.com/celery/vine/zipball/master#egg=vine
-# install celery
-$ (venv) git clone https://github.com/celery/celery.git
-$ (venv) cd celery
-$ (venv) python setup.py build
-$ (venv) python setup.py install
-$ (venv) cd .. && rm -rf celery
 ```
 To start the celery service, run:
 ```sh
