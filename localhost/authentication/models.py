@@ -80,8 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=GENDER_CHOICES,
         null=True,
         default=None)
-    credits = models.DecimalField(
-        _('credits'), max_digits=8, decimal_places=2, default=Decimal('0.0'))
+    credits = models.PositiveIntegerField(_('credits'), default=0)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
