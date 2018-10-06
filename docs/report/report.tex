@@ -1,13 +1,24 @@
 \documentclass[a4paper,12pt]{article}
-\usepackage[style=ieee,backend=biber]{biblatex}
+
+\usepackage[style=apa,backend=biber]{biblatex}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
+\lstset{aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
+
 \addbibresource{report.bib}
 
 \begin{document}
 \begin{titlepage}
-  \centering
-  \includegraphics[width=0.4\textwidth]{../unsw.png}\par\vspace{1cm}
+  \centering \includegraphics[width=0.4\textwidth]{../unsw.png}\par\vspace{1cm}
   {\scshape\LARGE University of New South Wales \par}
   \vspace{0.5cm}
   {\scshape\Large COMP3900 \par}
@@ -35,6 +46,8 @@
 \newpage
 \tableofcontents
 \newpage
+
+\include{sections/deployment}
 
 \printbibliography[heading=bibintoc]
 \end{document}

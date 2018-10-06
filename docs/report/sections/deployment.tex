@@ -1,0 +1,108 @@
+\section{Deployment}
+
+\emph{LocalHost} is deployed using \emph{Amazon Web Services} on an \emph{Amazon Elastic Compute Cloud} instance with the following specifications.
+\begin{lstlisting}
+OS: Ubuntu 18.04.1 LTS x86_64
+Host: HVM domU 4.2.amazon
+Kernel: 4.15.0-1023-aws
+CPU: Intel Xeon E5-2676 v3 (1) @ 2.4
+GPU: Cirrus Logic GD 5446
+Memory: 983MiB
+\end{lstlisting}
+
+\subsection{Amazon Web Services Configuration}
+
+After creating an instance, the only port on the server accessible from the internet is \lstinline{22 (SSH)}. For the server to accept web requests, ports \lstinline{80 (HTTP)} and \lstinline{443 (SSL)} must be opened. This can be done by navigating to the dashboard, selecting the running \emph{Amazon Elastic Compute Cloud} instance, and selecting \lstinline{launch-wizard}. A tab will then appear at the bottom of the page and will contain a form that can open ports.
+
+\subsection{Software}
+
+The default user account provided on an \emph{Amazon Elastic Compute Cloud} instance running \emph{Ubuntu} is \lstinline{ubuntu} and the following commands rely on this assumption. Commands requiring sudo privileges are prepended with \lstinline{#} and commmands executed under user permissions are prepended with \lstinline{$}.
+
+\subsubsection{Repository}
+
+To ease updating, an \lstinline{SSH} key will be generated to authenticate the server when accessing the repository.
+\begin{lstlisting}
+$ ssh-keygen -t rsa -b 4096
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+\end{lstlisting}
+After adding \lstinline{/home/ubuntu/.ssh/id_rsa.pub} to \emph{BitBucket} the repository can then be cloned.
+\begin{lstlisting}
+$ git clone git@bitbucket.org:jtalowell/localhost.git /home/ubuntu/localhost
+\end{lstlisting}
+
+\subsubsection{Django \& Immediate Dependencies}
+
+Django and its immediate dependencies must be installed.
+\begin{lstlisting}
+$ cd /home/ubuntu/localhost
+$ python -m venv venv
+$ source venv/bin/activate
+$ (venv) pip install -r requirements.txt
+\end{lstlisting}
+
+\subsubsection{PostgreSQL}
+
+\emph{PostgreSQL} must be installed and it's accompaning system service enabled.
+\begin{lstlisting}
+# apt install postgresql postgresql-contrib
+# systemctl enable postgresql.service
+# systemctl start postgresql.service
+\end{lstlisting}
+The database cluster must be created.
+\begin{lstlisting}
+$ sudo -u postgres -i
+[postgres]$ /usr/lib/postgresql/10/bin/initdb -D '/var/lib/postgresql/data'
+\end{lstlisting}
+A user to administer the database clusted must be created.
+\begin{lstlisting}
+[postgres]$ createuser --interactive
+Enter name of role to add: ubuntu
+Shall the new role be a superuser? (y/n) y
+[postgres]$ exit
+\end{lstlisting}
+The database to use for the project can now be created.
+\begin{lstlisting}
+$ createdb localhost_db
+$ sudo -u postgres -i
+[postgres]$ psql
+postgres=# \password ubuntu
+Enter new password: [DB_PW]
+Enter it again: [DB_PW]
+postgres=# GRANT ALL PRIVILEGES ON DATABASE localhost_db TO ubuntu;
+postgres=# ALTER ROLE ubuntu SET client_encoding TO ``utf8'';
+postgres=# ALTER ROLE ubuntu SET default_transaction_isolation TO ``read committed'';
+postgres=# \q
+[postgres]$ exit
+\end{lstlisting}
+
+\subsubsection{Redis}
+
+\emph{Ubuntu}'s package for \emph{Redis} works without any extended configuration and its services are automatically started and enabled.
+\begin{lstlisting}
+# apt install redis-server
+\end{lstlisting}
+
+\subsubsection{Daphne}
+
+\emph{Daphne} is installed as one of \emph{Django}'s immediate dependencies. The only thing left is to register a service script with \emph{Systemd}.
+\begin{lstlisting}
+# ln -sf /home/ubuntu/localhost/deploy/systemd/daphne.service /etc/systemd/system
+# nano /etc/systemd/system/daphne.service
+\end{lstlisting}
+The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER}, and \lstinline{DB_PW} must be set prior to enabling. Below \lstinline{Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"} add:
+
+\begin{lstlisting}
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+\end{lstlisting}
+
+
+\subsubsection{Gunicorn}
+\subsubsection{NGINX}
+\subsubsection{Maintenance}
+
