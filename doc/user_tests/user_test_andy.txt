@@ -1,0 +1,86 @@
+# User Test Template
+***
+###### Version 0.1.0 - 06 Oct, 2018
+###### Supervisor: Edward
+###### Tester: Andy
+###### Completion Date: 06 Oct
+###### Completion Time (24HR):
+
+# Instruction Set
+1. **Create a user account and login**
+*User difficulty rating (Out of 5):* 3
+*Supervisor comments*:
+Too many security requirements for password
+Should be a pop-up or modal to prompt user that account has been created. Any confirmation.
+Recommends that dob and gender should not be required for signup, but part of profile creation
+that user can do later. Lower barrier of entry
+
+2. **Add $150 to your wallet**
+*User difficulty rating (Out of 5):* 4 for navigation
+*Supervisor comments*:
+Tabs are faint on dashboard, hard for people with poor eyesight to see
+Confirmed for recharge success
+
+3. **Search for a listing in kingsford**
+*User difficulty rating (Out of 5):* 3, could be higher if navigation was clearer
+*Supervisor comments*:
+Needs a clearer home button on dashboard
+The search bar was not distinguishable
+Since enter button doesn't work, instead of saying "Try Kingsford", tell them to select Kingsford or something
+
+4. **Submit a bid on first listing in first property in search results**
+*User difficulty rating (Out of 5):* 3
+*Supervisor comments*:
+Confirmation that bid was succesful
+Listing requires more information
+An actual web-page back button, rather than just the browser back
+Should be clearer that you're the current top bidder
+More description needed for the rooms, detail lacking
+
+5. **Find the list of user's currently active bids**
+*User difficulty rating (Out of 5):* 4
+*Supervisor comments*:
+Activity tab name is bit vague
+Countdown timer for how long until auction ends
+Needs more information: property name, address
+Maybe potential to re-bid on activity page
+
+6. **Navigate to the listing that was previously bid on without searching the location**
+*user difficulty rating (out of 5):* 1
+*supervisor comments*:
+Easy to navigate, but activity page was lacking description
+Refer to comments in 5
+
+7. **Message owner of the listing previously bid on**
+*user difficulty rating (out of 5):* 1
+*supervisor comments*:
+Button to directly message host, instead of going to host profile
+Message should refer to the property that was in question
+
+8. **Create a listing**
+*User difficulty rating (Out of 5):* 2
+*Supervisor comments*:
+Amenities list is slightly unintuitive. Bubbles?
+Headings need to be reworded. New Item needs to be renamed
+
+9. **Navigate to the home page**
+*User difficulty rating (Out of 5):* 2
+*Supervisor comments*:
+
+10. **Find the listing that was created without searching the location**
+*User difficulty rating (Out of 5):* 4
+*Supervisor comments*:
+
+11. **Edit user profile**
+*user difficulty rating (out of 5):* 2
+*supervisor comments*:
+Unclear what you are editing
+
+12. **View user profile**
+*user difficulty rating (out of 5):* 4
+*supervisor comments*:
+
+# Overall Thoughts
+*Supervisor comments*:
+*User comments*:
+First glance, the home page is unclear what the purpose of the site is
