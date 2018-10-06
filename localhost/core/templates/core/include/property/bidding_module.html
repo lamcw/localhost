@@ -1,0 +1,49 @@
+<div class="bidding-module col-lg-4">
+  <div class="flex-row">
+    <div class="card flex-md-row h-md-250">
+      <div class="card-body d-flex flex-column align-items-center">
+        <div class="alert alert-warning" role="alert"></div>
+        {% if item.current_session %}
+        <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
+        <strong class="countdown d-inline-block mb-2 text-warning text-uppercase"></strong>
+        <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
+        <small class="small">
+          {% if item.has_bid and item.highest_bidder == user %}
+          <span id="highest-bidder">
+          </span> You have the highest bid!
+          {% else %}
+          No one has bidded yet!
+          {% endif %}
+        </small>
+        {% else %}
+        <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Closed</strong>
+        {% endif %}
+      </div>
+    </div>
+    {% if item.current_session %}
+    <div class="card flex-md-row">
+      <div class="card-body d-flex flex-column align-items-center">
+        <strong class="d-inline-block">Place Bid</strong>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          {% if user.is_authenticated %}
+          <input id="amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+          <div class="input-group-append">
+            <span class="input-group-text">.00</span>
+          </div>
+          <button id="{{ item.id }}" onclick="sendBid(this)" type="button" class="btn btn-success mb-0">Place</button>
+          {% else %}
+          <input id="amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder="Log in to bid" disabled>
+          <div class="input-group-append">
+            <span class="input-group-text">.00</span>
+          </div>
+          <a href="{% url 'authentication:login' %}?next={{ request.get_full_path }}" role="button" class="btn btn-success mb-0">Log in</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
