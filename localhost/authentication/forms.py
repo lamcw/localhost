@@ -5,10 +5,6 @@ from django.contrib.auth.forms import UserCreationForm
 User = get_user_model()
 
 
-class DatePicker(forms.DateInput):
-    input_type = 'date'
-
-
 class SignUpForm(UserCreationForm):
     class Meta:
         model = User
@@ -18,11 +14,4 @@ class SignUpForm(UserCreationForm):
             'last_name',
             'password1',
             'password2',
-            'avatar',
-            'dob',
-            'gender',
         )
-        widgets = {
-            'dob': DatePicker(),
-            'gender': forms.RadioSelect(),
-        }

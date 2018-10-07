@@ -9,15 +9,25 @@ from localhost.core.utils import parse_address
 User = get_user_model()
 
 
+class DatePicker(forms.DateInput):
+    input_type = 'date'
+
+
 class ProfileForm(ModelForm):
     class Meta:
         model = User
-        fields = ('bio', )
+        fields = (
+            'bio',
+            'dob',
+            'gender',
+        )
         widgets = {
             'bio': forms.Textarea(attrs={
                 'cols': 100,
                 'rows': 3
             }),
+            'dob': DatePicker(),
+            'gender': forms.RadioSelect(),
         }
 
 
