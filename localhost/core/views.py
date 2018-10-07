@@ -133,3 +133,14 @@ class ProfileView(DetailView):
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        born = self.get_object().dob
+        today = timezone.now()
+        if born:
+            context['age'] = today.year - born.year \
+                - ((today.month, today.day) < (born.month, born.day))
+        else:
+            context['age'] = None
+        return context

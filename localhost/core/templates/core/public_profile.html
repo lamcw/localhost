@@ -23,7 +23,12 @@
     <div class="d-flex col-md-6">
       <div class="d-flex flex-column flex-grow-1 justify-content-between">
         <h1>{{ user.full_name }}</h1>
-        <h6>Male &bull; 20</h6>
+        {% if user.gender %}
+        <h6>{{ user.get_gender_display }}</h6>
+        {% endif %}
+        {% if user.dob %}
+        <h6>{{ age }}</h6>
+        {% endif %}
         <p>
           {% if user.bio %}
           {{ user.bio }}
