@@ -8,3 +8,4 @@ clean:
 
 clean_all:
 	$(CC) -C
+	rm *.bbl *.xml

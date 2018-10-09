@@ -39,7 +39,7 @@ $ git clone git@bitbucket.org:jtalowell/localhost.git /home/ubuntu/localhost
 Django and its immediate dependencies must be installed.
 \begin{lstlisting}
 $ cd /home/ubuntu/localhost
-$ python -m venv venv
+$ python3 -m venv venv
 $ source venv/bin/activate
 $ (venv) pip install -r requirements.txt
 \end{lstlisting}
@@ -88,13 +88,14 @@ postgres=# \q
 
 \subsubsection{Daphne}
 
-\emph{Daphne} is installed as one of \emph{Django}'s immediate dependencies. The only thing left is to register a service script with \emph{Systemd}.
+\emph{Daphne} is installed as one of \emph{Django}'s immediate dependencies.
+The only thing
+left is to register a service script with \emph{Systemd}.
 \begin{lstlisting}
 # ln -sf /home/ubuntu/localhost/deploy/systemd/daphne.service /etc/systemd/system
-# nano /etc/systemd/system/daphne.service
+# vim /etc/systemd/system/daphne.service
 \end{lstlisting}
-The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER}, and \lstinline{DB_PW} must be set prior to enabling. Below \lstinline{Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"} add:
-
+The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER}, and \lstinline{DB_PW} must be set for \emph{Daphne} to be able to operate. This can be done by inserting the following lines in the service script.
 \begin{lstlisting}
 Environment="SECRET_KEY=YOUR KEY HERE"
 Environment="DB_USER=ubuntu"
@@ -103,6 +104,29 @@ Environment="DB_PW=YOUR DB PASSWORD HERE"
 
 
 \subsubsection{Gunicorn}
-\subsubsection{NGINX}
-\subsubsection{Maintenance}
 
+\emph{Gunicorn}, like \emph{Daphne}, is installed as one of \emph{Django}'s immediate dependencies. A service script is provided for installation.
+
+\begin{lstlisting}
+# ln -sf /home/ubuntu/localhost/deploy/systemd/gunicorn.service /etc/systemd/system
+# vim /etc/systemd/system/gunicorn.service
+\end{lstlisting}
+The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER}, and \lstinline{DB_PW} must be set for \emph{Gunicorn} to be able to operate. This can be done by inserting the following lines in the service script.
+\begin{lstlisting}
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+\end{lstlisting}
+
+\subsubsection{NGINX}
+
+\begin{lstlisting}
+# apt install nginx
+# systemd enable nginx
+# systemd start nginx
+\end{lstlisting}
+The relevant configuration files can be installed by:
+\begin{lstlisting}
+# /home/ubuntu/localhost/deploy/init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+\end{lstlisting}
+This script will install the NGINX configuration script in the repository and restart all the services for the project.
