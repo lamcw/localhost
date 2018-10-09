@@ -43,9 +43,9 @@
             <div class="card mb-4">
               <div class="card-body d-flex flex-column">
                 <h3>Description</h3>
-                <div class="d-flex justify-content-between">
+                <div class="d-flex flex-md-row justify-content-between">
                   <p class="m-0">{{ item.description }}</p>
-                  <div class="item-amneties">
+                  <div class="ml-2 item-amneties">
                     {% for amenity in item.amenities.all %}
                     <i class="fas {{ amenity.icon|safe }} pr-2"></i>
                     {% endfor %}

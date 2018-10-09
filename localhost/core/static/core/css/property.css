@@ -57,7 +57,7 @@ img {
 }
 
 .modal-header {
-  background-color: #4caf50;
+  background-color: var(--accent);
   color: white;
   border-radius: 0;
   padding: 1em 1.5em !important;
