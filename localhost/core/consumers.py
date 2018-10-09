@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
                                        WalletOperationError)
-from localhost.core.models import Bid, BiddingSession, PropertyItem
+from localhost.core.models import Bid, BiddingSession, PropertyItem, Notification
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -114,6 +114,15 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
         })
 
 
+class NotificationConsumer(BaseConsumer):
+    def receive_json(self, content, **kwargs):
+        super().receive_json(content, **kwargs)
+        req = content['type']
+        if req == 'notification':
+            instruction = content['data']['instruction']
+            if instruction == 'clear':
+                Notification.objects.get(id=content['data']['id']).delete()
+
 class BiddingConsumer(BaseConsumer):
     def receive_json(self, content, **kwargs):
         super().receive_json(content, **kwargs)
@@ -171,6 +180,20 @@ class BiddingConsumer(BaseConsumer):
                 latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
                 user.credits -= amount
+                notification = Notification.objects.create(
+                    user=latest_bid.bidder,
+                    message='O',
+                    property_item=property_item)
+                async_to_sync(self.channel_layer.group_send)(
+                    f'notifications_{latest_bid.bidder.id}', {
+                        'type': 'propagate',
+                        'identifier_type': 'notification',
+                        'data': {
+                            'id': notification.id,
+                            'message': 'You have been outbid!',
+                            'url': '/property/' + str(property_item.id)
+                        }
+                    })
             user.save()
 
             Bid.objects.create(

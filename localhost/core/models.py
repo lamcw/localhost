@@ -229,6 +229,7 @@ class PropertyItemReview(models.Model):
     rating = models.PositiveIntegerField(choices=[(i, i) for i in range(6)])
     description = models.TextField(_('description'))
 
+
 class Notification(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     OUTBID = 'O'
@@ -242,7 +243,9 @@ class Notification(models.Model):
             max_length=1,
             choices=MESSAGE_CHOICES,
     )
+    property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
+
 
 @receiver(m2m_changed, sender=PropertyItem.session.through)
 def property_item_m2m_changed(instance, action, pk_set, **kwargs):

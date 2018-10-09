@@ -9,7 +9,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
 from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview)
+                                   PropertyItemReview, Notification)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
@@ -27,6 +27,8 @@ class PropertyDetailView(DetailView):
         property_item = property.property_item.all()[0]
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
+        if self.request.user.is_authenticated:
+            context['notifications'] = Notification.objects.filter(user=self.request.user)
         return context
 
     def get_object(self, queryset=None):

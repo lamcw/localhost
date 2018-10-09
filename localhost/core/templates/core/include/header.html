@@ -21,7 +21,16 @@
           Notifications
         </button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Template</a>
+          {% if notifications %}
+            {% for notification in notifications %}
+            <div class="d-flex flex-row">
+                <a class="dropdown-item" href="/property/{{notification.property_item.id}}">{{notification.get_message_display}}</a>
+                <button id="button-notification-{{notification.id}}" class="notification-btn btn btn-primary" style="color:black !important;">clear</button>
+            </div>
+            {% endfor %}
+          {% else %}
+          <a class="dropdown-item">None</a>
+          {% endif %}
         </div>
       </div>
       {% if request.path != messages %}
