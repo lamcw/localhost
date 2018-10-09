@@ -1,0 +1,99 @@
+<div class="modal fade" id="property-item-{{ item.id }}" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title px-2">{{ item.title }}</h2>
+        <button type="button" class="close align-self-center" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row m-0">
+          <!-- Property details modules -->
+          <div class="d-flex flex-lg-row">
+            <div class="p-0 col-lg-8">
+              <!-- Slideshow -->
+              <div class="flex-row">
+                <div id="ttb-carousel-{{ item.id }}" class="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">
+                    {% for image in item.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                      <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
+                    </div>
+                    {% empty %}
+                    No images
+                    {% endfor %}
+                  </div>
+                  <a class="carousel-control-prev" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- Bidding module -->
+            {% include "core/include/property/bidding_module.html" %}
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <!-- Description and amneties -->
+            <div class="card mb-4">
+              <div class="card-body d-flex flex-column">
+                <h3>Description</h3>
+                <div class="d-flex flex-md-row justify-content-between">
+                  <p class="m-0">{{ item.description }}</p>
+                  <div class="ml-2 item-amneties">
+                    {% for amenity in item.amenities.all %}
+                    <i class="fas {{ amenity.icon|safe }} pr-2"></i>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Reviews -->
+            <div class="card mb-4">
+              <div class="card-body d-flex flex-column align-items-start">
+                <div class="w-100">
+                  <h3 class="d-inline">Reviews</h3>
+                  <div class="d-inline float-right">
+                    <div class="d-inline pr-4">
+                      Rating:
+                      {% if item.reviews|length > 0 %}
+                      {% with ''|center:item.rating as range %}
+                      {% for _ in range %}
+                      <i class="fas fa-star"></i>
+                      {% endfor %}
+                      {% endwith %}
+                      {% else %}
+                      N/A
+                      {% endif %}
+                      ({{ item.reviews|length }})
+                    </div>
+                  </div>
+                </div>
+                {% for review in item.reviews %}
+                <div class="w-100 review py-3">
+                  <p class="m-0">
+                    {{ review.description }}
+                  </p>
+                  <div class="d-inline float-right m-1">
+                    - {{ review.booking.user.short_name }}
+                    {% with ''|center:review.rating as range %}
+                    {% for _ in range %}
+                    <i class="fas fa-star"></i>
+                    {% endfor %}
+                    {% endwith %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

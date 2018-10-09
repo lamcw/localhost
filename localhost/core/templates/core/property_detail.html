@@ -39,7 +39,7 @@
           <div class="d-flex flex-row align-items-center">
             <strong class="text-success">{{ property.address }}</strong>
           </div>
-          <p class="mb-1">{{ property.description }}</p>
+          <p class="mb-1 d-flex flex-column flex-grow-1">{{ property.description }}</p>
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-primary m-0" data-toggle="modal" data-target="#map-modal">
             Map
@@ -48,8 +48,8 @@
         <div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center host">
           <img class="avatar" src="{{ property.host.avatar.url }}">
           {{ property.host.short_name }}
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
+          <div class="input-group">
+            <div class="input-group-prepend mx-auto">
               <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">Contact</button>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'core:profile' property.host.id %}">View host profile</a>
@@ -64,226 +64,17 @@
       </div>
     </div>
     <div class="align-self-center d-flex flex-column justify-content-between h-100">
-      <!-- Modal -->
-      <div class="modal fade" id="map-modal" tabindex="-1" role="dialog" aria-labelledby="map-modal-label" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="map-modal-label">Property Location</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div id="map"></div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Map modal -->
+      {% include "core/include/property/property_map_modal.html" %}
     </div>
   </div>
-
-  <!-- TTBs -->
-  <div class="items">
-    <button type="button" class="btn btn-primary bmd-btn-fab modal-close">
-      <i class="fas fa-times-circle"></i>
-    </button>
-    {% for item in property.property_item.all %}
-    <div class="d-flex justify-content-between">
-      <img src="{{ item.images.first.img.url }}">
-      <!-- Title, capacity, glyphs -->
-      <div class="align-self-center text-center p-2 w-100">
-        <h4>{{ item.title }}</h4>
-        Capacity: {{ item.capacity }}
-        <span class="mx-2 inline-divider"></span>
-        Amenities:
-        {% for amenity in item.amenities.all %}
-        <i class="fas {{ amenity.icon|safe }}"></i>
-        {% endfor %}
-      </div>
-      <!-- Price -->
-      <div class="align-self-center p-1">
-        <span id="bid-current-{{item.id}}">
-          ${{ item.current_price }}
-        </span>
-      </div>
-      <!-- View button -->
-      <div class="align-self-center p-2 d-flex">
-        <span class="mx-2 inline-divider align-self-center"></span>
-        <button type="button" class="m-0 btn btn-primary view-item" data-toggle="modal" data-target="#property-item-{{ item.id }}">
-          View
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="property-item-{{ item.id }}" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title px-2">{{ item.title }}</h2>
-                <button type="button" class="close align-self-center" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="row m-0">
-                  <!-- Property details modules -->
-                  <div class="property-item-module col-lg-8">
-                    <!-- Slideshow -->
-                    <div class="flex-row">
-                      <div id="ttb-carousel-{{ item.id }}" class="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner">
-                          {% for image in item.images.all %}
-                          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
-                          </div>
-                          {% empty %}
-                          No images
-                          {% endfor %}
-                        </div>
-                        <a class="carousel-control-prev" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Bidding module -->
-                  <div class="bidding-module col-lg-4">
-                    <div class="flex-row">
-                      <div class="card flex-md-row h-md-250">
-                        <div class="card-body d-flex flex-column align-items-center">
-                          <div class="alert alert-warning" role="alert"></div>
-                          {% if item.current_session %}
-                          <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Ends In</strong>
-                          <strong class="countdown d-inline-block mb-2 text-warning text-uppercase"></strong>
-                          <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
-                          <small class="small">
-                            {% if item.has_bid and item.highest_bidder == user %}
-                            <span id="highest-bidder">
-                            </span> You have the highest bid!
-                            {% else %}
-                            No one has bidded yet!
-                            {% endif %}
-                          </small>
-                          {% else %}
-                          <strong class="d-inline-block mx-2 text-success text-uppercase">Auction Closed</strong>
-                          {% endif %}
-                        </div>
-                      </div>
-                      {% if item.current_session %}
-                      <div class="card flex-md-row">
-                        <div class="card-body d-flex flex-column align-items-center">
-                          <strong class="d-inline-block">Place Bid</strong>
-                          <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text">$</span>
-                            </div>
-                            {% if user.is_authenticated %}
-                            <input id="amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-                            <div class="input-group-append">
-                              <span class="input-group-text">.00</span>
-                            </div>
-                            <button id="{{ item.id }}" onclick="sendBid(this)" type="button" class="btn btn-success mb-0">Place</button>
-                            {% else %}
-                            <input id="amount-ttb-{{ item.id }}" type="text" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder="Log in to bid" disabled>
-                            <div class="input-group-append">
-                              <span class="input-group-text">.00</span>
-                            </div>
-                            <a href="{% url 'authentication:login' %}?next={{ request.get_full_path }}" role="button" class="btn btn-success mb-0">Log in</a>
-                            {% endif %}
-                          </div>
-                        </div>
-                      </div>
-                      {% endif %}
-                    </div>
-                  </div>
-                  <div class="row m-0">
-                    <!-- Description and amneties -->
-                    <div class="flex-row">
-                      <div class="card flex-md-row mb-4 h-md-250">
-                        <div class="card-body d-flex justify-content-between">
-                          <p class="item-description">{{ item.description }}</p>
-                          <div class="item-amneties">
-                            {% for amenity in item.amenities.all %}
-                            <i class="fas {{ amenity.icon|safe }} pr-2"></i>
-                            {% endfor %}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Reviews -->
-                    <div class="flex-row">
-                      <div class="card flex-md-row mb-4 h-md-250">
-                        <div class="card-body d-flex flex-column align-items-start">
-                          <div class="w-100">
-                            <h3 class="d-inline">Reviews</h3>
-                            <div class="d-inline float-right">
-                              <div class="d-inline">
-                                Rating:
-                                {% with ''|center:item.rating as range %}
-                                {% for _ in range %}
-                                <i class="fas fa-star"></i>
-                                {% endfor %}
-                                {% endwith %}
-                                ({{ item.reviews|length }})
-                              </div>
-                            </div>
-                          </div>
-                          {% for review in item.reviews %}
-                          <div class="w-100 review py-3">
-                            <p class="m-0">
-                              {{ review.description }}
-                            </p>
-                            <div class="d-inline float-right m-1">
-                              - {{ review.booking.user.short_name }}
-                              {% with ''|center:review.rating as range %}
-                              {% for _ in range %}
-                              <i class="fas fa-star"></i>
-                              {% endfor %}
-                              {% endwith %}
-                            </div>
-                          </div>
-                          {% endfor %}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-
+  <!-- Property item listings -->
+  {% include "core/include/property/property_items.html" %}
 </div>
 {% include "core/include/footer.html" %}
 {% endblock %}
 {% block js %}
-<script>
-  $(".view-item").on("click", function() {
-    var targetID = $(this).data("target");
-    if ($(window).width() < 992) {
-      $(targetID).modal({backdrop: 'static'});
-      $(targetID).on("hide.bs.modal", function() {$(".modal-close").hide()});
-      $(".modal-close").show();
-      $(".modal-close").one("click", function() {
-        $(targetID).modal('hide');
-        $(this).hide();
-      });
-    }
-  });
-</script>
+<script type="text/javascript" src="{% static "core/js/property/mobile_modal_hide.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
@@ -304,8 +95,8 @@
   var handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)
-    $('#bid-current-'+data.property_item_id).text(new_bid);
-    $('#bid-current-modal-'+data.property_item_id).text(new_bid);
+    $('#bid-current-' + data.property_item_id).text(new_bid);
+    $('#bid-current-modal-' + data.property_item_id).text(new_bid);
   }
 
   csocket.register_handler('bid', handler);
