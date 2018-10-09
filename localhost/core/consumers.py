@@ -71,10 +71,8 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
 
     def connect(self):
         user = self.scope.get('user')
-        notifications_id = 'notifications_' + str(user.id)
         if user and user.is_authenticated:
             self.accept()
-            self.request_subscribe(notifications_id)
         else:
             self.close()
 
@@ -178,6 +176,17 @@ class BiddingConsumer(BaseConsumer):
         except (SessionExpiredError, WalletOperationError,
                 BidAmountError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+
+
+class NotificationConsumer(BaseConsumer):
+    def connect(self):
+        user = self.scope.get('user')
+        notifications_id = 'notifications_' + str(user.id)
+        if user and user.is_authenticated:
+            self.accept()
+            self.request_subscribe(notifications_id)
+        else:
+            self.close()
 
 
 def check_bid(property_item,

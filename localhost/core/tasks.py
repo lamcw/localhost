@@ -25,16 +25,17 @@ def cleanup_bids(pk):
     Args:
         pk: Primary key of the property item
     """
-    property_item = PropertyItem.objects.get(pk=pk)
+    property_item = PropertyItem.objects.prefetch_related('bids').get(pk=pk)
     logger.info(f'Cleaning up bids for property item: {property_item.title}')
     try:
         max_bid = property_item.bids.latest()
-        now = timezone.now()
+        today = timezone.now().date()
         earliest = timezone.make_aware(
-            datetime.combine(now,
+            datetime.combine(today,
                              property_item.property.earliest_checkin_time))
         latest = timezone.make_aware(
-            datetime.combine(now, property_item.property.latest_checkin_time))
+            datetime.combine(today,
+                             property_item.property.latest_checkin_time))
         Booking.objects.create(
             user=max_bid.bidder,
             property_item=property_item,
@@ -47,8 +48,7 @@ def cleanup_bids(pk):
                 'type': 'notification',
                 'class': 'success',
                 'message': 'You won a bid!.'
-            }
-        )
+            })
         property_item.available = False
         property_item.save()
         property_item.bids.all().delete()
