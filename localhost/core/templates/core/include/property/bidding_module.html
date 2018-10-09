@@ -1,5 +1,6 @@
 <div class="bidding-module d-flex flex-column flex-grow-1">
   <div class="d-flex flex-column flex-grow-1 justify-content-center">
+
     <div class="card flex-md-row h-md-250">
       <div class="card-body d-flex flex-column align-items-center">
         <div class="alert alert-warning" role="alert"></div>
@@ -20,6 +21,7 @@
         {% endif %}
       </div>
     </div>
+
     {% if item.current_session %}
     <div class="card flex-md-row">
       <div class="card-body d-flex flex-column align-items-center">
@@ -41,12 +43,12 @@
         </div>
       </div>
     </div>
+    {% if user.is_authenticated %}
+    <div class="d-flex flex-column m-0 bg-white px-5">
+      <p class="align-self-center">Buyout price:</p>
+      <button class="btn btn-raised btn-primary bg-accent">Buyout</button>
+    </div>
+    {% endif %}
+    {% endif %}
   </div>
-  {% if user.is_authenticated %}
-  <div class="d-flex flex-column m-0 bg-white px-5">
-    <p class="align-self-center">Buyout price:</p>
-    <button class="btn btn-raised btn-primary bg-accent">Buyout</button>
-  </div>
-  {% endif %}
-  {% endif %}
 </div>
