@@ -44,8 +44,30 @@ p {
   flex-direction: column !important;
 }
 
+.flex-md-row {
+  flex-direction: column !important;
+}
+
+.text-accent {
+  color: var(--accent) !important;
+}
+
+.bg-background {
+  background-color: var(--background) !important;
+}
+
+.bg-accent {
+  background-color: var(--accent) !important;
+}
+
 @media (min-width: 992px) {
   .flex-lg-row {
+    flex-direction: row !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .flex-md-row {
     flex-direction: row !important;
   }
 }
