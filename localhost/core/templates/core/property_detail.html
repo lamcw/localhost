@@ -39,7 +39,7 @@
           <div class="d-flex flex-row align-items-center">
             <strong class="text-success">{{ property.address }}</strong>
           </div>
-          <p class="mb-1">{{ property.description }}</p>
+          <p class="mb-1 d-flex flex-column flex-grow-1">{{ property.description }}</p>
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-primary m-0" data-toggle="modal" data-target="#map-modal">
             Map
@@ -48,7 +48,7 @@
         <div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center host">
           <img class="avatar" src="{{ property.host.avatar.url }}">
           {{ property.host.short_name }}
-          <div class="input-group mb-3">
+          <div class="input-group">
             <div class="input-group-prepend mx-auto">
               <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">Contact</button>
               <div class="dropdown-menu">

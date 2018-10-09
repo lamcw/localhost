@@ -39,3 +39,13 @@ p {
   -ms-flex-positive: 1 !important;
   flex-grow: 1 !important;
 }
+
+.flex-lg-row {
+  flex-direction: column !important;
+}
+
+@media (min-width: 992px) {
+  .flex-lg-row {
+    flex-direction: row !important;
+  }
+}

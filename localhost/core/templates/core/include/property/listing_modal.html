@@ -10,32 +10,34 @@
       <div class="modal-body p-0">
         <div class="row m-0">
           <!-- Property details modules -->
-          <div class="p-0 col-lg-8">
-            <!-- Slideshow -->
-            <div class="flex-row">
-              <div id="ttb-carousel-{{ item.id }}" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                  {% for image in item.images.all %}
-                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
+          <div class="d-flex flex-lg-row">
+            <div class="p-0 col-lg-8">
+              <!-- Slideshow -->
+              <div class="flex-row">
+                <div id="ttb-carousel-{{ item.id }}" class="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">
+                    {% for image in item.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                      <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
+                    </div>
+                    {% empty %}
+                    No images
+                    {% endfor %}
                   </div>
-                  {% empty %}
-                  No images
-                  {% endfor %}
+                  <a class="carousel-control-prev" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
                 </div>
-                <a class="carousel-control-prev" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="sr-only">Next</span>
-                </a>
               </div>
             </div>
+            <!-- Bidding module -->
+            {% include "core/include/property/bidding_module.html" %}
           </div>
-          <!-- Bidding module -->
-          {% include "core/include/property/bidding_module.html" %}
           <div class="row m-0">
             <!-- Description and amneties -->
             <div class="flex-row">
