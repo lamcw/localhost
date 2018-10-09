@@ -50,7 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, blank=False)
     email = models.EmailField(_('email address'), unique=True, blank=False)
-    avatar = models.ImageField(_('avatar'), upload_to=avatar_img_path)
+    avatar = models.ImageField(
+        _('avatar'),
+        upload_to=avatar_img_path,
+        default='default/avatar-placeholder.png')
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
