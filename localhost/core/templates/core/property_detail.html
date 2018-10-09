@@ -95,8 +95,16 @@
   var handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)
-    $('#bid-current-' + data.property_item_id).text(new_bid);
-    $('#bid-current-modal-' + data.property_item_id).text(new_bid);
+    $('#bid-current-' + data.property_item_id).text('$' + new_bid);
+    $('#bid-current-modal-' + data.property_item_id).text('Current bid: $' + new_bid);
+
+    if (data.user_id == {{ user.id }}) {
+      $('#highest-bidder').html('You have the highest bid!');
+      $('#highest-bidder').addClass('font-weight-bold');
+    } else {
+      $('#highest-bidder').html('Someone else has the highest bid!');
+      $('#highest-bidder').removeClass('font-weight-bold');
+    }
   }
 
   csocket.register_handler('bid', handler);

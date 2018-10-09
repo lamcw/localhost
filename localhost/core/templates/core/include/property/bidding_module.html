@@ -6,14 +6,23 @@
         {% if item.current_session %}
         <strong class="d-inline-block mx-2 text-accent text-uppercase">Auction Ends In</strong>
         <strong class="countdown d-inline-block mb-2 text-warning text-uppercase"></strong>
-        <h3>Current bid: $<span id="bid-current-modal-{{ item.id }}">{{ item.current_price }}</span></h3>
+        {% if item.has_bid %}
+        <h3 id="bid-current-modal-{{ item.id }}">Current bid: ${{ item.current_price }}</h3>
+        {% else %}
+        <h3 id="bid-current-modal-{{ item.id }}">Starting bid: ${{ item.current_price }}</h3>
+        {% endif %}
         <small class="small">
           {% if item.has_bid and item.highest_bidder == user %}
+          <span id="highest-bidder" class="font-weight-bold">
+          You have the highest bid!
+          {% elif item.has_bid %}
           <span id="highest-bidder">
-          </span> You have the highest bid!
+          Someone else has the highest bid!
           {% else %}
+          <span id="highest-bidder">
           No one has bidded yet!
           {% endif %}
+          </span>
         </small>
         {% else %}
         <strong class="d-inline-block mx-2 text-uppercase text-accent">Auction Closed</strong>
