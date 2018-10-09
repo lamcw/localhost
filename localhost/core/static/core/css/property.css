@@ -69,7 +69,12 @@ img {
 }
 
 .item-amneties {
-  min-width: 5rem;
+  min-width: 6rem;
+  max-width: 6rem;
+}
+
+.fas {
+  width: 26px !important;
 }
 
 @media (min-width: 576px) {
