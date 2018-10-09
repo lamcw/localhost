@@ -26,7 +26,8 @@ def cleanup_bids(pk):
     Args:
         pk: Primary key of the property item
     """
-    property_item = PropertyItem.objects.prefetch_related('bids').get(pk=pk)
+    property_item = PropertyItem.objects \
+        .prefetch_related('bids', 'property').get(pk=pk)
     logger.info(f'Cleaning up bids for property item: {property_item.title}')
     try:
         max_bid = property_item.bids.latest()
@@ -44,15 +45,16 @@ def cleanup_bids(pk):
             earliest_checkin_time=earliest,
             latest_checkin_time=latest)
         channel_layer = get_channel_layer()
+        logger.info(f'Bid won for {max_bid.bidder.full_name}')
         async_to_sync(channel_layer.group_send)(
             f'notification_{max_bid.bidder_id}', {
                 'type': 'notification',
                 'class': 'success',
                 'message': 'You won a bid!.'
             })
+        property_item.bids.all().delete()
         property_item.available = False
         property_item.save()
-        property_item.bids.all().delete()
     except Bid.DoesNotExist:
         logger.exception('No bids in this session')
 

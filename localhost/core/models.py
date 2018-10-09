@@ -54,8 +54,7 @@ class BiddingSession(models.Model):
         return qs1.union(qs2).first()
 
     def __str__(self):
-        return f"""{self.start_time.strftime('%I:%M %p')} -
-            {self.end_time.strftime('%I:%M %p')}"""
+        return f"""{self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')}"""
 
 
 class Sin(models.Func):
@@ -241,7 +240,9 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
     if action == 'post_add':
         for i, session in enumerate(sessions):
             schedule, _ = CrontabSchedule.objects.get_or_create(
-                minute=session.end_time.minute, hour=session.end_time.hour)
+                minute=session.end_time.minute,
+                hour=session.end_time.hour,
+                timezone=timezone.get_current_timezone())
             PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
@@ -260,7 +261,7 @@ def property_item_pre_save(instance, **kwargs):
     """
     Enable bids every day at 12nn.
     """
-    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12)
+    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12, minute=0)
     try:
         PeriodicTask.objects.get_or_create(
             crontab=schedule,
@@ -278,15 +279,20 @@ def session_pre_save(sender, instance, **kwargs):
     """
     try:
         old_session = sender.objects.get(pk=instance.pk)
-        schedule, _ = CrontabSchedule.objects.get_or_create(
-            minute=old_session.end_time.minute, hour=old_session.end_time.hour)
+        old_schedule, _ = CrontabSchedule.objects.get_or_create(
+            minute=old_session.end_time.minute,
+            hour=old_session.end_time.hour,
+            timezone=timezone.get_current_timezone())
         new_schedule, _ = CrontabSchedule.objects.get_or_create(
-            minute=instance.end_time.minute, hour=instance.end_time.hour)
+            minute=instance.end_time.minute,
+            hour=instance.end_time.hour,
+            timezone=timezone.get_current_timezone())
         PeriodicTask.objects \
             .filter(
-                crontab=schedule,
+                crontab=old_schedule,
                 task='localhost.core.tasks.cleanup_bids') \
             .update(crontab=new_schedule)
+        old_schedule.delete()
         PeriodicTasks.update_changed()
     except sender.DoesNotExist:
         logger.info(f'{instance} not in db. Skipping pre-save actions.')
