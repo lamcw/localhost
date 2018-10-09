@@ -47,13 +47,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     Email, first name, last name and password are required. Other fields are
     optional.
     """
+    DEFAULT_AVATAR_PATH = 'default/avatar-placeholder.png'
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, blank=False)
     email = models.EmailField(_('email address'), unique=True, blank=False)
     avatar = models.ImageField(
-        _('avatar'),
-        upload_to=avatar_img_path,
-        default='default/avatar-placeholder.png')
+        _('avatar'), upload_to=avatar_img_path, default=DEFAULT_AVATAR_PATH)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
