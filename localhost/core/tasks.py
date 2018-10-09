@@ -4,6 +4,7 @@ All scheduled tasks in core.
 import logging
 from datetime import datetime
 
+from asgiref import async_to_sync
 from celery import shared_task
 from channels.layers import get_channel_layer
 from django.utils import timezone
@@ -43,7 +44,7 @@ def cleanup_bids(pk):
             earliest_checkin_time=earliest,
             latest_checkin_time=latest)
         channel_layer = get_channel_layer()
-        channel_layer.group_send(
+        async_to_sync(channel_layer.group_send)(
             f'notification_{max_bid.bidder_id}', {
                 'type': 'notification',
                 'class': 'success',
