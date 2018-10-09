@@ -11,7 +11,7 @@
 
 {% block title %} {{ block.super }} - Dashboard {% endblock %}
 
-{% block main-flex-wrapper %}
+{% block main-container %}
 <div id="main-flex-wrapper" class="container-fluid d-flex flex-column justify-content-between p-0">
 {% endblock %}
 
@@ -21,11 +21,11 @@
     <div class="d-flex flex-column list-nav nav nav-pills">
       <h2 class="text-center p-1">Dashboard</h2>
       <span class="header-divider"></span>
-      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Activity</span></a>
+      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Active Bids</span></a>
       <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"><i class="fas fa-user"></i><span>Profile</span></a>
       <a class="nav-link" id="booking-history-tab" data-toggle="pill" href="#booking-history" role="tab"><i class="fas fa-history"></i><span>Booking History</span></a>
-      <a class="nav-link" id="guest-history-tab" data-toggle="pill" href="#guest-history" role="tab"><i class="fas fa-history"></i><span>Guest History</span></a>
       <a class="nav-link" id="listings-tab" data-toggle="pill" href="#listings" role="tab"><i class="fas fa-home"></i><span>Listings</span></a>
+      <a class="nav-link" id="guest-history-tab" data-toggle="pill" href="#guest-history" role="tab"><i class="fas fa-users"></i><span>Guest History</span></a>
       <a class="nav-link" id="security-tab" data-toggle="pill" href="#security" role="tab"><i class="fas fa-lock"></i><span>Security</span></a>
       <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab"><i class="fas fa-wallet"></i><span>Wallet</span></a>
     </div>

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import ListView
 
@@ -7,7 +8,7 @@ from localhost.messaging.models import Message
 User = get_user_model()
 
 
-class MessagingView(ListView):
+class MessagingView(LoginRequiredMixin, ListView):
     template_name = 'messaging/messaging.html'
     model = Message
 
