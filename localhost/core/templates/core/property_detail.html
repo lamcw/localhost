@@ -88,6 +88,7 @@
   csocket.open();
 
   var notification_handler = function(data) {
+    console.log('notification arrived!')
     $('#notifications .dropdown-menu').append('<a class="dropdown-item" href=' + data.url + '>' + data.message + '</a>');
   }
   csocket.register_handler('notification', notification_handler);
