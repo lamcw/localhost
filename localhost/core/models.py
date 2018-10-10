@@ -284,8 +284,8 @@ def property_item_pre_save(instance, **kwargs):
             task='localhost.core.tasks.enable_bids',
             name=f'Daily bids enable {instance.id}',
             args=json.dumps([instance.id]))
-    except IntegrityError as e:
-        logger.info('Task already exists. Task creation ignored.', e)
+    except IntegrityError:
+        logger.info('Task already exists. Task creation ignored.')
 
 
 @receiver(pre_save, sender=BiddingSession)
