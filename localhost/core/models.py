@@ -230,6 +230,23 @@ class PropertyItemReview(models.Model):
     description = models.TextField(_('description'))
 
 
+class Notification(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    OUTBID = 'O'
+    WON_BID = 'W'
+    MESSAGE_CHOICES = (
+           (OUTBID, 'You have been outbid!'),
+           (WON_BID, 'You have won your auction!')
+    )
+    message = models.CharField(
+            _('message'),
+            max_length=1,
+            choices=MESSAGE_CHOICES,
+    )
+    property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+
+
 @receiver(m2m_changed, sender=PropertyItem.session.through)
 def property_item_m2m_changed(instance, action, pk_set, **kwargs):
     sessions = BiddingSession.objects.filter(id__in=pk_set)

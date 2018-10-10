@@ -84,11 +84,11 @@
 <script>
   var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
+  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
   csocket.open();
 
   var notification_handler = function(data) {
-    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href="#">' + data.message + '</a>');
+    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href=' + data.url + '>' + data.message + '</a>');
   }
   csocket.register_handler('notification', notification_handler);
 
@@ -117,6 +117,13 @@
     $('.alert').show();
   }
   csocket.register_handler('alert', alert_handler);
+
+  $('.notification-btn').click(function() {
+    var notification = $(this).attr('id');
+    var notification_id = notification.match(/\d+$/)[0];
+    csocket.notification(notification_id, 'clear');
+    $(this).parent().remove();
+  });
 
 </script>
 <script>
