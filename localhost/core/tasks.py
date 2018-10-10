@@ -9,7 +9,7 @@ from celery import shared_task
 from channels.layers import get_channel_layer
 from django.utils import timezone
 
-from localhost.core.models import Bid, Booking, PropertyItem
+from localhost.core.models import Bid, Booking, PropertyItem, Notification
 
 logger = logging.getLogger(__name__)
 
@@ -44,21 +44,32 @@ def cleanup_bids(pk):
             price=max_bid.amount,
             earliest_checkin_time=earliest,
             latest_checkin_time=latest)
+
         channel_layer = get_channel_layer()
-        logger.info(f'Bid won for {max_bid.bidder.full_name}')
+        logger.info(f'Account {max_bid.bidder.id} won an auction.')
+
+        notification = Notification.objects.create(
+            user=max_bid.bidder,
+            message='W',
+            property_item=property_item)
+
         async_to_sync(channel_layer.group_send)(
-            f'notification_{max_bid.bidder_id}', {
-                'type': 'notification',
+            f'notifications_{max_bid.bidder.id}', {
+                'type': 'propagate',
+                'identifier_type': 'notification',
                 'data': {
-                    'id': '1337',
-                    'message': 'You won a bid!.'
+                    'id': notification.id,
+                    'message': f'Congratulations! You won {property_item.title} for the night.',
+                    'url': '/property/' + str(property_item.property.id)
                 }
             })
+
         property_item.bids.all().delete()
         property_item.available = False
         property_item.save()
     except Bid.DoesNotExist:
-        logger.info('No bids in this session')
+        #logger.info('No bids in this session')
+        pass
 
 
 @shared_task
@@ -67,7 +78,7 @@ def enable_bids(pk):
     Enable bids for a property item at 12:00nn.
 
     Args:
-        pk: Primary key of the property item
+    pk: Primary key of the property item
     """
     property_item = PropertyItem.objects.get(pk=pk)
     property_item.available = True
