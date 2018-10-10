@@ -236,7 +236,6 @@ class ClientSocket extends MSocket {
       'notification_id': notification_id,
       'instruction': instruction
     };
-    console.log("hiehere")
     this.send('notification', payload);
   }
 }

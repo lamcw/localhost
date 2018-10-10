@@ -102,7 +102,6 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             elif req == 'notification':
                 instruction = content['data']['instruction']
                 if instruction == 'clear':
-                    print(content['data']['notification_id'])
                     Notification.objects.get(id=content['data']['notification_id']).delete()
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
