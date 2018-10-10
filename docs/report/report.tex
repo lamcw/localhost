@@ -13,6 +13,7 @@
   breakatwhitespace=true,
   tabsize=4
 }
+\usepackage{longtable}
 
 \addbibresource{report.bib}
 
@@ -23,7 +24,7 @@
   \vspace{0.5cm}
   {\scshape\Large COMP3900 \par}
   \vspace{0.5cm}
-  {\huge\bfseries Project Report: LocalHost \par}
+  {\huge\bfseries Project Report: \emph{localhost} \par}
   \vspace{1cm}
   {\Large{} Group Name:\itshape{} Undergrads \par}
   \vspace{2cm}
@@ -50,7 +51,14 @@
 \tableofcontents
 \newpage
 
+\include{sections/introduction}
+\include{sections/implementation}
 \include{sections/deployment}
+\include{sections/manual}
 
 \printbibliography[heading=bibintoc]
+
+\appendix
+\include{appendix/user_tests}
+
 \end{document}
