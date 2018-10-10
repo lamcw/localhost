@@ -49,14 +49,16 @@ def cleanup_bids(pk):
         async_to_sync(channel_layer.group_send)(
             f'notification_{max_bid.bidder_id}', {
                 'type': 'notification',
-                'class': 'success',
-                'message': 'You won a bid!.'
+                'data': {
+                    'id': '1337',
+                    'message': 'You won a bid!.'
+                }
             })
         property_item.bids.all().delete()
         property_item.available = False
         property_item.save()
     except Bid.DoesNotExist:
-        logger.exception('No bids in this session')
+        logger.info('No bids in this session')
 
 
 @shared_task

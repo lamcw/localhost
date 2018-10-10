@@ -241,8 +241,7 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
         for i, session in enumerate(sessions):
             schedule, _ = CrontabSchedule.objects.get_or_create(
                 minute=session.end_time.minute,
-                hour=session.end_time.hour,
-                timezone=timezone.get_current_timezone())
+                hour=session.end_time.hour)
             PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
@@ -281,18 +280,19 @@ def session_pre_save(sender, instance, **kwargs):
         old_session = sender.objects.get(pk=instance.pk)
         old_schedule, _ = CrontabSchedule.objects.get_or_create(
             minute=old_session.end_time.minute,
-            hour=old_session.end_time.hour,
-            timezone=timezone.get_current_timezone())
+            hour=old_session.end_time.hour)
         new_schedule, _ = CrontabSchedule.objects.get_or_create(
             minute=instance.end_time.minute,
-            hour=instance.end_time.hour,
-            timezone=timezone.get_current_timezone())
+            hour=instance.end_time.hour)
         PeriodicTask.objects \
             .filter(
                 crontab=old_schedule,
                 task='localhost.core.tasks.cleanup_bids') \
             .update(crontab=new_schedule)
+        for task in PeriodicTask.objects.filter(
+                crontab=new_schedule,
+                task='localhost.core.tasks.cleanup_bids'):
+            PeriodicTasks.changed(task)
         old_schedule.delete()
-        PeriodicTasks.update_changed()
     except sender.DoesNotExist:
         logger.info(f'{instance} not in db. Skipping pre-save actions.')
