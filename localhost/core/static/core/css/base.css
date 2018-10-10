@@ -57,7 +57,7 @@ p {
 }
 
 .bg-accent {
-  background-color: var(--accent) !important;
+  background-color: var(--accent);
 }
 
 @media (min-width: 992px) {

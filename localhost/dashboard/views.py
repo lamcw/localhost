@@ -321,7 +321,8 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
         # today >= booking.latest_checkin_time.date + 1 day
         # so latest_checkin_time <= today - 1 day
         one_day_ago = timezone.now() - timedelta(days=1)
-        context['booking_list'] = Booking.objects.prefetch_related() \
+        context['booking_list'] = Booking.objects \
+            .select_related('property_item__property').prefetch_related() \
             .filter(user=self.request.user) \
             .order_by('-earliest_checkin_time') \
             .annotate(reviewed=Exists(reviews)) \

@@ -1,22 +1,22 @@
 {% load widget_tweaks %}
-<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="profile" role="tabpanel">
-  <div class="panel p-2">
-    <a class="btn btn-secondary" href="{% url 'core:profile' user.id %}">View Public Profile</a>
+<div class="p-2 flex-grow-1 flex-column justify-content-center tab-pane fade" id="profile" role="tabpanel">
+  <div class="panel p-2 mt-auto">
     <form id="change-bio" method="post" class="profile p-2 w-100" action="{% url 'dashboard:dashboard' %}">
       {% csrf_token %}
-      <div class="form-group mb-0">
-        <label for="{{ forms.profile.bio.id_for_label }}">{{ forms.profile.bio.label }}</label>
-        {% render_field forms.profile.bio class="form-control" rows="3" %}
+      <div class="form-group">
+        <label for="{{ forms.profile.bio.id_for_label }}"><h5 class="m-0">Personal Description</h5></label>
+        {% render_field forms.profile.bio class="form-control mb-4" rows="3" %}
       </div>
-      <div class="form-group mb-0">
-        <label for="{{ forms.profile.dob.id_for_label }}">{{ forms.profile.dob.label }}</label>
+      <div class="form-group">
+        <label for="{{ forms.profile.dob.id_for_label }}"><h5 class="m-0">{{ forms.profile.dob.label }}</h5></label><br>
         {% render_field forms.profile.dob rows="3" %}
       </div>
       <div class="form-group mb-0">
-        <label for="{{ forms.profile.gender.id_for_label }}">{{ forms.profile.gender.label }}</label>
-        {% render_field forms.profile.gender rows="3" %}
+        <label for="{{ forms.profile.gender.id_for_label }}"><h5 class="m-0">{{ forms.profile.gender.label }}</h5></label>
+        {% render_field forms.profile.gender class="list-inline text-center" %}
       </div>
       <button name="action" class="btn btn-primary" type="submit" value="profile">Apply</button>
     </form>
   </div>
+  <a href="{% url 'core:profile' user.id %}" class="align-self-end mt-auto"><button class="btn bg-accent text-white">View Public Profile</button></a>
 </div>
