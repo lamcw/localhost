@@ -14,6 +14,10 @@ form {
   max-width: 500px;
 }
 
+nav .nav-link {
+  color: grey !important;
+}
+
 .masthead-brand a,
 .nav-link {
   color: lightgrey !important;
@@ -30,10 +34,6 @@ header .masthead-brand {
 
 .masthead {
   padding-bottom: 0 !important;
-}
-
-.divider {
-  border-left: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .list-nav {
@@ -92,5 +92,3 @@ a span {
   position: absolute;
   left: 4rem;
 }
-
-
