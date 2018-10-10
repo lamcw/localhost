@@ -14,7 +14,8 @@ from django.utils import timezone
 
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
                                        WalletOperationError)
-from localhost.core.models import Bid, BiddingSession, PropertyItem, Notification
+from localhost.core.models import (Bid, BiddingSession, Notification,
+                                   PropertyItem)
 from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
@@ -102,7 +103,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             elif req == 'notification':
                 instruction = content['data']['instruction']
                 if instruction == 'clear':
-                    Notification.objects.get(id=content['data']['notification_id']).delete()
+                    Notification.objects.get(
+                        id=content['data']['notification_id']).delete()
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
 
@@ -221,6 +223,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 }
             })
+
     def propagate(self, event):
         """
         Propagates a message to the client.

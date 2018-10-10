@@ -10,7 +10,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django_celery_beat.models import CrontabSchedule, PeriodicTask
+from django_celery_beat.models import (CrontabSchedule, PeriodicTask,
+                                       PeriodicTasks)
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +54,7 @@ class BiddingSession(models.Model):
         return qs1.union(qs2).first()
 
     def __str__(self):
-        return f"""{self.start_time.strftime('%I:%M %p')} -
-            {self.end_time.strftime('%I:%M %p')}"""
+        return f"""{self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')}"""
 
 
 class Sin(models.Func):
@@ -249,33 +249,67 @@ class Notification(models.Model):
 
 @receiver(m2m_changed, sender=PropertyItem.session.through)
 def property_item_m2m_changed(instance, action, pk_set, **kwargs):
+    """
+    Add/remove cleanup task when session has been added to/removed from the
+    property item.
+    """
     sessions = BiddingSession.objects.filter(id__in=pk_set)
     if action == 'post_add':
-        for session in sessions:
+        for i, session in enumerate(sessions):
             schedule, _ = CrontabSchedule.objects.get_or_create(
-                minute=session.end_time.minute, hour=session.end_time.hour)
+                minute=session.end_time.minute,
+                hour=session.end_time.hour)
             PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
-                name=
-                f'PropertyItem<{instance.id}> cleanup bids {session.end_time}',
+                name=f'PropertyItem-{instance.id} bids cleanup {i}',
                 args=json.dumps([instance.id]))
     elif action == 'post_remove':
         names = [
-            f'PropertyItem<{instance.id}> cleanup bids {session.end_time}'
+            f'PropertyItem-{instance.id} bids cleanup {i}'
             for session in sessions
         ]
         PeriodicTask.objects.filter(name__in=names).delete()
 
 
 @receiver(pre_save, sender=PropertyItem)
-def property_item_pre_save(sender, instance, **kwargs):
-    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12)
+def property_item_pre_save(instance, **kwargs):
+    """
+    Enable bids every day at 12nn.
+    """
+    schedule, _ = CrontabSchedule.objects.get_or_create(hour=12, minute=0)
     try:
         PeriodicTask.objects.get_or_create(
             crontab=schedule,
             task='localhost.core.tasks.enable_bids',
             name=f'Daily bids enable {instance.id}',
             args=json.dumps([instance.id]))
-    except IntegrityError as e:
-        logger.exception('Task already exists. Task creation ignored.', e)
+    except IntegrityError:
+        logger.info('Task already exists. Task creation ignored.')
+
+
+@receiver(pre_save, sender=BiddingSession)
+def session_pre_save(sender, instance, **kwargs):
+    """
+    Updates tasks when session time is changed.
+    """
+    try:
+        old_session = sender.objects.get(pk=instance.pk)
+        old_schedule, _ = CrontabSchedule.objects.get_or_create(
+            minute=old_session.end_time.minute,
+            hour=old_session.end_time.hour)
+        new_schedule, _ = CrontabSchedule.objects.get_or_create(
+            minute=instance.end_time.minute,
+            hour=instance.end_time.hour)
+        PeriodicTask.objects \
+            .filter(
+                crontab=old_schedule,
+                task='localhost.core.tasks.cleanup_bids') \
+            .update(crontab=new_schedule)
+        for task in PeriodicTask.objects.filter(
+                crontab=new_schedule,
+                task='localhost.core.tasks.cleanup_bids'):
+            PeriodicTasks.changed(task)
+        old_schedule.delete()
+    except sender.DoesNotExist:
+        logger.info(f'{instance} not in db. Skipping pre-save actions.')
