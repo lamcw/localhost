@@ -1,30 +1,40 @@
 <div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="booking-history" role="tabpanel">
   {% if booking_list %}
-  <ul class="list-group w-100 px-2">
-    {% for booking in booking_list %}
-    <li class="list-group-item">
-      <a href="{{ booking.property_item.get_absolute_url }}" class="align-middle">{{ booking.property_item }}</a>
-      <div class="d-inline float-right">
-        <span class="mx-2 divider"></span>
-        ${{ booking.price }}
-        <span class="mx-2 divider"></span>
-        {{ booking.earliest_checkin_time|date }}
-        <span class="mx-2 divider"></span>
-        {{ booking.earliest_checkin_time|time }}
-        <span class="mx-2 divider"></span>
-        {{ booking.latest_checkin_time|time }}
-        <span class="mx-2 divider"></span>
-        {% if booking.can_cancel %}
-        <a href="" class="btn">Cancel Booking</a>
-        {% elif booking.reviewed or not booking.passed_one_day %}
-        <button class="btn" disabled>Review</button>
-        {% else %}
-        <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn">Review</a>
-        {% endif %}
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Booking</th>
+        <th scope="col">Price</th>
+        <th scope="col">Earliest Check-in</th>
+        <th scope="col">Latest Check-in Time</th>
+        <th scope="col">Leave Review</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in booking_list %}
+      <tr>
+        <th scope="row">
+          <div class="d-flex flex-column m-0">
+            <a href="{{ booking.property_item.get_absolute_url }}" class="m-0"><h5 class="m-0">{{ booking.property_item }}</h5></a>
+            <p class="m-0 font-weight-normal">{{ booking.property_item.property.address }}</p>
+          </div>
+        </th>
+        <td class="align-middle">${{ booking.price }}</td>
+        <td class="align-middle">{{ booking.earliest_checkin_time|date }} {{ booking.earliest_checkin_time|time }}</td>
+        <td class="align-middle">{{ booking.latest_checkin_time|time }}</td>
+        <td class="align-middle">
+          {% if booking.can_cancel %}
+          <a href="" class="btn">Cancel Booking</a>
+          {% elif booking.reviewed or not booking.passed_one_day %}
+          <button class="btn" disabled>Review</button>
+          {% else %}
+          <a href="{% url 'dashboard:listing-review' booking.id %}" class="btn text-white bg-accent">Review</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% else %}
   <p class="text-primary align-self-center">No previous bookings</p>
   {% endif %}

@@ -1,19 +1,28 @@
 <div class="p-2 flex-grow-1 justify-content-center tab-pane fade show active" id="activity" role="tabpanel">
   {% if active_bids %}
-  <ul class="list-group w-100 px-2">
-    {% for item in active_bids %}
-    <li class="list-group-item">
-      <a href="{{ item.get_absolute_url }}" class="align-middle">{{ item.title }}</a>
-      <div class="d-inline float-right">
-        <span class="mx-2 divider"></span>
-        Your bid: $<span id="user_bid_item_{{ item.id }}">{{ item.user_bid }}</span>
-        <span class="mx-2 divider"></span>
-        Current bid: $<span id="bid_item_{{ item.id }}">{{ item.current_bid }}</span>
-        <span class="mx-2 divider"></span>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Booking</th>
+        <th scope="col" class="text-center">Your last bid</th>
+        <th scope="col" class="text-center">Current highest bid</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in active_bids %}
+      <tr>
+        <th scope="row">
+          <div class="d-flex flex-column m-0">
+            <a href="{{ item.get_absolute_url }}" class="m-0"><h5 class="m-0">{{ item.title }}</h5></a>
+            <p class="m-0 font-weight-normal">{{ item.property.address }}</p>
+          </div>
+        </th>
+        <td class="align-middle text-center">$<span id="user_bid_item_{{ item.id }}">{{ item.user_bid }}</span></td>
+        <td class="align-middle text-center">$<span id="bid_item_{{ item.id }}">{{ item.current_bid }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% else %}
   <p class="text-primary align-self-center">No recent activity</p>
   {% endif %}
