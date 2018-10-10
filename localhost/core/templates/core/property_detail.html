@@ -293,15 +293,13 @@
 <script>
   var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
-  var notification_csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/notification/');
+  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
   csocket.open();
-  notification_csocket.open();
 
   var notification_handler = function(data) {
     $('#notifications .dropdown-menu').append('<a class="dropdown-item" href=' + data.url + '>' + data.message + '</a>');
   }
-  notification_csocket.register_handler('notification', notification_handler);
+  csocket.register_handler('notification', notification_handler);
 
   var handler = function(data) {
     var new_bid = data.amount;
@@ -323,14 +321,8 @@
 
   $('.notification-btn').click(function() {
     var notification = $(this).attr('id');
-    var notification_id = notification.match(/\d+$/);
-    notification_csocket.send('notifcation', {
-      'type': 'notification',
-      'data': {
-        'id': notification_id,
-        'instruction': 'clear'
-      }
-    });
+    var notification_id = notification.match(/\d+$/)[0];
+    csocket.notification(notification_id, 'clear');
     $(this).parent().remove();
   });
 
