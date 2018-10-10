@@ -71,3 +71,7 @@ p {
     flex-direction: row !important;
   }
 }
+
+::-webkit-input-placeholder {
+  height: 2rem;
+}
