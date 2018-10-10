@@ -91,9 +91,14 @@ class SearchResultsView(ListView):
         default_checkin = (
             timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(args.get('checkin', default_checkin))
+        latitude_offset = Decimal(0.15)
+        longitude_offset = Decimal(0.15)
 
-        properties = self.model.objects.within(latitude, longitude)
-
+        properties = Property.objects.within(latitude, longitude).filter(
+            latitude__range = (latitude - latitude_offset, latitude + latitude_offset),
+            longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
+        )
+        print(properties.query)
         if bid_now == 'on':
             now = timezone.localtime()
 

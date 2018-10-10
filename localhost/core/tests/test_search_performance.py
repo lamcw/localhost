@@ -31,7 +31,7 @@ class SearchPerformanceTest(TestCase):
         Performs a search on the database
         """
         lat, lng = settings.DEFAULT_SEARCH_COORD
-        url = f'{reverse("core:search_results")}?lat={lat}&lng={lng}'
+        url = f'{reverse("core:search-results")}?lat={lat}&lng={lng}'
         self.client.get(url)
 
     def test_search_performance(self):
