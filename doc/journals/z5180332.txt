@@ -93,3 +93,10 @@ cooperative multiplex socket library in JavaScript and two Python classes for
 the server. Together they enable clients and the server to communicate almost
 instantly. I migrated the current bidding page to use the library. Afterwards,
 I configured the server for Django Channels and enabled SSL for web sockets.
+
+# Week 10
+
+This week I migrated the deployment away from uWSGI and to Gunicorn. I
+additionally wrote service scripts for Gunicorn and Daphne to automate
+installation. I redesigned the homepage, splash page and public profile page
+according to recommendations from the user tests.
