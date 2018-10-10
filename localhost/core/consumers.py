@@ -10,10 +10,12 @@ from decimal import Decimal
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
                                        WalletOperationError)
-from localhost.core.models import Bid, BiddingSession, PropertyItem
+from localhost.core.models import Bid, BiddingSession, PropertyItem, Notification
+from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -53,7 +55,7 @@ class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
         return group in self.groups
 
 
-class BaseConsumer(MultiplexJsonWebsocketConsumer):
+class Consumer(MultiplexJsonWebsocketConsumer):
     """
     Generalised variant of MultiplexJsonWebsocketConsumer for use by all
     socket connections.
@@ -85,6 +87,20 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
             elif req == 'unsubscribe':
                 group = content['data']['group']
                 self.request_unsubscribe(group)
+            elif req == 'bid':
+                pk = content['data']['property_item_id']
+                amount = Decimal(content['data']['amount'])
+                property_item = PropertyItem.objects.get(pk=pk)
+                self.request_bid(property_item, amount)
+            elif req == 'message':
+                pk = content['data']['recipient_id']
+                message = content['data']['message']
+                recipient = User.objects.get(pk=pk)
+                self.request_inbox(recipient, message)
+            elif req == 'notification':
+                instruction = content['data']['instruction']
+                if instruction == 'clear':
+                    Notification.objects.get(id=content['data']['notification_id']).delete()
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
 
@@ -101,37 +117,6 @@ class BaseConsumer(MultiplexJsonWebsocketConsumer):
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
-
-    def propagate(self, event):
-        """
-        Propagates a message to the client.
-        """
-        self.send_json({
-            'type': event.get('identifier_type'),
-            'data': event.get('data')
-        })
-
-
-class BiddingConsumer(BaseConsumer):
-    def receive_json(self, content, **kwargs):
-        super().receive_json(content, **kwargs)
-        try:
-            req = content['type']
-            if req == 'bid':
-                pk = content['data']['property_item_id']
-                amount = Decimal(content['data']['amount'])
-                property_item = PropertyItem.objects.get(pk=pk)
-                self.request_bid(property_item, amount)
-        except KeyError as e:
-            logger.exception('Invalid JSON format.', exc_info=e)
-        except PropertyItem.DoesNotExist as e:
-            logger.exception(
-                'Property item does not exist. JSON may be tampered.',
-                exc_info=e)
-        except PropertyItem.MultipleObjectsReturned as e:
-            logger.exception(
-                'More than one property item found. JSON may be tampered.',
-                exc_info=e)
 
     def request_bid(self, property_item, amount):
         """
@@ -169,6 +154,20 @@ class BiddingConsumer(BaseConsumer):
                 latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
                 user.credits -= amount
+                notification = Notification.objects.create(
+                    user=latest_bid.bidder,
+                    message='O',
+                    property_item=property_item)
+                async_to_sync(self.channel_layer.group_send)(
+                    f'notifications_{latest_bid.bidder.id}', {
+                        'type': 'propagate',
+                        'identifier_type': 'notification',
+                        'data': {
+                            'id': notification.id,
+                            'message': 'You have been outbid!',
+                            'url': '/property/' + str(property_item.id)
+                        }
+                    })
             user.save()
 
             Bid.objects.create(
@@ -176,6 +175,58 @@ class BiddingConsumer(BaseConsumer):
         except (SessionExpiredError, WalletOperationError,
                 BidAmountError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+
+    def request_inbox(self, recipient, message):
+        """
+        Handles an inbox request
+        """
+        sender = self.scope['user']
+        time_now = timezone.localtime()
+        message_object = Message.objects.create(
+            sender=sender, recipient=recipient, msg=message)
+        async_to_sync(self.channel_layer.group_send)(
+            f'inbox_{recipient.id}', {
+                'type': 'propagate',
+                'identifier_type': 'message',
+                'data': {
+                    'message': message_object.msg,
+                    'time': str(time_now),
+                    'sender': {
+                        'id': sender.id,
+                        'name': sender.first_name
+                    },
+                    'recipient': {
+                        'id': recipient.id,
+                        'name': recipient.first_name
+                    }
+                }
+            })
+
+        async_to_sync(self.channel_layer.group_send)(
+            f'inbox_{sender.id}', {
+                'type': 'propagate',
+                'identifier_type': 'message',
+                'data': {
+                    'message': message_object.msg,
+                    'time': time_now.strftime("%b %d, %-H:%M %P"),
+                    'sender': {
+                        'id': sender.id,
+                        'name': sender.first_name
+                    },
+                    'recipient': {
+                        'id': recipient.id,
+                        'name': recipient.first_name
+                    }
+                }
+            })
+    def propagate(self, event):
+        """
+        Propagates a message to the client.
+        """
+        self.send_json({
+            'type': event.get('identifier_type'),
+            'data': event.get('data')
+        })
 
 
 class NotificationConsumer(BaseConsumer):
