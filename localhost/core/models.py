@@ -155,7 +155,7 @@ class PropertyItem(models.Model):
     description = models.TextField(
         _('description'), max_length=600, help_text=_('Character limit: 600'))
     buyout_price = models.PositiveIntegerField(
-        _('buyout price'), help_text=_('Buyout price of the auction.'), null=True)
+        _('buyout price'), help_text=_('Buyout price of the auction.'))
     min_price = models.PositiveIntegerField(
         _('min price'), help_text=_('Starting price of the auction.'))
     session = models.ManyToManyField(
