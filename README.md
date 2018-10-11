@@ -65,7 +65,7 @@ localhost_db=# \q
 $ git clone git@bitbucket.org:jtalowell/localhost.git && cd localhost
 $ python -m venv venv
 $ source venv/bin/activate
-$ (venv) pip install -r requirements_dev.txt  # use requirements.txt if in production
+$ (venv) pip install -r requirements.txt
 ```
 
 #### Celery
