@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
-                                       WalletOperationError)
+                                       WalletOperationError, BidBuyoutError)
 from localhost.core.models import (Bid, BiddingSession, Notification,
                                    PropertyItem, Booking)
 from localhost.messaging.models import Message
@@ -260,7 +260,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
         except (SessionExpiredError, WalletOperationError,
-                BidAmountError) as e:
+                BidAmountError, BidBuyoutError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_inbox(self, recipient, message):
@@ -334,6 +334,8 @@ def check_bid(property_item,
             'Not enough credits! Go to Dashboard to add credits.')
     elif incoming_bid_amount < min_next_bid:
         raise BidAmountError('Your bid is too low.')
+    elif incoming_bid_amount >= property_item.buyout_price:
+        raise BidBuyoutError('Bid is too high! Please use buyout instead.')
 
 
 def check_buyout(property_item, user, buyout_amount, latest_bid=None):

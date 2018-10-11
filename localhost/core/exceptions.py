@@ -11,3 +11,7 @@ class WalletOperationError(ValueError):
 class BidAmountError(ValueError):
     """Raise when bid amount is invalid."""
     pass
+
+class BidBuyoutError(ValueError):
+    """Raise when bid amount is greater than buyout price"""
+    pass
