@@ -15,6 +15,7 @@
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 <main role="main" class="inner cover">
+{% if property_list|length > 0 %}
   <div class="album py-5">
     <div class="container">
       <div class="row">
@@ -73,6 +74,9 @@
       </nav>
     </div>
   </div>
+{% else %}
+<h2 class="text-center text-white font-weight-bold">No results found.<br />Try another location!</h2>
+{% endif %}
 </main>
 {% include "core/include/footer.html" %}
 {% endblock %}
