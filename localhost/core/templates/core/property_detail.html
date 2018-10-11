@@ -107,14 +107,9 @@
   });
 
   $('.buyout-confirm').click(function() {
-    // console.log('buyout confirmed');
     csocket.buyout($(this).val());
     $('#buyout-confirm-' + $(this).val()).modal('hide');
   });
-
-  // $('[id^=cancel-buyout]').click(function() {
-  //   $('#buyout-confirm-' + $(this).val()).modal('hide');
-  // });
 
   var handler = function(data) {
     var new_bid = data.amount;

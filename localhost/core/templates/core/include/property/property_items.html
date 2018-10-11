@@ -5,7 +5,6 @@
   {% for item in property.property_item.all %}
   {% if item.available %}
   <div class="d-flex justify-content-between">
-    <!-- TODO: profile avatar -->
     <img src="{{ item.images.all.0.img.url }}">
     <!-- Title, capacity, glyphs -->
     <div class="align-self-center text-center p-2 w-100">
@@ -36,9 +35,6 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Confirm buyout</h5>
-              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button> -->
             </div>
             <div class="modal-body">
               <p>Are you sure you want to buyout this auction?</p>
