@@ -6,6 +6,7 @@ groups.
 """
 import logging
 from decimal import Decimal
+from datetime import datetime
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
@@ -15,7 +16,7 @@ from django.utils import timezone
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
                                        WalletOperationError)
 from localhost.core.models import (Bid, BiddingSession, Notification,
-                                   PropertyItem)
+                                   PropertyItem, Booking)
 from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
@@ -101,10 +102,14 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 recipient = User.objects.get(pk=pk)
                 self.request_inbox(recipient, message)
             elif req == 'notification':
+                pk = content['data']['notification_id']
+                notification = Notification.objects.get(pk=pk)
                 instruction = content['data']['instruction']
-                if instruction == 'clear':
-                    Notification.objects.get(
-                        id=content['data']['notification_id']).delete()
+                self.request_notification(notification, instruction)
+            elif req == 'buyout':
+                pk = content['data']['property_item_id']
+                property_item = PropertyItem.objects.get(pk=pk)
+                self.request_buyout(property_item)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
 
@@ -121,6 +126,84 @@ class Consumer(MultiplexJsonWebsocketConsumer):
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
+
+    def request_notification(self, notification, instruction):
+        """
+        Handles a request to execute an instruction on a notification
+        """
+        if instruction == 'clear':
+            notification.delete()
+
+    def request_buyout(self, property_item):
+        """
+        Handles a request to buyout a propertyitem
+        """
+        user = self.scope['user']
+        amount = property_item.buyout_price
+
+        try:
+            latest_bid = property_item.bids.latest()
+        except Bid.DoesNotExist:
+            latest_bid = None
+
+        try:
+            check_buyout(property_item, user, amount, latest_bid)
+            if not property_item.bids.exists():
+                user.credits -= amount
+            else:
+                latest_bid = property_item.bids.latest()
+                if latest_bid.bidder == user:
+                    user.credits -= amount - latest_bid.amount
+                else:
+                    latest_bid.bidder.credits += latest_bid.amount
+                    latest_bid.bidder.save()
+                    user.credits -= amount
+                notification = Notification.objects.create(
+                    user=latest_bid.bidder,
+                    message='B',
+                    property_item=property_item)
+                async_to_sync(self.channel_layer.group_send)(
+                    f'notifications_{latest_bid.bidder.id}', {
+                        'type': 'propagate',
+                        'identifier_type': 'notification',
+                        'data': {
+                            'id': notification.id,
+                            'message': 'The item you were \
+                                    bidding on was bought out!',
+                            'url': '/property/'
+                                   + str(property_item.property.id)
+                        }
+                    })
+
+                property_item.bids.all().delete()
+            user.save()
+            property_item.available = False
+            property_item.save()
+
+            today = timezone.now().date()
+            earliest = timezone.make_aware(
+                datetime.combine(today,
+                                 property_item.property.earliest_checkin_time))
+            latest = timezone.make_aware(
+                datetime.combine(today,
+                                 property_item.property.latest_checkin_time))
+            Booking.objects.create(user=user,
+                                   property_item=property_item,
+                                   price=amount,
+                                   earliest_checkin_time=earliest,
+                                   latest_checkin_time=latest)
+            async_to_sync(self.channel_layer.group_send)(
+                f'property_item_{property_item.id}', {
+                    'type': 'propagate',
+                    'identifier_type': 'buyout',
+                    'data': {
+                        'property_item_id': property_item.id,
+                        'user_id': user.id
+                    }
+                })
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError) as e:
+            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_bid(self, property_item, amount):
         """
@@ -169,7 +252,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'data': {
                             'id': notification.id,
                             'message': 'You have been outbid!',
-                            'url': '/property/' + str(property_item.id)
+                            'url': '/property/'
+                                   + str(property_item.property.id)
                         }
                     })
             user.save()
@@ -251,3 +335,16 @@ def check_bid(property_item,
             'Not enough credits! Go to Dashboard to add credits.')
     elif incoming_bid_amount < min_next_bid:
         raise BidAmountError('Your bid is too low.')
+
+
+def check_buyout(property_item, user, buyout_amount, latest_bid=None):
+    current_session = BiddingSession.current_session_of(property_item)
+    if not current_session:
+        raise SessionExpiredError('Bidding session expired.')
+    elif (latest_bid and user == latest_bid.bidder
+          and buyout_amount > user.credits + latest_bid.amount):
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')
+    elif not latest_bid and buyout_amount > user.credits:
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')

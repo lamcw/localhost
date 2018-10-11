@@ -93,6 +93,17 @@
   }
   csocket.register_handler('notification', notification_handler);
 
+  var buyout_handler = function(data) {
+    console.log('buyout');
+    $('.alert').text("Bought out!");
+    $('.alert').show();
+  }
+  csocket.register_handler('buyout', buyout_handler)
+
+  $('.buyout-button').click(function() {
+    console.log('hihihi')
+    csocket.buyout($(this).val());
+  });
   var handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)

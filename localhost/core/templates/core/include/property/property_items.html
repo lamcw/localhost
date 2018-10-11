@@ -3,6 +3,7 @@
     <i class="fas fa-times-circle"></i>
   </button>
   {% for item in property.property_item.all %}
+  {% if item.available %}
   <div class="d-flex justify-content-between">
     <!-- TODO: profile avatar -->
     <img src="{{ item.images.all.0.img.url }}">
@@ -31,5 +32,6 @@
       {% include "core/include/property/listing_modal.html" %}
     </div>
   </div>
+  {% endif %}
   {% endfor %}
 </div>
