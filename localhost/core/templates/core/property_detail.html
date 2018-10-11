@@ -95,6 +95,8 @@
 
   var buyout_handler = function(data) {
     console.log('buyout');
+    $('.bidding-module :button').prop('disabled', true);
+    $('.bidding-module input').prop('disabled', true);
     $('.alert').text("Bought out!");
     $('.alert').show();
   }
