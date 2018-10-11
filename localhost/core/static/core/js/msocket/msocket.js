@@ -238,4 +238,11 @@ class ClientSocket extends MSocket {
     };
     this.send('notification', payload);
   }
+
+  buyout(property_item_id) {
+    var payload = {
+      'property_item_id': property_item_id,
+    };
+    this.send('buyout', payload);
+  }
 }

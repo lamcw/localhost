@@ -154,6 +154,8 @@ class PropertyItem(models.Model):
         _('title'), max_length=100, help_text=_('Character limit: 100'))
     description = models.TextField(
         _('description'), max_length=600, help_text=_('Character limit: 600'))
+    buyout_price = models.PositiveIntegerField(
+        _('buyout price'), help_text=_('Buyout price of the auction.'))
     min_price = models.PositiveIntegerField(
         _('min price'), help_text=_('Starting price of the auction.'))
     session = models.ManyToManyField(
@@ -234,9 +236,11 @@ class Notification(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     OUTBID = 'O'
     WON_BID = 'W'
+    BUYOUT = 'B'
     MESSAGE_CHOICES = (
            (OUTBID, 'You have been outbid!'),
-           (WON_BID, 'You have won your auction!')
+           (WON_BID, 'You have won your auction!'),
+           (BUYOUT, 'The item you were bidding on was bought out!')
     )
     message = models.CharField(
             _('message'),

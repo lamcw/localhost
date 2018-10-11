@@ -54,8 +54,8 @@
     </div>
     {% if user.is_authenticated %}
     <div class="d-flex flex-column m-0 bg-white px-5">
-      <p class="align-self-center">Buyout price:</p>
-      <button class="btn btn-raised btn-primary bg-accent">Buyout</button>
+      <p class="align-self-center">Buyout price: {{ item.buyout_price }}</p>
+      <button value="{{ item.id }}" class="buyout-button btn btn-raised btn-primary bg-accent">Buyout</button>
     </div>
     {% endif %}
     {% endif %}
