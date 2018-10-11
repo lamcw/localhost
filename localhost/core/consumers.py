@@ -158,23 +158,22 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     latest_bid.bidder.credits += latest_bid.amount
                     latest_bid.bidder.save()
                     user.credits -= amount
-                notification = Notification.objects.create(
-                    user=latest_bid.bidder,
-                    message='B',
-                    property_item=property_item)
-                async_to_sync(self.channel_layer.group_send)(
-                    f'notifications_{latest_bid.bidder.id}', {
-                        'type': 'propagate',
-                        'identifier_type': 'notification',
-                        'data': {
-                            'id': notification.id,
-                            'message': 'The item you were \
-                                    bidding on was bought out!',
-                            'url': '/property/'
-                                   + str(property_item.property.id)
-                        }
-                    })
-
+                    notification = Notification.objects.create(
+                        user=latest_bid.bidder,
+                        message='B',
+                        property_item=property_item)
+                    async_to_sync(self.channel_layer.group_send)(
+                        f'notifications_{latest_bid.bidder.id}', {
+                            'type': 'propagate',
+                            'identifier_type': 'notification',
+                            'data': {
+                                'id': notification.id,
+                                'message': 'The item you were \
+                                        bidding on was bought out!',
+                                'url': '/property/'
+                                       + str(property_item.property.id)
+                            }
+                        })
                 property_item.bids.all().delete()
             user.save()
             property_item.available = False
