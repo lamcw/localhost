@@ -2,6 +2,9 @@ class SessionExpiredError(Exception):
     """Raise when bidding session has expired."""
     pass
 
+class ItemUnavailableError(Exception):
+    """Raise when property item is no longer available."""
+    pass
 
 class WalletOperationError(ValueError):
     """Raise when wallet operation is invalid."""

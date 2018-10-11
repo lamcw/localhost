@@ -14,7 +14,8 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
-                                       WalletOperationError, BidBuyoutError)
+                                       WalletOperationError, BidBuyoutError,
+                                       ItemUnavailableError)
 from localhost.core.models import (Bid, BiddingSession, Notification,
                                    PropertyItem, Booking)
 from localhost.messaging.models import Message
@@ -201,7 +202,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     }
                 })
         except (SessionExpiredError, WalletOperationError,
-                BidAmountError) as e:
+                BidAmountError, ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_bid(self, property_item, amount):
@@ -260,7 +261,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
         except (SessionExpiredError, WalletOperationError,
-                BidAmountError, BidBuyoutError) as e:
+                BidAmountError, BidBuyoutError, ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_inbox(self, recipient, message):
@@ -325,6 +326,8 @@ def check_bid(property_item,
     current_session = BiddingSession.current_session_of(property_item)
     if not current_session:
         raise SessionExpiredError('Bidding session expired.')
+    elif not property_item.available:
+        raise ItemUnavailableError('This item is no longer available!')
     elif (latest_bid and user == latest_bid.bidder
           and incoming_bid_amount > user.credits + latest_bid.amount):
         raise WalletOperationError(
@@ -342,6 +345,8 @@ def check_buyout(property_item, user, buyout_amount, latest_bid=None):
     current_session = BiddingSession.current_session_of(property_item)
     if not current_session:
         raise SessionExpiredError('Bidding session expired.')
+    elif not property_item.available:
+        raise ItemUnavailableError('This item is no longer available!')
     elif (latest_bid and user == latest_bid.bidder
           and buyout_amount > user.credits + latest_bid.amount):
         raise WalletOperationError(
