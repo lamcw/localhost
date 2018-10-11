@@ -29,6 +29,22 @@ p {
   font-family: 'Roboto', sans-serif !important;
 }
 
+.card {
+  border-radius: 0 !important;
+}
+
+.modal-content {
+  border-radius: 0 !important;
+}
+
+.dropdown-menu {
+  border-radius: 0 !important;
+}
+
+.modal-header {
+  border-radius: 0 !important;
+}
+
 /* Manually importing flex-grow classes from mainline bootstrap */
 .flex-grow-0 {
   -ms-flex-positive: 0 !important;
@@ -60,9 +76,30 @@ p {
   background-color: var(--accent);
 }
 
-@media (min-width: 992px) {
-  .flex-lg-row {
-    flex-direction: row !important;
+::-webkit-input-placeholder {
+  height: 2rem;
+}
+
+.modal-close,
+.modal-close:hover {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  margin-bottom: 0;
+  z-index: 3000 !important;
+}
+
+@media (min-width: 576px) {
+  .modal-close,
+  .modal-close:hover {
+    bottom: 33px;
+    right: calc(50% - 245px);
+  }
+
+  .modal-lg {
+    width: 500px;
+    max-width: 500px;
   }
 }
 
@@ -70,8 +107,33 @@ p {
   .flex-md-row {
     flex-direction: row !important;
   }
+
+  .modal-lg {
+    width: 750px;
+    max-width: 750px;
+  }
+
+  .modal-close,
+  .modal-close:hover {
+    bottom: 33px;
+    right: calc(50% - 370px);
+  }
 }
 
-::-webkit-input-placeholder {
-  height: 2rem;
+@media (min-width: 992px) {
+  .flex-lg-row {
+    flex-direction: row !important;
+  }
+
+  .modal-lg {
+    width: 970px;
+    max-width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .modal-lg {
+    width: 1170px;
+    max-width: 1170px;
+  }
 }
