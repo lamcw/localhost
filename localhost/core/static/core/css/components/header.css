@@ -21,12 +21,27 @@
   color: white;
 }
 
+#notifications {
+  margin: 0;
+}
+
+#notifications button {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, .5);
+}
+
+nav {
+  justify-content: space-around !important;
+}
+
 @media (min-width: 768px) {
   .masthead-brand {
     float: left;
   }
-  .nav-masthead {
-    float: right;
+  nav {
+    justify-content: flex-end !important;
   }
   .nav-masthead .nav-link {
     padding-left: 1rem;

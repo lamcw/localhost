@@ -6,16 +6,22 @@ groups.
 """
 import logging
 from decimal import Decimal
+from datetime import datetime
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
-from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
-from localhost.core.models import Bid, BiddingSession, PropertyItem
+from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
+                                       WalletOperationError, BidBuyoutError,
+                                       ItemUnavailableError)
+from localhost.core.models import (Bid, BiddingSession, Notification,
+                                   PropertyItem, Booking)
 from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class MultiplexJsonWebsocketConsumer(JsonWebsocketConsumer):
@@ -69,8 +75,11 @@ class Consumer(MultiplexJsonWebsocketConsumer):
     """
 
     def connect(self):
-        if self.scope['user'].is_authenticated:
+        user = self.scope.get('user')
+        notifications_id = 'notifications_' + str(user.id)
+        if user and user.is_authenticated:
             self.accept()
+            self.request_subscribe(notifications_id)
         else:
             self.close()
 
@@ -84,157 +93,216 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 group = content['data']['group']
                 self.request_unsubscribe(group)
             elif req == 'bid':
-                property_item_id = content['data']['property_item_id']
+                pk = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
-                self.request_bid(property_item_id, amount)
+                property_item = PropertyItem.objects.get(pk=pk)
+                self.request_bid(property_item, amount)
             elif req == 'message':
-                logger.debug(content['data'])
-                recipient_id = content['data']['recipient_id']
+                pk = content['data']['recipient_id']
                 message = content['data']['message']
-                self.request_inbox(recipient_id, message)
-        except KeyError:
-            logger.exception('Invalid JSON format')
+                recipient = User.objects.get(pk=pk)
+                self.request_inbox(recipient, message)
+            elif req == 'notification':
+                pk = content['data']['notification_id']
+                notification = Notification.objects.get(pk=pk)
+                instruction = content['data']['instruction']
+                self.request_notification(notification, instruction)
+            elif req == 'buyout':
+                pk = content['data']['property_item_id']
+                property_item = PropertyItem.objects.get(pk=pk)
+                self.request_buyout(property_item)
+        except KeyError as e:
+            logger.exception('Invalid JSON format.', exc_info=e)
 
     def request_subscribe(self, group):
         """
-        Handles a request to subscribe to a group
+        Handles a request to subscribe to a group.
         """
-
-        sub_message = group.split('_')
-        logger.debug(sub_message)
-        logger.debug(group)
-        logger.debug(self.scope['user'].id)
-        if (sub_message[0] is 'inbox'
-                and sub_message[1] is not self.scope['user'].id):
-            logger.info("failed")
-            self.close()
-        elif not self.is_subscribed(group):
+        if not self.is_subscribed(group):
             self.subscribe(group)
 
     def request_unsubscribe(self, group):
         """
-        Handles a request to unsubscribe to a group
+        Handles a request to unsubscribe to a group.
         """
         if self.is_subscribed(group):
             self.unsubscribe(group)
 
-    def request_bid(self, property_item_id, amount):
+    def request_notification(self, notification, instruction):
         """
-        Handles a bid request
+        Handles a request to execute an instruction on a notification
         """
-        time_now = timezone.localtime().time()
-        property_item = PropertyItem.objects.get(id=property_item_id)
+        if instruction == 'clear':
+            notification.delete()
 
+    def request_buyout(self, property_item):
+        """
+        Handles a request to buyout a propertyitem
+        """
+        user = self.scope['user']
+        amount = property_item.buyout_price
+
+        try:
+            latest_bid = property_item.bids.latest()
+        except Bid.DoesNotExist:
+            latest_bid = None
+
+        try:
+            check_buyout(property_item, user, amount, latest_bid)
+            if not property_item.bids.exists():
+                user.credits -= amount
+            else:
+                latest_bid = property_item.bids.latest()
+                if latest_bid.bidder == user:
+                    user.credits -= amount - latest_bid.amount
+                else:
+                    latest_bid.bidder.credits += latest_bid.amount
+                    latest_bid.bidder.save()
+                    user.credits -= amount
+                    notification = Notification.objects.create(
+                        user=latest_bid.bidder,
+                        message='B',
+                        property_item=property_item)
+                    async_to_sync(self.channel_layer.group_send)(
+                        f'notifications_{latest_bid.bidder.id}', {
+                            'type': 'propagate',
+                            'identifier_type': 'notification',
+                            'data': {
+                                'id': notification.id,
+                                'message': 'The item you were \
+                                        bidding on was bought out!',
+                                'url': '/property/'
+                                       + str(property_item.property.id)
+                            }
+                        })
+                property_item.bids.all().delete()
+            user.save()
+            property_item.available = False
+            property_item.save()
+
+            today = timezone.now().date()
+            earliest = timezone.make_aware(
+                datetime.combine(today,
+                                 property_item.property.earliest_checkin_time))
+            latest = timezone.make_aware(
+                datetime.combine(today,
+                                 property_item.property.latest_checkin_time))
+            Booking.objects.create(user=user,
+                                   property_item=property_item,
+                                   price=amount,
+                                   earliest_checkin_time=earliest,
+                                   latest_checkin_time=latest)
+            async_to_sync(self.channel_layer.group_send)(
+                f'property_item_{property_item.id}', {
+                    'type': 'propagate',
+                    'identifier_type': 'buyout',
+                    'data': {
+                        'property_item_id': property_item.id,
+                        'user_id': user.id
+                    }
+                })
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError, ItemUnavailableError) as e:
+            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+
+    def request_bid(self, property_item, amount):
+        """
+        Handles a bid request.
+        """
+        user = self.scope['user']
         try:
             # The minimum next bid is either
             # * The starting price when there are no bids
             # * The next dollar amount if there is a bid
-            latest_bid = property_item.bids.latest('amount')
+            latest_bid = property_item.bids.latest()
             min_next_bid = latest_bid.amount + 1
         except Bid.DoesNotExist:
+            latest_bid = None
             min_next_bid = property_item.min_price
 
-        current_session = BiddingSession.objects.filter(
-            propertyitem=property_item,
-            end_time__gt=time_now,
-            start_time__lte=time_now)
-
-        if not current_session.exists():
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description': 'Bidding session expired'
-                }
-            })
-        elif amount > self.scope['user'].credits:
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description':
-                    'Not enough credits! Go to Dashboard to add credits.'
-                }
-            })
-
-        elif amount < min_next_bid:
-            self.send_json({
-                'type': 'alert',
-                'data': {
-                    'description': 'Your bid is too low.'
-                }
-            })
-
-        else:
+        try:
+            check_bid(property_item, user, amount, min_next_bid, latest_bid)
             async_to_sync(self.channel_layer.group_send)(
-                f'property_item_{property_item_id}', {
+                f'property_item_{property_item.id}', {
                     'type': 'propagate',
                     'identifier_type': 'bid',
                     'data': {
-                        'property_item_id': property_item_id,
+                        'property_item_id': property_item.id,
                         'amount': str(amount),
-                        'user_id': self.scope['user'].id
+                        'user_id': user.id
                     }
                 })
 
             if not property_item.bids.exists():
-                self.scope['user'].credits -= amount
-                self.scope['user'].save()
-            elif latest_bid.bidder == self.scope['user']:
-                self.scope['user'].credits -= amount - latest_bid.amount
-                self.scope['user'].save()
+                user.credits -= amount
+            elif latest_bid.bidder == user:
+                user.credits -= amount - latest_bid.amount
             else:
                 latest_bid.bidder.credits += latest_bid.amount
                 latest_bid.bidder.save()
-                self.scope['user'].credits -= amount
-                self.scope['user'].save()
+                user.credits -= amount
+                notification = Notification.objects.create(
+                    user=latest_bid.bidder,
+                    message='O',
+                    property_item=property_item)
+                async_to_sync(self.channel_layer.group_send)(
+                    f'notifications_{latest_bid.bidder.id}', {
+                        'type': 'propagate',
+                        'identifier_type': 'notification',
+                        'data': {
+                            'id': notification.id,
+                            'message': 'You have been outbid!',
+                            'url': '/property/'
+                                   + str(property_item.property.id)
+                        }
+                    })
+            user.save()
 
             Bid.objects.create(
-                property_item=property_item,
-                bidder=self.scope['user'],
-                amount=amount)
+                property_item=property_item, bidder=user, amount=amount)
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError, BidBuyoutError, ItemUnavailableError) as e:
+            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
-    def request_inbox(self, recipient_id, message):
+    def request_inbox(self, recipient, message):
         """
-        Handles a inbox request
+        Handles an inbox request
         """
-        sender_id = self.scope['user'].id
+        sender = self.scope['user']
         time_now = timezone.localtime()
         message_object = Message.objects.create(
-            sender=self.scope['user'],
-            recipient=get_user_model().objects.get(id=recipient_id),
-            time=time_now,
-            msg=message)
-        recipient = get_user_model().objects.get(id=recipient_id)
+            sender=sender, recipient=recipient, msg=message)
         async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{recipient_id}', {
+            f'inbox_{recipient.id}', {
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
                     'message': message_object.msg,
                     'time': str(time_now),
                     'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
+                        'id': sender.id,
+                        'name': sender.first_name
                     },
                     'recipient': {
-                        'id': recipient_id,
+                        'id': recipient.id,
                         'name': recipient.first_name
                     }
                 }
             })
 
         async_to_sync(self.channel_layer.group_send)(
-            f'inbox_{sender_id}', {
+            f'inbox_{sender.id}', {
                 'type': 'propagate',
                 'identifier_type': 'message',
                 'data': {
                     'message': message_object.msg,
                     'time': time_now.strftime("%b %d, %-H:%M %P"),
                     'sender': {
-                        'id': self.scope['user'].id,
-                        'name': self.scope['user'].first_name
+                        'id': sender.id,
+                        'name': sender.first_name
                     },
                     'recipient': {
-                        'id': recipient_id,
+                        'id': recipient.id,
                         'name': recipient.first_name
                     }
                 }
@@ -242,9 +310,47 @@ class Consumer(MultiplexJsonWebsocketConsumer):
 
     def propagate(self, event):
         """
-        Propagates a message to the client
+        Propagates a message to the client.
         """
         self.send_json({
-            'type': event['identifier_type'],
-            'data': event['data']
+            'type': event.get('identifier_type'),
+            'data': event.get('data')
         })
+
+
+def check_bid(property_item,
+              user,
+              incoming_bid_amount,
+              min_next_bid,
+              latest_bid=None):
+    current_session = BiddingSession.current_session_of(property_item)
+    if not current_session:
+        raise SessionExpiredError('Bidding session expired.')
+    elif not property_item.available:
+        raise ItemUnavailableError('This item is no longer available!')
+    elif (latest_bid and user == latest_bid.bidder
+          and incoming_bid_amount > user.credits + latest_bid.amount):
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')
+    elif not latest_bid and incoming_bid_amount > user.credits:
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')
+    elif incoming_bid_amount < min_next_bid:
+        raise BidAmountError('Your bid is too low.')
+    elif incoming_bid_amount >= property_item.buyout_price:
+        raise BidBuyoutError('Bid is too high! Please use buyout instead.')
+
+
+def check_buyout(property_item, user, buyout_amount, latest_bid=None):
+    current_session = BiddingSession.current_session_of(property_item)
+    if not current_session:
+        raise SessionExpiredError('Bidding session expired.')
+    elif not property_item.available:
+        raise ItemUnavailableError('This item is no longer available!')
+    elif (latest_bid and user == latest_bid.bidder
+          and buyout_amount > user.credits + latest_bid.amount):
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')
+    elif not latest_bid and buyout_amount > user.credits:
+        raise WalletOperationError(
+            'Not enough credits! Go to Dashboard to add credits.')

@@ -1,3 +1,15 @@
-.col-md-8 {
-  border-left: 1px solid rgba(0, 0, 0, 0.125);
+@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto');
+
+body {
+  color: black;
+}
+
+.card {
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
 }

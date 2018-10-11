@@ -10,7 +10,7 @@
 
 {% block title %} {{ block.super }} - Messages {% endblock %}
 
-{% block main-flex-wrapper %}
+{% block main-container %}
 <div id="main-flex-wrapper" class="container-fluid d-flex flex-column justify-content-between p-0">
 {% endblock %}
 
@@ -50,8 +50,8 @@
     {% endfor %}
     </div>
     <div class="d-flex">
-      <textarea id="chat-message-input" class="w-100" type="text" rows="3"></textarea>
-      <input id="chat-message-submit" class="" type="button" value="Send"/>
+      <textarea id="chat-message-input" class="w-100 p-3" type="text" rows="2" placeholder="Enter a message..."></textarea>
+      <input id="chat-message-submit" class="m-0 btn btn-dark" type="button" value="Send"/>
     </div>
   </div>
 </div>
@@ -62,12 +62,7 @@
 <script>
   var roomName = {{ user.id }};
 
-  var uri;
-  if (window.location.protocol === "https:") {
-    uri = "wss";
-  } else {
-    uri = "ws";
-  }
+  var uri = window.location.protocol === "https:" ? "wss" : "ws";
 
   var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
   csocket.open();
@@ -96,29 +91,45 @@
 
   document.querySelector('#chat-message-input').focus();
   document.querySelector('#chat-message-input').onkeyup = function(e) {
-      if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
-      }
+    if (e.keyCode === 13) {  // enter, return
+      document.querySelector('#chat-message-submit').click();
+    }
   };
 
   document.querySelector('#chat-message-submit').onclick = function(e) {
-      var messageInputDom = document.querySelector('#chat-message-input');
-      var message = messageInputDom.value;
-      var recipient_id = $('.active').attr('id').match(/\d+$/)[0];
-      console.log("id" + recipient_id);
-      console.log(message)
-      if (message) {
-        csocket.message(recipient_id, message)
-      }
-      messageInputDom.value = '';
+    var messageInputDom = document.querySelector('#chat-message-input');
+    var message = messageInputDom.value;
+    var recipient_id = $('.active').attr('id').match(/\d+$/)[0];
+    console.log("id" + recipient_id);
+    console.log(message)
+    if (message) {
+      csocket.message(recipient_id, message)
+    }
+    messageInputDom.value = '';
   };
 
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', function(){
+   // Open existing or create new chat if redirected from a property page
+    var url = new URL(window.location.href);
+    var newRecipient = url.searchParams.get("recipient");
+    // console.log(newRecipient);
+    if (newRecipient) {
+      if ($('#contact-' + newRecipient).length == 0) {
+        console.log("need a new tab...");
+        $('#v-pills-tab span').after('<a id="contact-' + newRecipient + '" class="nav-link" data-toggle="pill" href="#messages-panel-' + newRecipient + '" role="tab"> {{ recipient.first_name }}</a>');
+        $('#v-pills-tabContent').prepend('<div class="flex-column flex-grow-1 min-height-0 tab-pane fade" id="messages-panel-' + newRecipient + '" role="tabpanel"><div class="d-flex flex-column flex-grow-1 justify-content-end min-height-0"><ul id="messages-list-' + newRecipient + '" class="messages px-4"></ul></div></div>');
+      }
+      $('#contact-' + newRecipient).toggleClass('active show');
+      $('#messages-panel-' + newRecipient).toggleClass('active show');
+    } else {
+      // Else, display first conversation
+      $('#v-pills-tab div').children('a:first').toggleClass('active show');
+      $('#v-pills-tabContent').children(':first').toggleClass('active show');
+    }
+
+    // Scroll message panels to the bottom (most recent message)
     var chatWindow = document.querySelector('.messages');
     chatWindow.scrollTop = chatWindow.scrollHeight;
-  });
 </script>
 {% endblock %}
-

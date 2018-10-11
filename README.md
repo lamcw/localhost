@@ -5,6 +5,11 @@
 * postgreSQL>=9.6.10
 * psycopg2>=2.7.5
 * Redis>=4.0.9
+* celery (master branch or >= 4.3.0)
+* django-celery-beat>=1.1.1
+* django-polymorphic>=2.0.3
+* django-widget-tweaks>=1.4.3
+* factory-boy==2.11.1
 
 localhost is a real-time property auction platform tailored for short stays.
 It was developed by team *Undergrads* for the capstone course [COMP3900: Computer Science Project](http://legacy.handbook.unsw.edu.au/undergraduate/courses/2018/COMP3900.html) in Semester 2 2018 at [UNSW](https://www.unsw.edu.au/).
@@ -63,23 +68,7 @@ $ source venv/bin/activate
 $ (venv) pip install -r requirements.txt
 ```
 
-#### Setting Up Celery
-Since Celery 4.2.x does not support Python 3.7, we need to install Celery from
-source.
-```sh
-# install dependencies
-$ (venv) pip install https://github.com/celery/celery/zipball/master#egg=celery
-$ (venv) pip install https://github.com/celery/billiard/zipball/master#egg=billiard
-$ (venv) pip install https://github.com/celery/py-amqp/zipball/master#egg=amqp
-$ (venv) pip install https://github.com/celery/kombu/zipball/master#egg=kombu
-$ (venv) pip install https://github.com/celery/vine/zipball/master#egg=vine
-# install celery
-$ (venv) git clone https://github.com/celery/celery.git
-$ (venv) cd celery
-$ (venv) python setup.py build
-$ (venv) python setup.py install
-$ (venv) cd .. && rm -rf celery
-```
+#### Celery
 To start the celery service, run:
 ```sh
 celery -A localhost worker -l info -E -B
@@ -119,12 +108,12 @@ If only one of the test sets is required, simply omit `-l` and load the set manu
 
 To export data in database,
 ```sh
-./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
+./manage.py dumpdata --indent=2 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
 ```
 
 To export data in database,
 ```sh
-./manage.py dumpdata --indent=4 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
+./manage.py dumpdata --indent=2 --natural-foreign core django_celery_beat authentication [other apps] -o [file]
 ```
 
 #### Testing
@@ -163,6 +152,9 @@ let g:ale_linters = {
 
 Not all the linters provided in the *ALE* documentation are good quality and some may not run well alongside others. Add each linter one at a time and watch for unacceptable performance drops before continuing.
 
+#### Style Guide
+Python code should follow [PEP 8](https://www.python.org/dev/peps/pep-0008/?) and docstring should follow [Google style](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
+
 #### Branches and pull requests
 
 * `master` contains the latest stable release.
@@ -180,3 +172,74 @@ Who do I select for a review?
 
 * If there are code corrections to be made, request them to be made before the pull request is merged. 
 * Ensure that the changes do not break any functionality.
+
+## Deployment
+
+Please note that while this README is updated in the `dev` branch of the repository, the server ***must*** be deployed under the `master` branch. Server specific fixes are directly committed to the `master` branch.
+
+`localhost` is deployed on an EC2 AWS instance running Ubuntu 18.04.1 LTS. The distribution can be installed through the community marketplace. The path of the repository, for consistency, is `/home/ubuntu/localhost/`.
+
+### Port Forwarding Configuration
+
+On the EC2 Dashboard, navigate to the running instance with `localhost`, scroll to the far right and select 'launch-wizard'. This will open a tab for configuring ports at the bottom on the page. Ports `80` and `443` must be enabled.
+
+### Services
+
+#### Django
+
+[Django](https://www.djangoproject.com/) follows the same instructions as in Development with only minor differences:
+* The environment variable `SECRET_KEY` must be set when running commands requiring it.
+* Django must be run using `settings_production.py`.
+
+#### PostgreSQL
+
+[PostgresSQL](https://www.postgresql.org/) follows the same instructions as in Development with only minor differences:
+* `initdb` may not be in the path and require you to use the full path to the script.
+* `pg_hba.conf` will require password authentication for the database. After creating an account, the `\password` command must be used in the `psql` shell to set a password.
+* Environment variables `DB_USER` and `DB_PW` must be manually set when running commands requiring them.
+
+#### NGINX
+
+[NGINX](https://www.nginx.com/) is used as the web server. `deploy/nginx.conf` contains the required configuration for the server.
+* Requests to port 80 are automatically redirected to port 443.
+* SSL certificates are installed using [certbot](https://certbot.eff.org/) with [Let's Encrypt](https://letsencrypt.org/). On a fresh install *certbot* should automatically use the certificates that have already been registered. Certificates must be renewed every three months.
+* Serves media and static files.
+* Websocket requests are redirected to a local network port that *Daphne* listens to.
+* Remaining requests are redirected to a file socket at `/home/ubuntu/localhost.sock` that *Gunicorn* listens to.
+
+#### Gunicorn
+
+*NGINX* cannot interface with *Django* directly. [Gunicorn](https://gunicorn.org/) is used to handle requests from *NGINX* that require *Django*.
+
+The service script required can be found in `deploy/systemd/gunicorn.service`. The environment variables for `SECRET_KEY`, `DB_USER`, and `DB_PW` must be set prior to enabling. Below `Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"` add:
+
+```
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+```
+
+#### Daphne
+
+[Daphne](https://github.com/django/daphne) is used as a WebSocket protocol server for Django Channels. *NGINX* redirects all WebSocket requests to a local network socket for *Daphne* to operate on.
+
+The service script required can be found in `deploy/systemd/daphne.service`. The environment variables for `SECRET_KEY`, `DB_USER`, and `DB_PW` must be set prior to enabling. Below `Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"` add:
+
+```
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+```
+
+### init.sh
+
+To automate the installation / update of the `NGINX` configuration script and to restart the services a script is provided at `deploy/init.sh`. It requires sudo privileges.
+
+```
+# ./init.sh
+Installing nginx config...
+Restarting services...
+Finished...exiting.
+```
+
+This should be run whenever a rebuild takes place.

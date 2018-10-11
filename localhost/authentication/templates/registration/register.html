@@ -17,6 +17,9 @@
   {% csrf_token %}
   {% for field in form %}
     {% if field.label != 'Gender' %}
+      {% if field.label == 'Date of birth' %}
+      <br><label for="{{ field.id_for_label }}" class="text-muted">{{ field.label }}</label>
+      {% endif %}
       {% include "core/include/form_field.html" with form=form field=field %}
     {% endif %}
   {% endfor %}

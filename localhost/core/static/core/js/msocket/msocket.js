@@ -216,11 +216,33 @@ class ClientSocket extends MSocket {
    *                        sent to
    * @param message         The message to be sent
    * */
-    message(recipient_id, message) {
+  message(recipient_id, message) {
     var payload = {
       'recipient_id': recipient_id,
       'message': message
     };
     this.send('message', payload);
+  }
+
+  /**
+   * @brief Sends a notification instruction
+   *
+   * @param notification_id The id of the notification the instruction
+   *                        will operate on
+   * @param instruction     The instruction to be executed
+   * */
+  notification(notification_id, instruction) {
+    var payload = {
+      'notification_id': notification_id,
+      'instruction': instruction
+    };
+    this.send('notification', payload);
+  }
+
+  buyout(property_item_id) {
+    var payload = {
+      'property_item_id': property_item_id,
+    };
+    this.send('buyout', payload);
   }
 }

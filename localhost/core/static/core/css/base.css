@@ -1,15 +1,32 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Raleway');
+
+:root {
+    --foreground: #c7cece;
+    --background: #2a3432;
+    --accent: #7daab9;
+    --alternative-accent: #dcbdad;
+}
+
+html {
+  background: url(../images/laura-cros-748180-unsplash.jpg) no-repeat center center fixed;
+  background-size: cover;
+}
 
 body {
+  background: rgba(0, 0, 0, 0.4) !important;
   font-family: 'Roboto', sans-serif;
 }
 
-#main-flex-wrapper {
+body > .container, body > .container-fluid {
   min-height: 100vh;
 }
 
-.card {
-  border-radius: 0;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+}
+
+p {
+  font-family: 'Roboto', sans-serif !important;
 }
 
 /* Manually importing flex-grow classes from mainline bootstrap */
@@ -21,4 +38,40 @@ body {
 .flex-grow-1 {
   -ms-flex-positive: 1 !important;
   flex-grow: 1 !important;
+}
+
+.flex-lg-row {
+  flex-direction: column !important;
+}
+
+.flex-md-row {
+  flex-direction: column !important;
+}
+
+.text-accent {
+  color: var(--accent) !important;
+}
+
+.bg-background {
+  background-color: var(--background) !important;
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+@media (min-width: 992px) {
+  .flex-lg-row {
+    flex-direction: row !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .flex-md-row {
+    flex-direction: row !important;
+  }
+}
+
+::-webkit-input-placeholder {
+  height: 2rem;
 }

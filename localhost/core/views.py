@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -8,13 +9,16 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView
 
 from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview)
+                                   PropertyItemReview, Notification)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
 
 
 class PropertyDetailView(DetailView):
+    """
+    View that shows property and its property items.
+    """
     queryset = Property.objects.prefetch_related('property_item')
 
     def get_context_data(self, **kwargs):
@@ -23,6 +27,8 @@ class PropertyDetailView(DetailView):
         property_item = property.property_item.all()[0]
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
+        if self.request.user.is_authenticated:
+            context['notifications'] = Notification.objects.filter(user=self.request.user)
         return context
 
     def get_object(self, queryset=None):
@@ -34,19 +40,9 @@ class PropertyDetailView(DetailView):
                 booking__property_item=property_item)
             property_item.reviews = reviews.order_by('-rating')
             property_item.rating = reviews.aggregate(
-                Avg('rating'))['rating__avg']
-            now = timezone.localtime()
-            qs1 = BiddingSession.objects.filter(
-                Q(start_time__lte=F('end_time')),
-                Q(start_time__lte=now),
-                end_time__gte=now,
-                propertyitem=property_item)
-            qs2 = BiddingSession.objects.filter(
-                Q(start_time__gt=F('end_time')),
-                Q(start_time__lte=now)
-                | Q(end_time__gte=now),
-                propertyitem=property_item)
-            property_item.current_session = qs1.union(qs2).first()
+                Avg('rating'))['rating__avg'] or 0
+            property_item.current_session = \
+                BiddingSession.current_session_of(property_item)
             try:
                 property_item.current_price = \
                     property_item.bids.latest().amount
@@ -60,17 +56,25 @@ class PropertyDetailView(DetailView):
 
 
 class SearchResultsView(ListView):
+    """
+    View that display search results.
+    """
     model = Property
     template_name = 'core/search_results.html'
     paginate_by = 18
 
     def get_queryset(self, **kwargs):
+        """
+        Parses url parameters and display a list of property as a result,
+        sorted by distance, filtered by number of guests, check-in times.
+        """
         args = self.request.GET
         logger.debug(args)
 
         try:
-            latitude = float(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-            longitude = float(
+            latitude = Decimal(
+                args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            longitude = Decimal(
                 args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
             address = args.get('address')
@@ -87,9 +91,14 @@ class SearchResultsView(ListView):
         default_checkin = (
             timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(args.get('checkin', default_checkin))
+        latitude_offset = Decimal(0.15)
+        longitude_offset = Decimal(0.15)
 
-        properties = self.model.objects.within(latitude, longitude)
-
+        properties = Property.objects.within(latitude, longitude).filter(
+            latitude__range = (latitude - latitude_offset, latitude + latitude_offset),
+            longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
+        )
+        print(properties.query)
         if bid_now == 'on':
             now = timezone.localtime()
 
@@ -125,6 +134,20 @@ class SearchResultsView(ListView):
 
 
 class ProfileView(DetailView):
+    """
+    View that display user public profile.
+    """
     model = get_user_model()
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        born = self.get_object().dob
+        today = timezone.now()
+        if born:
+            context['age'] = today.year - born.year \
+                - ((today.month, today.day) < (born.month, born.day))
+        else:
+            context['age'] = None
+        return context

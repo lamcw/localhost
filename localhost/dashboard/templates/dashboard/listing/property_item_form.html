@@ -15,9 +15,8 @@
 {% include "core/include/form_field.html" with form=form field=form.title %}
 {% include "core/include/form_field.html" with form=form field=form.description %}
 <div class="form-row">
-  {% include "core/include/form_field.html" with form=form field=form.min_price field_extra_css='col-md-4' %}
-  {% include "core/include/form_field.html" with form=form field=form.buyout_price field_extra_css='col-md-4' %}
-  {% include "core/include/form_field.html" with form=form field=form.capacity field_extra_css='col-md-4' %}
+  {% include "core/include/form_field.html" with form=form field=form.min_price field_extra_css='col-md-6' %}
+  {% include "core/include/form_field.html" with form=form field=form.capacity field_extra_css='col-md-6' %}
 </div>
 <div class="form-group">
   {{ form.amenities.label_tag }}

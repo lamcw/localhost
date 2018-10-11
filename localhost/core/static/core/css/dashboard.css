@@ -14,9 +14,13 @@ form {
   max-width: 500px;
 }
 
+nav .nav-link {
+  color: grey !important;
+}
+
 .masthead-brand a,
 .nav-link {
-  color: grey !important;
+  color: lightgrey !important;
 }
 
 header .masthead-brand {
@@ -32,17 +36,12 @@ header .masthead-brand {
   padding-bottom: 0 !important;
 }
 
-.divider {
-  border-left: 1px solid rgba(0, 0, 0, 0.125);
-}
-
 .list-nav {
   max-width: 250px;
   width: 250px;
 }
 
 .list-nav a {
-  color: gray;
   padding-left: 2rem !important;
   padding-right: 2rem !important;
   text-transform: none;

@@ -1,10 +1,13 @@
-from decimal import Decimal
-
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+
+def avatar_img_path(instance, filename):
+    return f"user_{instance.id}/avatar_{filename}"
 
 
 class UserManager(BaseUserManager):
@@ -44,9 +47,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     Email, first name, last name and password are required. Other fields are
     optional.
     """
+    DEFAULT_AVATAR_PATH = 'default/avatar-placeholder.png'
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, blank=False)
     email = models.EmailField(_('email address'), unique=True, blank=False)
+    avatar = models.ImageField(
+        _('avatar'), upload_to=avatar_img_path, default=DEFAULT_AVATAR_PATH)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -80,8 +86,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=GENDER_CHOICES,
         null=True,
         default=None)
-    credits = models.DecimalField(
-        _('credits'), max_digits=8, decimal_places=2, default=Decimal('0.0'))
+    credits = models.BigIntegerField(
+        _('credits'), default=0, validators=[MinValueValidator(0)])
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

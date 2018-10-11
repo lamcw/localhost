@@ -1,0 +1,29 @@
+<div class="p-2 flex-grow-1 justify-content-center tab-pane fade" id="guest-history" role="tabpanel">
+  {% if guest_booking_list %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Booking</th>
+        <th scope="col">Tenant</th>
+        <th scope="col">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in guest_booking_list %}
+      <tr>
+        <th scope="row">
+          <div class="d-flex flex-column m-0">
+            <a href="{{ booking.property_item.get_absolute_url }}" class="m-0"><h5 class="m-0">{{ booking.property_item }}</h5></a>
+            <p class="m-0 font-weight-normal">{{ booking.property_item.property.address }}</p>
+          </div>
+        </th>
+        <td class="align-middle"><a href="/profile/{{ booking.user.id }}" class="align-middle">{{ booking.user.first_name }}</a></td>
+        <td class="align-middle">{{ booking.earliest_checkin_time|date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-primary align-self-center">No guests have stayed with you yet</p>
+  {% endif %}
+</div>

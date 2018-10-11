@@ -6,5 +6,4 @@ app_name = 'messaging'
 
 urlpatterns = [
     path('', views.MessagingView.as_view(), name='messages'),
-
 ]

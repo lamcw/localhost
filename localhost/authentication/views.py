@@ -8,6 +8,9 @@ from localhost.authentication.forms import SignUpForm
 
 
 class SignUpView(UserPassesTestMixin, FormView):
+    """
+    Provides sign up view for user. Logs user in if registration is successful.
+    """
     template_name = 'registration/register.html'
     form_class = SignUpForm
     success_url = reverse_lazy('core:index')
@@ -29,4 +32,7 @@ class SignUpView(UserPassesTestMixin, FormView):
 
 class LoginView(UserPassesTestMixin, LoginView):
     def test_func(self):
+        """
+        User cannot access this page if he/she is authenticated.
+        """
         return not self.request.user.is_authenticated
