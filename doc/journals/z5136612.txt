@@ -49,3 +49,9 @@ Mid-sem break
 Implemented a way so that tasks can be scheduled after a certain period of time.
 This is useful for removing bids after auction ends. Also added factories to
 generate test data. Finished backend for user profile as well.
+
+Week 10
+
+Refactored repo. Mostly bug fixes in backend. Messages fetching is a bit faster
+now with native SQL queries. Performed user tests. Updated test data to match
+the current database model.
