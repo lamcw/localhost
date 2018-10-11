@@ -5,19 +5,20 @@ the server and a variety of clients who can listen to different and many
 groups.
 """
 import logging
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from localhost.core.exceptions import (BidAmountError, SessionExpiredError,
-                                       WalletOperationError, BidBuyoutError,
-                                       ItemUnavailableError)
-from localhost.core.models import (Bid, BiddingSession, Notification,
-                                   PropertyItem, Booking)
+from localhost.core.exceptions import (BidAmountError, BidBuyoutError,
+                                       ItemUnavailableError,
+                                       SessionExpiredError,
+                                       WalletOperationError)
+from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
+                                   PropertyItem)
 from localhost.messaging.models import Message
 
 logger = logging.getLogger(__name__)
@@ -168,11 +169,13 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                             'type': 'propagate',
                             'identifier_type': 'notification',
                             'data': {
-                                'id': notification.id,
-                                'message': 'The item you were \
+                                'id':
+                                notification.id,
+                                'message':
+                                'The item you were \
                                         bidding on was bought out!',
-                                'url': '/property/'
-                                       + str(property_item.property.id)
+                                'url':
+                                '/property/' + str(property_item.property.id)
                             }
                         })
                 property_item.bids.all().delete()
@@ -187,11 +190,12 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             latest = timezone.make_aware(
                 datetime.combine(today,
                                  property_item.property.latest_checkin_time))
-            Booking.objects.create(user=user,
-                                   property_item=property_item,
-                                   price=amount,
-                                   earliest_checkin_time=earliest,
-                                   latest_checkin_time=latest)
+            Booking.objects.create(
+                user=user,
+                property_item=property_item,
+                price=amount,
+                earliest_checkin_time=earliest,
+                latest_checkin_time=latest)
             async_to_sync(self.channel_layer.group_send)(
                 f'property_item_{property_item.id}', {
                     'type': 'propagate',
@@ -201,8 +205,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'user_id': user.id
                     }
                 })
-        except (SessionExpiredError, WalletOperationError,
-                BidAmountError, ItemUnavailableError) as e:
+        except (SessionExpiredError, WalletOperationError, BidAmountError,
+                ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_bid(self, property_item, amount):
@@ -252,16 +256,16 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'data': {
                             'id': notification.id,
                             'message': 'You have been outbid!',
-                            'url': '/property/'
-                                   + str(property_item.property.id)
+                            'url':
+                            '/property/' + str(property_item.property.id)
                         }
                     })
             user.save()
 
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
-        except (SessionExpiredError, WalletOperationError,
-                BidAmountError, BidBuyoutError, ItemUnavailableError) as e:
+        except (SessionExpiredError, WalletOperationError, BidAmountError,
+                BidBuyoutError, ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
 
     def request_inbox(self, recipient, message):

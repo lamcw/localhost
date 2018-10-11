@@ -28,7 +28,8 @@ class PropertyDetailView(DetailView):
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
         if self.request.user.is_authenticated:
-            context['notifications'] = Notification.objects.filter(user=self.request.user)
+            context['notifications'] = Notification.objects.filter(
+                user=self.request.user)
         return context
 
     def get_object(self, queryset=None):
@@ -95,10 +96,10 @@ class SearchResultsView(ListView):
         longitude_offset = Decimal(0.15)
 
         properties = Property.objects.within(latitude, longitude).filter(
-            latitude__range = (latitude - latitude_offset, latitude + latitude_offset),
-            longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
-        )
-        print(properties.query)
+            latitude__range=(latitude - latitude_offset,
+                             latitude + latitude_offset),
+            longitude__range=(longitude - longitude_offset,
+                              longitude + longitude_offset))
         if bid_now == 'on':
             now = timezone.localtime()
 
