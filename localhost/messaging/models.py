@@ -15,7 +15,7 @@ class Message(models.Model):
     msg = models.TextField()
 
     class Meta:
-        ordering = ['-time']
+        ordering = ['time']
 
     def __str__(self):
         return f'{self.sender}->{self.recipient}: {self.msg}'
