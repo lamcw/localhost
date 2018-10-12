@@ -16,7 +16,7 @@
 <div class="container panel">
   <form method="post" class="m-0">
     <h3>Leaving review for...</h3>
-    <p>[PlaceHolder address + TTB name]</p>
+    <p>{{ property_item.property.address }}, {{ property_item.title }}</p>
     {% csrf_token %}
     {% for field in form %}
     {% include "core/include/form_field.html" with form=form field=field %}
