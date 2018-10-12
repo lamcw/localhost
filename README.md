@@ -2,17 +2,14 @@
 
 ## Dependencies
 * Python>=3.6.5
-* postgreSQL>=9.6.10
-* psycopg2>=2.7.5
+* pip>=18.1
+* PostgreSQL>=9.6.10
 * Redis>=4.0.9
-* celery (master branch or >= 4.3.0)
-* django-celery-beat>=1.1.1
-* django-polymorphic>=2.0.3
-* django-widget-tweaks>=1.4.3
-* factory-boy==2.11.1
 
 localhost is a real-time property auction platform tailored for short stays.
 It was developed by team *Undergrads* for the capstone course [COMP3900: Computer Science Project](http://legacy.handbook.unsw.edu.au/undergraduate/courses/2018/COMP3900.html) in Semester 2 2018 at [UNSW](https://www.unsw.edu.au/).
+
+![localhost splash page](screenshot.jpg)
 
 ## Contributing
 ### Setup
