@@ -5,7 +5,6 @@
   {% for item in property.property_item.all %}
   {% if item.available %}
   <div class="d-flex justify-content-between">
-    <!-- TODO: profile avatar -->
     <img src="{{ item.images.all.0.img.url }}">
     <!-- Title, capacity, glyphs -->
     <div class="align-self-center text-center p-2 w-100">
@@ -30,6 +29,25 @@
         View
       </button>
       {% include "core/include/property/listing_modal.html" %}
+      {% if user.is_authenticated %}
+      <div id="buyout-confirm-{{ item.id }}" class="modal fade" tabindex="-1" role="dialog" data-show="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm buyout</h5>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to buyout this auction?</p>
+              <h5 class="text-center font-weight-bold">Buyout price: ${{ item.buyout_price }}</h5>
+            </div>
+            <div class="modal-footer">
+              <button value="{{ item.id }}" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button value="{{ item.id }}" type="button" class="ml-2 buyout-confirm btn btn-success btn-raised">Buyout!</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
   {% endif %}

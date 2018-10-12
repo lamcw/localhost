@@ -95,15 +95,22 @@
 
   var buyout_handler = function(data) {
     console.log('buyout');
-    $('.alert').text("Bought out!");
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' button').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' input').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' .alert').text("Bought out!");
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('buyout', buyout_handler)
 
   $('.buyout-button').click(function() {
-    console.log('hihihi')
-    csocket.buyout($(this).val());
+    $('#buyout-confirm-' + $(this).val()).modal({backdrop: 'static', show: true});
   });
+
+  $('.buyout-confirm').click(function() {
+    csocket.buyout($(this).val());
+    $('#buyout-confirm-' + $(this).val()).modal('hide');
+  });
+
   var handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)
@@ -125,8 +132,8 @@
   {% endfor %}
 
   var alert_handler = function(data) {
-    $('.alert').text(data.description);
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' .alert').text(data.description);
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('alert', alert_handler);
 
@@ -157,4 +164,10 @@
   }
 </script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=initMap"></script>
+
+<script>
+  $(document).on('hidden.bs.modal', '.modal', function () {
+    $('.modal:visible').length && $(document.body).addClass('modal-open');
+  });
+</script>
 {% endblock %}

@@ -205,9 +205,15 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'user_id': user.id
                     }
                 })
-        except (SessionExpiredError, WalletOperationError, BidAmountError,
+        except (SessionExpiredError, WalletOperationError, BidAmountError, 
                 ItemUnavailableError) as e:
-            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+            self.send_json({
+                'type': 'alert',
+                'data': {
+                    'description': str(e),
+                    'property_item_id': property_item.id
+                    }
+            })
 
     def request_bid(self, property_item, amount):
         """
@@ -264,9 +270,15 @@ class Consumer(MultiplexJsonWebsocketConsumer):
 
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
-        except (SessionExpiredError, WalletOperationError, BidAmountError,
+        except (SessionExpiredError, WalletOperationError, BidAmountError, 
                 BidBuyoutError, ItemUnavailableError) as e:
-            self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+            self.send_json({
+                'type': 'alert', 
+                'data': {
+                    'description': str(e),
+                    'property_item_id': property_item.id
+                    }
+            })
 
     def request_inbox(self, recipient, message):
         """
