@@ -97,8 +97,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             elif req == 'bid':
                 pk = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
-                property_item = PropertyItem.objects.get(pk=pk) \
-                    .prefetch_related('bids')
+                property_item = PropertyItem.objects \
+                    .prefetch_related('bids').get(pk=pk)
                 self.request_bid(property_item, amount)
             elif req == 'message':
                 pk = content['data']['recipient_id']
@@ -112,8 +112,9 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 self.request_notification(notification, instruction)
             elif req == 'buyout':
                 pk = content['data']['property_item_id']
-                property_item = PropertyItem.objects.get(pk=pk) \
-                    .select_related('property').prefetch_related('bids')
+                property_item = PropertyItem.objects \
+                    .select_related('property') \
+                    .prefetch_related('bids').get(pk=pk)
                 self.request_buyout(property_item)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
