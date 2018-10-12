@@ -49,28 +49,40 @@ as they can find bargains on days of low demand.
 \subsection{Concepts}
 
 \subsubsection{Auction Sessions}
-Auctions on our platform run in sessions ranging from two to six hours.
-Auction sessions start from midday to 3am the following day, with shorter sessions
-for stages of the day where a higher volume of bids are expected and longer sessions
-for periods of lull such as early afternoon.
-At the end of every session the highest bidder wins the auction and a booking is made.
 
 \begin{table}[!h]
 \centering
-  \begin{tabular}{lll}
-  Session & Start Time & End Time \\
+  \begin{tabular}{|l|l|l|}
+  \hline
+  Session & Start Time & End Time \\ \hline
   1       & 12pm       & 6pm      \\
   2       & 6pm        & 8pm      \\
   3       & 8pm        & 10pm     \\
   4       & 10pm       & 12am     \\
-  5       & 12am       & 3am
+  5       & 12am       & 3am      \\ \hline
   \end{tabular}
   \caption{Auction Session Times}
+  \label{tab:sessionTimes}
 \end{table}
 
+Auctions on our platform run in fixed sessions ranging in time from two to six hours.
+At the end of every session the highest bidder wins the auction and a booking is made.
+As seen in Table~\ref{tab:sessionTimes},
+auction sessions start running from midday to 3am the following day, with shorter sessions
+for stages of the day where a higher volume of bids are expected and longer sessions
+for periods of low volume such as early afternoon.
+
+The purpose of having multiple sessions is to give prospective guests multiple chances to
+win a bid throughout the day. If the guest loses a bid earlier in the day, he has
+additional chances later that night to win another bid. If auction
+sessions were not enforced and owners could choose their own session times, they
+would choose a single long session throughout the day which would
+maximise the number of bids to optimise their profits.
+Instead, hosts must decide which sessions their properties are listed for auction
+based on personal factors such as latest guest check-in time.
+
 \subsubsection{Buyout Option}
-There exists an option for guests to buyout the listing if they wish to immediately purchase
+A buyout option exists for guests to immediately purchase
 the item without having to wait for the auction session to end. Guests may choose to
 trade off cost for convenience and hosts receive large financial benefit from buyouts.
 Buyouts will immediately end the auction session and award the property item to the buyer.
-
