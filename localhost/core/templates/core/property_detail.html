@@ -132,8 +132,8 @@
   {% endfor %}
 
   var alert_handler = function(data) {
-    $('.alert').text(data.description);
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' .alert').text(data.description);
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('alert', alert_handler);
 

@@ -205,9 +205,21 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'user_id': user.id
                     }
                 })
+<<<<<<< HEAD
         except (SessionExpiredError, WalletOperationError, BidAmountError,
                 ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+=======
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError, ItemUnavailableError) as e:
+            self.send_json({
+                'type': 'alert',
+                'data': {
+                    'description': str(e),
+                    'property_item_id': property_item.id
+                    }
+            })
+>>>>>>> 0a5e80f... fixed issue of alerts appearing on all property item modals. alerts now only appear on the modal they were triggered on
 
     def request_bid(self, property_item, amount):
         """
@@ -264,9 +276,21 @@ class Consumer(MultiplexJsonWebsocketConsumer):
 
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
+<<<<<<< HEAD
         except (SessionExpiredError, WalletOperationError, BidAmountError,
                 BidBuyoutError, ItemUnavailableError) as e:
             self.send_json({'type': 'alert', 'data': {'description': str(e)}})
+=======
+        except (SessionExpiredError, WalletOperationError,
+                BidAmountError, BidBuyoutError, ItemUnavailableError) as e:
+            self.send_json({
+                'type': 'alert', 
+                'data': {
+                    'description': str(e),
+                    'property_item_id': property_item.id
+                    }
+            })
+>>>>>>> 0a5e80f... fixed issue of alerts appearing on all property item modals. alerts now only appear on the modal they were triggered on
 
     def request_inbox(self, recipient, message):
         """
