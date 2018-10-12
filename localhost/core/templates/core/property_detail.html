@@ -76,23 +76,11 @@
 {% block js %}
 <script type="text/javascript" src="{% static "core/js/property/mobile_modal_hide.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
-<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
   var session_end = new Date('{% now "F j, Y" %} {{ session_end|time:"H:i:s" }}').getTime();
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>
-  var uri = window.location.protocol === "https:" ? "wss" : "ws";
-
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
-  csocket.open();
-
-  var notification_handler = function(data) {
-    console.log('notification arrived!')
-    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href=' + data.url + '>' + data.message + '</a>');
-  }
-  csocket.register_handler('notification', notification_handler);
-
   var buyout_handler = function(data) {
     console.log('buyout');
     $('#bidding-module-' + data.property_item_id + ' button').prop('disabled', true);
@@ -136,13 +124,6 @@
     $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('alert', alert_handler);
-
-  $('.notification-btn').click(function() {
-    var notification = $(this).attr('id');
-    var notification_id = notification.match(/\d+$/)[0];
-    csocket.notification(notification_id, 'clear');
-    $(this).parent().remove();
-  });
 
 </script>
 <script>

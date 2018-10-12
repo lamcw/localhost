@@ -55,14 +55,8 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
   var self = {{ user.id }};
-
-  var uri = windows.location.protocol == "https:" ? "wss" : "ws";
-
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/bid/');
-  csocket.open();
 
   var handler = function(data) {
     $('#' + 'bid_item_' + data.property_item_id).text(data.amount);
