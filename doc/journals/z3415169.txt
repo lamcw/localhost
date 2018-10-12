@@ -35,3 +35,11 @@ Bidding will be restructured for multiplexing by Jasper
 Mid-sem Break
 Re-wrote backend for bidding and messaging after Jasper added his socket multiplexing library
 Began populating the database with dummy properties, property items and images
+
+Week 10
+Completed the backend for messaging with timestamps and proper ordering
+Conducted user tests with three friends
+
+Week 11
+Added the backend for a buyout option for users.
+Added backend for notifications. Users receive notification after buyout, auction expiry and outbidding
