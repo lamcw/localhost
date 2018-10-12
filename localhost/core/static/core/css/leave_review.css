@@ -1,0 +1,7 @@
+.panel {
+  max-width: 500px;
+}
+
+.checked {
+  color: orange !important;
+}

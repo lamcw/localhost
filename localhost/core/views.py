@@ -6,13 +6,14 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 
-from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview, Notification)
+from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
+                                   Property, PropertyItemReview)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class PropertyDetailView(DetailView):
@@ -28,7 +29,7 @@ class PropertyDetailView(DetailView):
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
         if self.request.user.is_authenticated:
-            context['notifications'] = Notification.objects.filter(user=self.request.user)
+            context['notifications'] = self.request.user.notification_set.all()
         return context
 
     def get_object(self, queryset=None):
@@ -72,18 +73,15 @@ class SearchResultsView(ListView):
         logger.debug(args)
 
         try:
-            latitude = Decimal(
-                args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-            longitude = Decimal(
-                args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
+            lat = Decimal(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            lng = Decimal(args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
             address = args.get('address')
             if address:
-                latitude, longitude = parse_address(address)
+                lat, lng = parse_address(address)
             else:
                 # address also empty
-                latitude, longitude = parse_address(
-                    settings.DEFAULT_SEARCH_ADDRESS)
+                lat, lng = parse_address(settings.DEFAULT_SEARCH_ADDRESS)
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
@@ -91,14 +89,12 @@ class SearchResultsView(ListView):
         default_checkin = (
             timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(args.get('checkin', default_checkin))
-        latitude_offset = Decimal(0.15)
-        longitude_offset = Decimal(0.15)
+        lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
+        lat_range = (lat - lat_offset, lat + lat_offset)
+        lng_range = (lng - lng_offset, lng + lng_offset)
+        properties = Property.objects.within(lat, lng).filter(
+            latitude__range=lat_range, longitude__range=lng_range)
 
-        properties = Property.objects.within(latitude, longitude).filter(
-            latitude__range = (latitude - latitude_offset, latitude + latitude_offset),
-            longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
-        )
-        print(properties.query)
         if bid_now == 'on':
             now = timezone.localtime()
 
@@ -137,7 +133,7 @@ class ProfileView(DetailView):
     """
     View that display user public profile.
     """
-    model = get_user_model()
+    model = User
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
 
@@ -150,4 +146,22 @@ class ProfileView(DetailView):
                 - ((today.month, today.day) < (born.month, born.day))
         else:
             context['age'] = None
+        return context
+
+
+class HomeView(TemplateView):
+    template_name = 'core/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            context['last_booking'] = self.request.user \
+                .booking_set \
+                .select_related('property_item__property') \
+                .latest('earliest_checkin_time')
+        except Booking.DoesNotExist:
+            context['last_booking'] = None
+        except AttributeError:
+            # user not logged in
+            pass
         return context

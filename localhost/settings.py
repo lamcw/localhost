@@ -32,13 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
-    'polymorphic',
     'widget_tweaks',
     'django_celery_beat',
     'localhost.core',
     'localhost.authentication',
     'localhost.messaging',
-    'localhost.report',
     'localhost.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -121,8 +119,8 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = 'core:index'
-LOGOUT_REDIRECT_URL = 'core:index'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:home'
 
 AUTH_USER_MODEL = 'authentication.User'
 

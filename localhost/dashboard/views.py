@@ -9,7 +9,7 @@ from django.db import DataError
 from django.db.models import (BooleanField, Case, Exists, Max, OuterRef,
                               Subquery, Value, When)
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, UpdateView
@@ -20,7 +20,8 @@ from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
 from localhost.dashboard.forms import (ProfileForm, PropertyForm,
-                                       PropertyItemFormSet, WalletForm)
+                                       PropertyItemFormSet,
+                                       PropertyItemReviewForm, WalletForm)
 
 logger = logging.getLogger(__name__)
 
@@ -312,6 +313,7 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
             property_item=OuterRef('pk'),
             bidder=self.request.user).order_by('-amount')
         context['active_bids'] = PropertyItem.objects \
+            .select_related('property') \
             .annotate(current_bid=Max('bids__amount')) \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
@@ -322,7 +324,7 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
         # so latest_checkin_time <= today - 1 day
         one_day_ago = timezone.now() - timedelta(days=1)
         context['booking_list'] = Booking.objects \
-            .select_related('property_item__property').prefetch_related() \
+            .select_related('property_item', 'property_item__property') \
             .filter(user=self.request.user) \
             .order_by('-earliest_checkin_time') \
             .annotate(reviewed=Exists(reviews)) \
@@ -338,7 +340,8 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
                 default=Value(False),
                 output_field=BooleanField()
             ))
-        context['guest_booking_list'] = Booking.objects.prefetch_related() \
+        context['guest_booking_list'] = Booking.objects \
+            .select_related('property_item', 'property_item__property', 'user') \
             .filter(property_item__property__host=self.request.user) \
             .order_by('-earliest_checkin_time')
         return context
@@ -450,13 +453,18 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
                         CreateView):
-    model = PropertyItemReview
+    form_class = PropertyItemReviewForm
     success_url = reverse_lazy('dashboard:dashboard')
-    fields = (
-        'rating',
-        'description',
-    )
     template_name = 'dashboard/property_item_review.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['property_item'] = get_object_or_404(
+            Booking.objects.select_related('property_item',
+                                           'property_item__property').
+            prefetch_related('property_item__images'),
+            pk=self.kwargs.get('pk')).property_item
+        return context
 
     def form_valid(self, form):
         form.instance.booking = Booking.objects.get(pk=self.kwargs.get('pk'))

@@ -40,6 +40,9 @@ class BiddingSession(models.Model):
 
     @classmethod
     def current_session_of(cls, property_item):
+        """
+        Helper function to return current session a property item is in.
+        """
         now = timezone.localtime().time()
         qs1 = cls.objects.filter(
             Q(start_time__lte=F('end_time')),
@@ -166,8 +169,6 @@ class PropertyItem(models.Model):
     amenities = models.ManyToManyField(
         Amenity, blank=True, help_text=_('Amenities in this place.'))
     capacity = models.PositiveIntegerField()
-    bindable = models.BooleanField(
-        default=True, help_text=_('Enable binding bids.'))
     available = models.BooleanField(default=True)
 
     def get_absolute_url(self):
@@ -237,15 +238,14 @@ class Notification(models.Model):
     OUTBID = 'O'
     WON_BID = 'W'
     BUYOUT = 'B'
-    MESSAGE_CHOICES = (
-           (OUTBID, 'You have been outbid!'),
-           (WON_BID, 'You have won your auction!'),
-           (BUYOUT, 'The item you were bidding on was bought out!')
-    )
+    MESSAGE_CHOICES = ((OUTBID, 'You have been outbid!'),
+                       (WON_BID, 'You have won your auction!'),
+                       (BUYOUT,
+                        'The item you were bidding on was bought out!'))
     message = models.CharField(
-            _('message'),
-            max_length=1,
-            choices=MESSAGE_CHOICES,
+        _('message'),
+        max_length=1,
+        choices=MESSAGE_CHOICES,
     )
     property_item = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
@@ -261,8 +261,7 @@ def property_item_m2m_changed(instance, action, pk_set, **kwargs):
     if action == 'post_add':
         for i, session in enumerate(sessions):
             schedule, _ = CrontabSchedule.objects.get_or_create(
-                minute=session.end_time.minute,
-                hour=session.end_time.hour)
+                minute=session.end_time.minute, hour=session.end_time.hour)
             PeriodicTask.objects.get_or_create(
                 crontab=schedule,
                 task='localhost.core.tasks.cleanup_bids',
@@ -300,11 +299,9 @@ def session_pre_save(sender, instance, **kwargs):
     try:
         old_session = sender.objects.get(pk=instance.pk)
         old_schedule, _ = CrontabSchedule.objects.get_or_create(
-            minute=old_session.end_time.minute,
-            hour=old_session.end_time.hour)
+            minute=old_session.end_time.minute, hour=old_session.end_time.hour)
         new_schedule, _ = CrontabSchedule.objects.get_or_create(
-            minute=instance.end_time.minute,
-            hour=instance.end_time.hour)
+            minute=instance.end_time.minute, hour=instance.end_time.hour)
         PeriodicTask.objects \
             .filter(
                 crontab=old_schedule,

@@ -9,7 +9,7 @@ from celery import shared_task
 from channels.layers import get_channel_layer
 from django.utils import timezone
 
-from localhost.core.models import Bid, Booking, PropertyItem, Notification
+from localhost.core.models import Bid, Booking, Notification, PropertyItem
 
 logger = logging.getLogger(__name__)
 
@@ -46,15 +46,13 @@ def cleanup_bids(pk):
             latest_checkin_time=latest)
 
         channel_layer = get_channel_layer()
-        logger.info(f'Account {max_bid.bidder.id} won an auction.')
+        logger.info(f'Account {max_bid.bidder_id} won an auction.')
 
         notification = Notification.objects.create(
-            user=max_bid.bidder,
-            message='W',
-            property_item=property_item)
+            user=max_bid.bidder, message='W', property_item=property_item)
 
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{max_bid.bidder.id}', {
+            f'notifications_{max_bid.bidder_id}', {
                 'type': 'propagate',
                 'identifier_type': 'notification',
                 'data': {
@@ -68,7 +66,6 @@ def cleanup_bids(pk):
         property_item.available = False
         property_item.save()
     except Bid.DoesNotExist:
-        #logger.info('No bids in this session')
         pass
 
 

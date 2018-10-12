@@ -1,23 +1,60 @@
+{% load widget_tweaks %}
+
 {% for hidden_field in form.hidden_fields %}
-  {{ hidden_field }}
+{{ hidden_field }}
 {% endfor %}
 
 {% if form.non_field_errors %}
-  {% for error in form.non_field_errors %}
-    <div class="alert alert-danger" role="alert">
-      {{ error }}
-    </div>
-  {% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+{% endfor %}
 {% endif %}
 
-{% include "core/include/form_field.html" with form=form field=form.title %}
-{% include "core/include/form_field.html" with form=form field=form.description %}
-{% include "core/include/form_field.html" with form=form field=form.address %}
-<div class="form-row">
-  {% include "core/include/form_field.html" with form=form field=form.price field_extra_css='col-md-4' %}
-  {% include "core/include/form_field.html" with form=form field=form.buyout_price field_extra_css='col-md-4' %}
-  {% include "core/include/form_field.html" with form=form field=form.capacity field_extra_css='col-md-4' %}
+<div class="form-group">
+  <label for="{{ form.title.id_for_label }}" class="sr-only">{{ form.title.label }}</label>
+  {% if form.is_bound %}
+  {% if form.title.errors %}
+  {% render_field form.title class="form-control is-invalid" placeholder=form.title.label %}
+  {% for error in form.title.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
+  {% else %}
+  {% render_field form.title class="form-control is-valid" placeholder=form.title.label %}
+  {% endif %}
+  {% else %}
+  {% render_field form.title class="form-control" placeholder=form.title.label %}
+  {% endif %}
+
+  {% if form.title.help_text %}
+  <small class="form-text text-muted">{{ form.title.help_text|safe }}</small>
+  {% endif %}
 </div>
+<div class="form-group">
+  <label for="{{ form.description.id_for_label }}" class="sr-only">{{ form.description.label }}</label>
+  {% if form.is_bound %}
+  {% if form.description.errors %}
+  {% render_field form.description class="form-control is-invalid" placeholder=form.description.label rows="5" %}
+  {% for error in form.description.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
+  {% else %}
+  {% render_field form.description class="form-control is-valid" placeholder=form.description.label rows="5" %}
+  {% endif %}
+  {% else %}
+  {% render_field form.description class="form-control" placeholder=form.description.label rows="5" %}
+  {% endif %}
+
+  {% if form.description.help_text %}
+  <small class="form-text text-muted">{{ form.description.help_text|safe }}</small>
+  {% endif %}
+</div>
+{% include "core/include/form_field.html" with form=form field=form.address %}
 <div class="form-row">
   {% include "core/include/form_field.html" with form=form field=form.earliest_checkin_time field_extra_css='col-md-6' %}
   {% include "core/include/form_field.html" with form=form field=form.latest_checkin_time field_extra_css='col-md-6' %}
@@ -26,6 +63,6 @@
   {{ form.img.label_tag }}
   {{ form.img }}
   {% if form.img.help_text %}
-    <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
+  <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
   {% endif %}
 </div>

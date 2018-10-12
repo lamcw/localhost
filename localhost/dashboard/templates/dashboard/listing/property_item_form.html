@@ -1,78 +1,110 @@
 {% load widget_tweaks %}
 
 {% for hidden_field in form.hidden_fields %}
-  {{ hidden_field }}
+{{ hidden_field }}
 {% endfor %}
 
 {% if form.non_field_errors %}
-  {% for error in form.non_field_errors %}
-    <div class="alert alert-danger" role="alert">
-      {{ error }}
-    </div>
-  {% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+{% endfor %}
 {% endif %}
 
-{% include "core/include/form_field.html" with form=form field=form.title %}
-{% include "core/include/form_field.html" with form=form field=form.description %}
+<div class="form-group">
+  <label for="{{ form.title.id_for_label }}" class="sr-only">{{ form.title.label }}</label>
+  {% if form.is_bound %}
+  {% if form.title.errors %}
+  {% render_field form.title class="form-control is-invalid" placeholder=form.title.label %}
+  {% for error in form.title.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
+  {% else %}
+  {% render_field form.title class="form-control is-valid" placeholder=form.title.label %}
+  {% endif %}
+  {% else %}
+  {% render_field form.title class="form-control" placeholder=form.title.label %}
+  {% endif %}
+
+  {% if form.title.help_text %}
+  <small class="form-text text-muted">{{ form.title.help_text|safe }}</small>
+  {% endif %}
+</div>
+<div class="form-group">
+  <label for="{{ form.description.id_for_label }}" class="sr-only">{{ form.description.label }}</label>
+  {% if form.is_bound %}
+  {% if form.description.errors %}
+  {% render_field form.description class="form-control is-invalid" placeholder=form.description.label rows="5" %}
+  {% for error in form.description.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
+  {% else %}
+  {% render_field form.description class="form-control is-valid" placeholder=form.description.label rows="5" %}
+  {% endif %}
+  {% else %}
+  {% render_field form.description class="form-control" placeholder=form.description.label rows="5" %}
+  {% endif %}
+
+  {% if form.description.help_text %}
+  <small class="form-text text-muted">{{ form.description.help_text|safe }}</small>
+  {% endif %}
+</div>
 <div class="form-row">
-  {% include "core/include/form_field.html" with form=form field=form.min_price field_extra_css='col-md-6' %}
-  {% include "core/include/form_field.html" with form=form field=form.capacity field_extra_css='col-md-6' %}
+  {% include "core/include/form_field.html" with form=form field=form.min_price field_extra_css='col-md-4' %}
+  {% include "core/include/form_field.html" with form=form field=form.buyout_price field_extra_css='col-md-4' %}
+  {% include "core/include/form_field.html" with form=form field=form.capacity field_extra_css='col-md-4' %}
 </div>
 <div class="form-group">
   {{ form.amenities.label_tag }}
   {% if form.is_bound %}
-    {% if form.amenities.errors %}
-      {% render_field form.amenities class="form-control is-invalid" %}
-      {% for error in form.amenities.errors %}
-        <div class="invalid-feedback">
-          {{ error|escape }}
-        </div>
-      {% endfor %}
-    {% else %}
-      {% render_field form.amenities class="form-control is-valid" %}
-    {% endif %}
+  {% if form.amenities.errors %}
+  {% render_field form.amenities class="form-control is-invalid" %}
+  {% for error in form.amenities.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
   {% else %}
-    {% render_field form.amenities class="form-control" %}
+  {% render_field form.amenities class="form-control is-valid" %}
+  {% endif %}
+  {% else %}
+  {% render_field form.amenities class="form-control" %}
   {% endif %}
 
   {% if form.amenities.help_text %}
-    <small class="form-text text-muted">{{ form.amenities.help_text|safe }}</small>
+  <small class="form-text text-muted">{{ form.amenities.help_text|safe }}</small>
   {% endif %}
 </div>
 <div class="form-group">
   {{ form.session.label_tag }}
   {% if form.is_bound %}
-    {% if form.session.errors %}
-      {% render_field form.session class="form-control is-invalid" %}
-      {% for error in form.session.errors %}
-        <div class="invalid-feedback">
-          {{ error|escape }}
-        </div>
-      {% endfor %}
-    {% else %}
-      {% render_field form.session class="form-control is-valid" %}
-    {% endif %}
+  {% if form.session.errors %}
+  {% render_field form.session class="form-control is-invalid" %}
+  {% for error in form.session.errors %}
+  <div class="invalid-feedback">
+    {{ error|escape }}
+  </div>
+  {% endfor %}
   {% else %}
-    {% render_field form.session class="form-control" %}
+  {% render_field form.session class="form-control is-valid" %}
+  {% endif %}
+  {% else %}
+  {% render_field form.session class="form-control" %}
   {% endif %}
 
   {% if form.session.help_text %}
-    <small class="form-text text-muted">{{ form.session.help_text|safe }}</small>
-  {% endif %}
-</div>
-<div class="form-check">
-  {% render_field form.bindable class="form-check-input" %}
-  <label class="form-check-label" for="{{ form.bindable.id_for_label }}">
-    {{ form.bindable.label }}
-  </label>
-  {% if form.bindable.help_text %}
-    <small class="form-text text-muted">{{ form.bindable.help_text|safe }}</small>
+  <small class="form-text text-muted">{{ form.session.help_text|safe }}</small>
   {% endif %}
 </div>
 <div class="form-group">
   {{ form.img.label_tag }}
   {{ form.img }}
   {% if form.img.help_text %}
-    <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
+  <small class="form-text text-muted">{{ form.img.help_text|safe }}</small>
   {% endif %}
 </div>

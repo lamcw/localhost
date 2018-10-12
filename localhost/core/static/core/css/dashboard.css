@@ -14,17 +14,18 @@ form {
   max-width: 500px;
 }
 
-nav .nav-link {
+nav .nav-link,
+#notifications button {
   color: grey !important;
+}
+
+#notifications button:hover {
+  color: black !important;
 }
 
 .masthead-brand a,
 .nav-link {
   color: lightgrey !important;
-}
-
-header .masthead-brand {
-  display: none;
 }
 
 .nav-masthead .nav-link:hover,

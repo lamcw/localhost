@@ -73,38 +73,37 @@
 </div>
 {% include "core/include/footer.html" %}
 {% endblock %}
+
 {% block js %}
 <script type="text/javascript" src="{% static "core/js/property/mobile_modal_hide.js" %}"></script>
 <script type="text/javascript" src="{% static "core/js/countdown.js" %}"></script>
-<script type="text/javascript" src="{% static "core/js/msocket/msocket.js" %}"></script>
 <script>
+  /* Setting the countdown for each of the active auction items. */
   var session_end = new Date('{% now "F j, Y" %} {{ session_end|time:"H:i:s" }}').getTime();
   register_countdown('countdown', session_end, 'CLOSED');
 </script>
 <script>
-  var uri = window.location.protocol === "https:" ? "wss" : "ws";
-
-  var csocket = new ClientSocket(uri + '://' + window.location.host + '/ws/realtime/');
-  csocket.open();
-
-  var notification_handler = function(data) {
-    console.log('notification arrived!')
-    $('#notifications .dropdown-menu').append('<a class="dropdown-item" href=' + data.url + '>' + data.message + '</a>');
-  }
-  csocket.register_handler('notification', notification_handler);
-
+  /* Registering realtime buyout event handler. */
   var buyout_handler = function(data) {
     console.log('buyout');
-    $('.alert').text("Bought out!");
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' button').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' input').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' .alert').text("Bought out!");
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('buyout', buyout_handler)
 
   $('.buyout-button').click(function() {
-    console.log('hihihi')
-    csocket.buyout($(this).val());
+    $('#buyout-confirm-' + $(this).val()).modal({backdrop: 'static', show: true});
   });
-  var handler = function(data) {
+
+  $('.buyout-confirm').click(function() {
+    csocket.buyout($(this).val());
+    $('#buyout-confirm-' + $(this).val()).modal('hide');
+  });
+
+  /* Registering realtime bid handler event handler. */
+  var bid_handler = function(data) {
     var new_bid = data.amount;
     console.log(new_bid)
     $('#bid-current-' + data.property_item_id).text('$' + new_bid);
@@ -118,27 +117,22 @@
       $('#highest-bidder').removeClass('font-weight-bold');
     }
   }
+  csocket.register_handler('bid', bid_handler);
 
-  csocket.register_handler('bid', handler);
+  /* Registering listener for property events. */
   {% for property_item in property.property_item.all %}
   csocket.subscribe('property_item', {{ property_item.id }});
   {% endfor %}
 
+  /* Registering listener for alerts. */
   var alert_handler = function(data) {
-    $('.alert').text(data.description);
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' .alert').text(data.description);
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('alert', alert_handler);
-
-  $('.notification-btn').click(function() {
-    var notification = $(this).attr('id');
-    var notification_id = notification.match(/\d+$/)[0];
-    csocket.notification(notification_id, 'clear');
-    $(this).parent().remove();
-  });
-
 </script>
 <script>
+  /* Catching errors client side for bidding. */
   function sendBid (button) {
     var amount = $('#amount-ttb-' + button.id).val()
     if (amount) {
@@ -149,6 +143,7 @@
   }
 </script>
 <script>
+  /* Displaying map when button registers function call. */
   function initMap() {
     var property = {lat: {{ property.latitude }}, lng: {{ property.longitude }}};
     var map = new google.maps.Map(
@@ -157,4 +152,10 @@
   }
 </script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=initMap"></script>
+<script>
+  /* Event triggered when the modal is finished disappearing off the screen. */
+  $(document).on('hidden.bs.modal', '.modal', function () {
+    $('.modal:visible').length && $(document.body).addClass('modal-open');
+  });
+</script>
 {% endblock %}

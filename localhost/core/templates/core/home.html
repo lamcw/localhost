@@ -5,7 +5,11 @@
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/gmaps.css" %}">
+{% if user.is_authenticated %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/home.css" %}">
+{% else %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/splash.css" %}">
+{% endif %}
 {% endblock %}
 
 {% block body_wrapped %}
@@ -13,16 +17,34 @@
 <main role="main">
   <ul class="tag-lines">
     <li>
-      <h1>We hope you enjoyed your stay at Kingsford!</h1>
-      <!-- <h1>Welcome to localhost!</h1> -->
+      {% if user.is_authenticated %}
+      {% if last_booking %}
+      <h1>We hope you enjoyed your stay at {{ last_booking.property_item.property.address }}!</h1>
+      {% else %}
+      <h1>Welcome to localhost!</h1>
+      {% endif %}
+      {% else %}
+      <h1 class="tag-head">Welcome to the next generation of lodging</h1>
+      {% endif %}
     </li>
     <li>
+      {% if user.is_authenticated %}
+      {% if last_booking %}
       <h4>Are you ready for your next adventure?</h4>
-      <!-- <h1>We hope you enjoy your stay</h1> -->
+      {% else %}
+      <h1>We hope you enjoy your stay</h1>
+      {% endif %}
+      {% else %}
+      <h4>Search &bull; Bid &bull; Stay</h4>
+      {% endif %}
     </li>
   </ul>
   <div class="input-group stylish-input-group">
+    {% if user.is_authenticated %}
     <input id="suburb_search" type="text" class="form-control py-2" placeholder="Where would you like to go?">
+    {% else %}
+    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try searching for 'Kingsford'">
+    {% endif %}
   </div>
   <form id="form-search" method="get" action="{% url 'core:search-results' %}">
     <input type="hidden" id="suburb_search_lat" name="lat" value="">
