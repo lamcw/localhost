@@ -95,10 +95,10 @@
 
   var buyout_handler = function(data) {
     console.log('buyout');
-    $('.bidding-module :button').prop('disabled', true);
-    $('.bidding-module input').prop('disabled', true);
-    $('.alert').text("Bought out!");
-    $('.alert').show();
+    $('#bidding-module-' + data.property_item_id + ' button').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' input').prop('disabled', true);
+    $('#bidding-module-' + data.property_item_id + ' .alert').text("Bought out!");
+    $('#bidding-module-' + data.property_item_id + ' .alert').show();
   }
   csocket.register_handler('buyout', buyout_handler)
 
