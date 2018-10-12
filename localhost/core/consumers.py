@@ -205,7 +205,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                         'user_id': user.id
                     }
                 })
-        except (SessionExpiredError, WalletOperationError, BidAmountError, 
+        except (SessionExpiredError, WalletOperationError, BidAmountError,
                 ItemUnavailableError) as e:
             self.send_json({
                 'type': 'alert',
@@ -270,10 +270,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
 
             Bid.objects.create(
                 property_item=property_item, bidder=user, amount=amount)
-        except (SessionExpiredError, WalletOperationError, BidAmountError, 
+        except (SessionExpiredError, WalletOperationError, BidAmountError,
                 BidBuyoutError, ItemUnavailableError) as e:
             self.send_json({
-                'type': 'alert', 
+                'type': 'alert',
                 'data': {
                     'description': str(e),
                     'property_item_id': property_item.id
@@ -294,7 +294,7 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 'identifier_type': 'message',
                 'data': {
                     'message': message_object.msg,
-                    'time': str(time_now),
+                    'time': time_now.strftime("%b %d, %-H:%M %P"),
                     'sender': {
                         'id': sender.id,
                         'name': sender.first_name
