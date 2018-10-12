@@ -29,6 +29,12 @@ p {
   font-family: 'Roboto', sans-serif !important;
 }
 
+textarea {
+  resize: none;
+  border: none;
+  overflow-x: hidden;
+}
+
 .card {
   border-radius: 0 !important;
 }

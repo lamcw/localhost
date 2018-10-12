@@ -14,12 +14,6 @@ ul {
   min-height: 0;
 }
 
-textarea {
-  resize: none;
-  border: none;
-  overflow-x: hidden;
-}
-
 textarea:focus {
   border: none;
   outline: none;
