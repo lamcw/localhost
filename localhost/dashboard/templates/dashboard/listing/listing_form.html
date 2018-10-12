@@ -3,8 +3,9 @@
 
 {% block css %}
 
-<link rel="stylesheet" type="text/css" href="{% static "core/css/panel.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
 
 {% endblock %}
 
@@ -13,26 +14,28 @@
 
 <div class="container">
   {% block form %}
-  <form class="panel" enctype="multipart/form-data" method="post" novalidate>
+  <form class="" enctype="multipart/form-data" method="post" novalidate>
     {% csrf_token %}
-    <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
-    {% include "dashboard/listing/property_form.html" with form=form image_formset=image_formset %}
+    <div class="panel">
+      <h2>{% block form_title %}Listing{% endblock %} - property details</h2>
+      {% include "dashboard/listing/property_form.html" with form=form image_formset=image_formset %}
 
-    {{ property_item_formset.management_form }}
-    {% for error in property_item_formset.non_form_errors %}
-    <div class="alert alert-danger" role="alert">
-      {{ error }}
+      {{ property_item_formset.management_form }}
+      {% for error in property_item_formset.non_form_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
 
     {% for form in property_item_formset %}
-    <div id="property_item-0" class="dynamic-form">
-      <h2>{% block sub_item_title %}New Item{% endblock %}</h2>
+    <div id="property_item-0" class="dynamic-form mt-4 panel">
+      <h2>{% block sub_item_title %}New Bookable{% endblock %}</h2>
       {% include 'dashboard/listing/property_item_form.html' with form=form %}
     </div>
     {% endfor %}
-    <button type="button" class="btn btn-success" onclick="listing_item_clone(); return false;">+ Add Item</button>
-    <input type="submit" class="btn btn-primary" value="Create"/>
+    <button type="button" class="btn btn-success btn-raised" onclick="listing_item_clone(); return false;">+ Add Item</button>
+    <button type="submit" class="btn btn-primary btn-raised float-right">Create Property</button>
   </form>
   {% endblock %}
 </div>
