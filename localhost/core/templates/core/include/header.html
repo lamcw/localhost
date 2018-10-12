@@ -1,46 +1,42 @@
 {% url 'messaging:messages' as messages %}
 {% url 'dashboard:dashboard' as dashboard %}
-{% url 'core:index' as home%}
 
 <header class="masthead p-3">
-  <!-- <div class="inner"> -->
-    {% if request.path == messages or request.path == dashboard %}
+  {% if request.path != messages and request.path != dashboard %}
+  <h3 class="masthead-brand"><a href="{% url 'core:home' %}">localhost</a></h3>
+  {% endif %}
+  <nav class="nav nav-masthead flex-grow-1">
+    {% if not user.is_authenticated %}
+    <a class="nav-link" href="{% url 'authentication:register' %}">Register</a>
+    <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
     {% else %}
-    <h3 class="masthead-brand"><a href="{% url 'core:index' %}">localhost</a></h3>
+    {% if request.path == messages or request.path == dashboard %}
+    <a class="nav-link mr-auto" href="{% url 'core:home' %}"><h5><i class="fas fa-home"></i></h5></a>
     {% endif %}
-    <nav class="nav nav-masthead flex-grow-1">
-      {% if not user.is_authenticated %}
-      <a class="nav-link" href="{% url 'authentication:register' %}">Register</a>
-      <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
-      {% else %}
-      {% if request.path == messages or request.path == dashboard %}
-      <a class="nav-link mr-auto" href="{% url 'core:index' %}"><h5><i class="fas fa-home"></i></h5></a>
-      {% endif %}
-      <div id="notifications" class="btn-group">
-        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Notifications
-        </button>
-        <div class="dropdown-menu">
-          {% if notifications %}
-            {% for notification in notifications %}
-            <div class="d-flex flex-row">
-                <a class="dropdown-item" href="/property/{{notification.property_item.id}}">{{notification.get_message_display}}</a>
-                <button id="button-notification-{{notification.id}}" class="notification-btn btn btn-primary" style="color:black !important;">clear</button>
-            </div>
-            {% endfor %}
-          {% else %}
-          <a class="dropdown-item">None</a>
-          {% endif %}
+    <div id="notifications" class="btn-group">
+      <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Notifications
+      </button>
+      <div class="dropdown-menu">
+        {% if notifications %}
+        {% for notification in notifications %}
+        <div class="d-flex flex-row">
+          <a class="dropdown-item" href="/property/{{ notification.property_item.id }}">{{ notification.get_message_display }}</a>
+          <button id="button-notification-{{ notification.id }}" class="notification-btn btn btn-primary" style="color:black !important;">clear</button>
         </div>
+        {% endfor %}
+        {% else %}
+        <a class="dropdown-item">None</a>
+        {% endif %}
       </div>
-      {% if request.path != messages %}
-      <a class="nav-link" href="{% url 'messaging:messages' %}">Messages</a>
-      {% endif %}
-      {% if request.path != dashboard %}
-      <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
-      {% endif %}
-      <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
-      {% endif %}
-    </nav>
-  <!-- </div> -->
+    </div>
+    {% if request.path != messages %}
+    <a class="nav-link" href="{% url 'messaging:messages' %}">Messages</a>
+    {% endif %}
+    {% if request.path != dashboard %}
+    <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+    {% endif %}
+    <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
+    {% endif %}
+  </nav>
 </header>

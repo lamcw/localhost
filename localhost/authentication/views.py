@@ -13,7 +13,7 @@ class SignUpView(UserPassesTestMixin, FormView):
     """
     template_name = 'registration/register.html'
     form_class = SignUpForm
-    success_url = reverse_lazy('core:index')
+    success_url = reverse_lazy('core:home')
 
     def test_func(self):
         return not self.request.user.is_authenticated
