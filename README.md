@@ -9,7 +9,7 @@
 localhost is a real-time property auction platform tailored for short stays.
 It was developed by team *Undergrads* for the capstone course [COMP3900: Computer Science Project](http://legacy.handbook.unsw.edu.au/undergraduate/courses/2018/COMP3900.html) in Semester 2 2018 at [UNSW](https://www.unsw.edu.au/).
 
-![localhost splash page](screenshot.jpg)
+![localhost splash page](./screenshot.jpg)
 
 ## Contributing
 ### Setup
