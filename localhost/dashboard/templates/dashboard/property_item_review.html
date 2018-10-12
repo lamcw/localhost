@@ -1,18 +1,27 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% load widget_tweaks %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/panel.css" %}">
+{% endblock %}
 
 {% block title %} {{ block.super }} - Review {% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 
-<div class="container">
-  <form method="post">
+<div class="container panel">
+  <form method="post" class="m-0">
+    <h3>Leaving review for...</h3>
+    <p>{{ property_item.property.address }}, {{ property_item.title }}</p>
     {% csrf_token %}
     {% for field in form %}
     {% include "core/include/form_field.html" with form=form field=field %}
     {% endfor %}
-    <input type="submit" value="Save">
+    <input type="submit" value="Save" class="m-0">
   </form>
 </div>
 

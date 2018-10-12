@@ -9,7 +9,7 @@ from django.db import DataError
 from django.db.models import (BooleanField, Case, Exists, Max, OuterRef,
                               Subquery, Value, When)
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, UpdateView
@@ -20,7 +20,8 @@ from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
 from localhost.dashboard.forms import (ProfileForm, PropertyForm,
-                                       PropertyItemFormSet, WalletForm)
+                                       PropertyItemFormSet,
+                                       PropertyItemReviewForm, WalletForm)
 
 logger = logging.getLogger(__name__)
 
@@ -452,13 +453,17 @@ class ListingDelete(LoginRequiredMixin, DeleteView):
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
                         CreateView):
-    model = PropertyItemReview
+    form_class = PropertyItemReviewForm
     success_url = reverse_lazy('dashboard:dashboard')
-    fields = (
-        'rating',
-        'description',
-    )
     template_name = 'dashboard/property_item_review.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['property_item'] = get_object_or_404(
+            Booking.objects.select_related('property_item',
+                                           'property_item__property'),
+            pk=self.kwargs.get('pk')).property_item
+        return context
 
     def form_valid(self, form):
         form.instance.booking = Booking.objects.get(pk=self.kwargs.get('pk'))

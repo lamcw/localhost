@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.forms.models import ModelForm, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from localhost.core.models import Property, PropertyItem
+from localhost.core.models import Property, PropertyItem, PropertyItemReview
 from localhost.core.utils import parse_address
 
 User = get_user_model()
@@ -88,6 +88,18 @@ class WalletForm(forms.Form):
     class Meta:
         labels = {
             'recharge_amount': 'Add money to wallet',
+        }
+
+
+class PropertyItemReviewForm(ModelForm):
+    class Meta:
+        model = PropertyItemReview
+        fields = (
+            'rating',
+            'description',
+        )
+        labels = {
+            'description': 'Leave a review...',
         }
 
 
