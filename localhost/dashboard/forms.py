@@ -101,6 +101,9 @@ class PropertyItemReviewForm(ModelForm):
         labels = {
             'description': 'Leave a review...',
         }
+        widgets = {
+            'rating': forms.HiddenInput(),
+        }
 
 
 PropertyItemFormSet = inlineformset_factory(
