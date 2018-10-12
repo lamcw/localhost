@@ -20,12 +20,6 @@ function listen_notifications(csocket) {
     check_empty_notifications();
   }
 
-  notification_handler({
-    'id': 1337,
-    'message': 'sparta',
-    'url': 'https://bitbucket.com/'
-  });
-
   csocket.register_handler('notification', notification_handler);
 
   $('.notification-btn').click(function() {
