@@ -28,7 +28,8 @@ class PropertyDetailView(DetailView):
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
         if self.request.user.is_authenticated:
-            context['notifications'] = Notification.objects.filter(user=self.request.user)
+            context['notifications'] = Notification.objects.filter(
+                user=self.request.user)
         return context
 
     def get_object(self, queryset=None):
@@ -72,18 +73,15 @@ class SearchResultsView(ListView):
         logger.debug(args)
 
         try:
-            latitude = Decimal(
-                args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
-            longitude = Decimal(
-                args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
+            lat = Decimal(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
+            lng = Decimal(args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
         except ValueError:
             address = args.get('address')
             if address:
-                latitude, longitude = parse_address(address)
+                lat, lng = parse_address(address)
             else:
                 # address also empty
-                latitude, longitude = parse_address(
-                    settings.DEFAULT_SEARCH_ADDRESS)
+                lat, lng = parse_address(settings.DEFAULT_SEARCH_ADDRESS)
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
@@ -91,14 +89,12 @@ class SearchResultsView(ListView):
         default_checkin = (
             timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(args.get('checkin', default_checkin))
-        latitude_offset = Decimal(0.15)
-        longitude_offset = Decimal(0.15)
+        lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
+        lat_range = (lat - lat_offset, lat + lat_offset)
+        lng_range = (lng - lng_offset, lng + lng_offset)
+        properties = Property.objects.within(lat, lng).filter(
+            latitude__range=lat_range, longitude__range=lng_range)
 
-        properties = Property.objects.within(latitude, longitude).filter(
-            latitude__range = (latitude - latitude_offset, latitude + latitude_offset),
-            longitude__range = (longitude - longitude_offset, longitude + longitude_offset)
-        )
-        print(properties.query)
         if bid_now == 'on':
             now = timezone.localtime()
 
