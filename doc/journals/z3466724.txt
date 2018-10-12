@@ -62,3 +62,11 @@ Completed the property page beta so that all property items within that
 property are displayed on one page. Viewing a property item now appears in a
 modal with the option to bid. Added a floating button for mobile users to close
 the modal. Also made the page mobile friendly.
+
+// Week 10
+Redesigned and updated the Dashboard and Messages pages to be consistent with
+the theme of the website. Wrote the messaging handler with Ed and Jasper for
+the Messages page. Resolved many small issues which impacted the rendering on
+desktop and mobile browsers.
+
+// Week 11
