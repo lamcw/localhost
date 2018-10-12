@@ -40,7 +40,11 @@
     </li>
   </ul>
   <div class="input-group stylish-input-group">
+    {% if user.is_authenticated %}
+    <input id="suburb_search" type="text" class="form-control py-2" placeholder="Where would you like to go?">
+    {% else %}
     <input id="suburb_search" type="text" class="form-control py-2" placeholder="Try searching for 'Kingsford'">
+    {% endif %}
   </div>
   <form id="form-search" method="get" action="{% url 'core:search-results' %}">
     <input type="hidden" id="suburb_search_lat" name="lat" value="">
