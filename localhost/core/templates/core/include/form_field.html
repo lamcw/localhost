@@ -11,7 +11,7 @@ Context args:
   <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
   {% if form.is_bound %}
     {% if field.errors %}
-      {% render_field field class="form-control is-invalid" placeholder=field.label%}
+      {% render_field field class="form-control is-invalid" placeholder=field.label %}
       {% for error in field.errors %}
         <div class="invalid-feedback">
           {{ error|escape }}

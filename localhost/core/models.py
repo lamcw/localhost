@@ -169,8 +169,6 @@ class PropertyItem(models.Model):
     amenities = models.ManyToManyField(
         Amenity, blank=True, help_text=_('Amenities in this place.'))
     capacity = models.PositiveIntegerField()
-    bindable = models.BooleanField(
-        default=True, help_text=_('Enable binding bids.'))
     available = models.BooleanField(default=True)
 
     def get_absolute_url(self):
