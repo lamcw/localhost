@@ -12,7 +12,7 @@ User = get_user_model()
 
 class UserReportCreate(LoginRequiredMixin, CreateView):
     model = UserReport
-    success_url = reverse_lazy('core:index')
+    success_url = reverse_lazy('core:home')
     template_name = 'report/user_report_create.html'
     fields = ('description', )
 

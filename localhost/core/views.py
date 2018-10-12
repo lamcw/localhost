@@ -6,13 +6,14 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 
-from localhost.core.models import (Bid, BiddingSession, Property,
-                                   PropertyItemReview, Notification)
+from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
+                                   Property, PropertyItemReview)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class PropertyDetailView(DetailView):
@@ -133,7 +134,7 @@ class ProfileView(DetailView):
     """
     View that display user public profile.
     """
-    model = get_user_model()
+    model = User
     template_name = 'core/public_profile.html'
     context_object_name = 'user'
 
@@ -146,4 +147,22 @@ class ProfileView(DetailView):
                 - ((today.month, today.day) < (born.month, born.day))
         else:
             context['age'] = None
+        return context
+
+
+class HomeView(TemplateView):
+    template_name = 'core/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            context['last_booking'] = self.request.user \
+                .booking_set \
+                .select_related('property_item__property') \
+                .latest('earliest_checkin_time')
+        except Booking.DoesNotExist:
+            context['last_booking'] = None
+        except AttributeError:
+            # user not logged in
+            pass
         return context
