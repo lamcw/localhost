@@ -32,13 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
-    'polymorphic',
     'widget_tweaks',
     'django_celery_beat',
     'localhost.core',
     'localhost.authentication',
     'localhost.messaging',
-    'localhost.report',
     'localhost.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',

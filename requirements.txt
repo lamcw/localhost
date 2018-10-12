@@ -15,7 +15,6 @@ constantly==15.1.0
 daphne==2.2.2
 Django==2.1.2
 django-celery-beat==1.1.0
-django-polymorphic==2.0.3
 django-widget-tweaks==1.4.3
 factory-boy==2.11.1
 kombu==4.2.1
