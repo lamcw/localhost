@@ -71,9 +71,9 @@ createdb $1
 if [ $M = y ]; then
     tput setaf 5; echo "Making migrations..."
     if [ $s = y ]; then
-        ./manage.py makemigrations core report messaging dashboard authentication --settings localhost.settings_production
+        ./manage.py makemigrations core messaging dashboard authentication --settings localhost.settings_production
     else
-        ./manage.py makemigrations core report messaging dashboard authentication
+        ./manage.py makemigrations core messaging dashboard authentication
     fi
 fi
 
