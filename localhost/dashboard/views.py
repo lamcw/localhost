@@ -312,6 +312,7 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
             property_item=OuterRef('pk'),
             bidder=self.request.user).order_by('-amount')
         context['active_bids'] = PropertyItem.objects \
+            .select_related('property') \
             .annotate(current_bid=Max('bids__amount')) \
             .filter(bids__bidder=self.request.user).distinct() \
             .annotate(user_bid=Subquery(user_bid.values('amount')[:1]))
@@ -322,7 +323,7 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
         # so latest_checkin_time <= today - 1 day
         one_day_ago = timezone.now() - timedelta(days=1)
         context['booking_list'] = Booking.objects \
-            .select_related('property_item__property').prefetch_related() \
+            .select_related('property_item', 'property_item__property') \
             .filter(user=self.request.user) \
             .order_by('-earliest_checkin_time') \
             .annotate(reviewed=Exists(reviews)) \
@@ -338,7 +339,8 @@ class DashboardView(LoginRequiredMixin, MultiFormsView):
                 default=Value(False),
                 output_field=BooleanField()
             ))
-        context['guest_booking_list'] = Booking.objects.prefetch_related() \
+        context['guest_booking_list'] = Booking.objects \
+            .select_related('property_item', 'property_item__property', 'user') \
             .filter(property_item__property__host=self.request.user) \
             .order_by('-earliest_checkin_time')
         return context

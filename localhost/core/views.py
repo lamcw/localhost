@@ -29,8 +29,7 @@ class PropertyDetailView(DetailView):
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
         if self.request.user.is_authenticated:
-            context['notifications'] = Notification.objects.filter(
-                user=self.request.user)
+            context['notifications'] = self.request.user.notification_set.all()
         return context
 
     def get_object(self, queryset=None):

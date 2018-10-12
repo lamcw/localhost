@@ -11,6 +11,7 @@ from decimal import Decimal
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
 from localhost.core.exceptions import (BidAmountError, BidBuyoutError,
@@ -96,7 +97,8 @@ class Consumer(MultiplexJsonWebsocketConsumer):
             elif req == 'bid':
                 pk = content['data']['property_item_id']
                 amount = Decimal(content['data']['amount'])
-                property_item = PropertyItem.objects.get(pk=pk)
+                property_item = PropertyItem.objects.get(pk=pk) \
+                    .prefetch_related('bids')
                 self.request_bid(property_item, amount)
             elif req == 'message':
                 pk = content['data']['recipient_id']
@@ -110,10 +112,13 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 self.request_notification(notification, instruction)
             elif req == 'buyout':
                 pk = content['data']['property_item_id']
-                property_item = PropertyItem.objects.get(pk=pk)
+                property_item = PropertyItem.objects.get(pk=pk) \
+                    .select_related('property').prefetch_related('bids')
                 self.request_buyout(property_item)
         except KeyError as e:
             logger.exception('Invalid JSON format.', exc_info=e)
+        except ObjectDoesNotExist as e:
+            logger.exception('Invalid pk.', exc_info=e)
 
     def request_subscribe(self, group):
         """
@@ -162,10 +167,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                     user.credits -= amount
                     notification = Notification.objects.create(
                         user=latest_bid.bidder,
-                        message='B',
+                        message=Notification.BUYOUT,
                         property_item=property_item)
                     async_to_sync(self.channel_layer.group_send)(
-                        f'notifications_{latest_bid.bidder.id}', {
+                        f'notifications_{latest_bid.bidder_id}', {
                             'type': 'propagate',
                             'identifier_type': 'notification',
                             'data': {
@@ -253,10 +258,10 @@ class Consumer(MultiplexJsonWebsocketConsumer):
                 user.credits -= amount
                 notification = Notification.objects.create(
                     user=latest_bid.bidder,
-                    message='O',
+                    message=Notification.OUTBID,
                     property_item=property_item)
                 async_to_sync(self.channel_layer.group_send)(
-                    f'notifications_{latest_bid.bidder.id}', {
+                    f'notifications_{latest_bid.bidder_id}', {
                         'type': 'propagate',
                         'identifier_type': 'notification',
                         'data': {

@@ -40,6 +40,9 @@ class BiddingSession(models.Model):
 
     @classmethod
     def current_session_of(cls, property_item):
+        """
+        Helper function to return current session a property item is in.
+        """
         now = timezone.localtime().time()
         qs1 = cls.objects.filter(
             Q(start_time__lte=F('end_time')),
