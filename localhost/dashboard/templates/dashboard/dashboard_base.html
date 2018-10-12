@@ -58,6 +58,7 @@
 <script>
   var self = {{ user.id }};
 
+  /* Registering bid event handler. */
   var handler = function(data) {
     $('#' + 'bid_item_' + data.property_item_id).text(data.amount);
     if (data.user_id == self) {
@@ -68,6 +69,7 @@
 
   {% if active_bids %}
   {% for item in active_bids %}
+  /* Subscribing to each of the property events. */
   csocket.subscribe('property_item', {{ item.id }});
   {% endfor %}
   {% endif %}

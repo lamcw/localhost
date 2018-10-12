@@ -1,3 +1,8 @@
+/**
+ * @brief Used to listen to notifications and update the notifications dropdown
+ *
+ * @param csocket The socket that notifications are listened to on
+ * */
 function listen_notifications(csocket) {
   var notification_handler = function(data) {
     /* Removing the "None" placeholder from notifications */

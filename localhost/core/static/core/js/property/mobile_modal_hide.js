@@ -1,3 +1,6 @@
+/**
+ * @brief Binds a hide to the exit click for the modal
+ * */
 $(".view-item").on("click", function() {
   var targetID = $(this).data("target");
   if ($(window).width() < 992) {
