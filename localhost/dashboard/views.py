@@ -461,7 +461,8 @@ class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
         context = super().get_context_data(**kwargs)
         context['property_item'] = get_object_or_404(
             Booking.objects.select_related('property_item',
-                                           'property_item__property'),
+                                           'property_item__property').
+            prefetch_related('property_item__images'),
             pk=self.kwargs.get('pk')).property_item
         return context
 
