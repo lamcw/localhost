@@ -5,6 +5,7 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/search_filter.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/results.css" %}">
 {% endblock %}
 
@@ -82,4 +83,13 @@
   {% endif %}
 </main>
 {% include "core/include/footer.html" %}
+{% endblock %}
+{% block js%}
+<script>
+  function activateSearchCallback() {
+    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
 {% endblock %}
