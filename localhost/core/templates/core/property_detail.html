@@ -7,9 +7,13 @@
 <link rel="stylesheet" type="text/css" href="{% static "core/css/property.css" %}">
 {% endblock %}
 
+{% block main-container %}
+<div class="container-fluid d-flex flex-column justify-content-between">
+{% endblock %}
+
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
-<div class="container">
+<div class="container px-3">
   <div id="property-carousel" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">
       {% with "https://via.placeholder.com/600x300?text=No images" as placeholder_image %}
