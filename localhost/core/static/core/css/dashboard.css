@@ -98,10 +98,7 @@ a span {
   position: absolute;
   background-color: black;
   z-index: 1000;
-}
-
-.navbar-toggler {
-  z-index: 3000;
+  top: 56px;
 }
 
 .btn-home {
