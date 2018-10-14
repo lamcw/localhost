@@ -15,14 +15,18 @@
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
 <main role="main" class="inner cover">
-{% if property_list|length > 0 %}
+{% if property_list %}
   <div class="album py-5">
     <div class="container">
       <div class="row">
         {% for property in property_list %}
         <div class="col-md-4 mb-4">
           <div class="card box-shadow h-100">
-            <img class="card-img-top" src="{{property.images.all.0.img.url}}"  alt="Card image cap">
+            {% if property.images.first %}
+            <img class="card-img-top" src="{{ property.images.first.img.url }}"  alt="Card image cap">
+            {% else %}
+            <img class="card-img-top" src="https://via.placeholder.com/300x170?text=No images" alt="Card image cap">
+            {% endif %}
             <div class="card-body d-flex flex-column justify-content-between">
               <h2 class="card-title">{{ property.title }}</h2>
               <div class="card-meta d-flex flex-column justify-content-end">

@@ -5,7 +5,7 @@
   {% for item in property.property_item.all %}
   {% if item.available %}
   <div class="d-flex justify-content-between">
-    <img src="{{ item.images.all.0.img.url }}">
+    <img src="{{ item.images.first.img.url }}">
     <!-- Title, capacity, glyphs -->
     <div class="align-self-center text-center p-2 w-100">
       <h4>{{ item.title }}</h4>
@@ -18,7 +18,7 @@
     </div>
     <!-- Price -->
     <div class="align-self-center p-1">
-      <span id="bid-current-{{item.id}}">
+      <span id="bid-current-{{ item.id }}">
         ${{ item.current_price }}
       </span>
     </div>

@@ -12,13 +12,17 @@
 <div class="container">
   <div id="property-carousel" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">
+      {% with "https://via.placeholder.com/600x300?text=No images" as placeholder_image %}
       {% for image in property.images.all %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
         <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
       </div>
       {% empty %}
-      No images
+      <div class="carousel-item active">
+        <img class="d-block w-100" src="{{ placeholder_image }}" alt="slide-1">
+      </div>
       {% endfor %}
+      {% endwith %}
     </div>
     <a class="carousel-control-prev" href="#property-carousel" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
