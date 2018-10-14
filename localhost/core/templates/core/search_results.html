@@ -9,15 +9,12 @@
 <link rel="stylesheet" type="text/css" href="{% static "core/css/results.css" %}">
 {% endblock %}
 
-{% block main-container %}
-<div class="container-fluid d-flex flex-column justify-content-between">
-{% endblock %}
-
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
+{% include "core/include/search_filter.html" %}
 <main role="main" class="inner cover">
-{% if property_list %}
-  <div class="album py-5">
+{% if property_list|length > 0 %}
+  <div class="album py-4">
     <div class="container">
       <div class="row">
         {% for property in property_list %}
