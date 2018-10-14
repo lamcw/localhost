@@ -17,23 +17,25 @@
 
 {% block body_wrapped %}
 <div class="container-fluid d-flex flex-row flex-grow-1 justify-content-center p-0 min-height-0">
-  <div class="d-flex flex-column py-3 justify-content-between" id="v-pills-tab" role="tablist">
-    <div class="d-flex flex-column list-nav nav nav-pills">
-      <h2 class="text-center p-1">Dashboard</h2>
-      <span class="header-divider"></span>
-      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Active Bids</span></a>
-      <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"><i class="fas fa-user"></i><span>Profile</span></a>
-      <a class="nav-link" id="booking-history-tab" data-toggle="pill" href="#booking-history" role="tab"><i class="fas fa-history"></i><span>Booking History</span></a>
-      <a class="nav-link" id="listings-tab" data-toggle="pill" href="#listings" role="tab"><i class="fas fa-home"></i><span>Listings</span></a>
-      <a class="nav-link" id="guest-history-tab" data-toggle="pill" href="#guest-history" role="tab"><i class="fas fa-users"></i><span>Guest History</span></a>
-      <a class="nav-link" id="security-tab" data-toggle="pill" href="#security" role="tab"><i class="fas fa-lock"></i><span>Security</span></a>
-      <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+  <div id="contacts" class="collapse navbar-collapse">
+    <div id="v-pills-tab" class="d-flex flex-column py-3 justify-content-between h-100" role="tablist">
+      <div class="d-flex flex-column list-nav nav nav-pills">
+        <h2 class="text-center p-1">Dashboard</h2>
+        <span class="header-divider"></span>
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#activity" role="tab"><i class="fas fa-bullhorn"></i><span>Active Bids</span></a>
+        <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"><i class="fas fa-user"></i><span>Profile</span></a>
+        <a class="nav-link" id="booking-history-tab" data-toggle="pill" href="#booking-history" role="tab"><i class="fas fa-history"></i><span>Booking History</span></a>
+        <a class="nav-link" id="listings-tab" data-toggle="pill" href="#listings" role="tab"><i class="fas fa-home"></i><span>Listings</span></a>
+        <a class="nav-link" id="guest-history-tab" data-toggle="pill" href="#guest-history" role="tab"><i class="fas fa-users"></i><span>Guest History</span></a>
+        <a class="nav-link" id="security-tab" data-toggle="pill" href="#security" role="tab"><i class="fas fa-lock"></i><span>Security</span></a>
+        <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+      </div>
+      <h3 class="masthead-brand"><a href="{% url 'core:home' %}">localhost</a></h3>
     </div>
-    <h3 class="masthead-brand"><a href="{% url 'core:home' %}">localhost</a></h3>
   </div>
 
   <div class="bg-light d-flex flex-column flex-grow-1 text-dark min-height-0">
-    {% include "core/include/header.html" %}
+    {% include "core/include/dashboard_header.html" %}
     <div class="tab-content d-flex flex-grow-1 min-height-0" id="v-pills-tabContent">
       <!-- Activity -->
       {% include "dashboard/active_bids.html" %}

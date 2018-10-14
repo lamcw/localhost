@@ -1,0 +1,44 @@
+{% url 'messaging:messages' as messages %}
+{% url 'dashboard:dashboard' as dashboard %}
+
+<header class="masthead p-3">
+  <nav class="nav nav-masthead flex-grow-1">
+    {% if not user.is_authenticated %}
+    <a class="nav-link" href="{% url 'authentication:register' %}">Register</a>
+    <a class="nav-link" href="{% url 'authentication:login' %}">Log in</a>
+    {% else %}
+    <button class="btn navbar-toggler bg-light" type="button" data-toggle="collapse" data-target="#contacts">
+      <i class="fas fa-user-friends"></i>
+    </button>
+    <a class="nav-link btn-home" href="{% url 'core:home' %}"><h5 class="m-0"><i class="fas fa-home"></i></h5></a>
+    <button class="btn navbar-toggler bg-light" type="button" data-toggle="collapse" data-target="#settings">
+      <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="settings">
+      <div id="notifications" class="btn-group">
+        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Notifications
+        </button>
+        <div class="dropdown-menu">
+          {% if notifications %}
+          {% for notification in notifications %}
+          <div class="d-flex flex-row">
+            <a class="dropdown-item" href="/property/{{ notification.property_item.id }}">{{ notification.get_message_display }}</a>
+            <button id="button-notification-{{ notification.id }}" class="notification-btn btn btn-primary" style="color:black !important;">clear</button>
+          </div>
+          {% endfor %}
+          {% else %}
+          <a id="notification-none" class="dropdown-item">None</a>
+          {% endif %}
+        </div>
+      </div>
+      {% if request.path == messages %}
+      <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+      {% else %}
+      <a class="nav-link" href="{% url 'messaging:messages' %}">Messages</a>
+      {% endif %}
+      <a class="nav-link" href="{% url 'authentication:logout' %}">Log out</a>
+      {% endif %}
+    </div>
+  </nav>
+</header>

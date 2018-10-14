@@ -28,3 +28,13 @@ textarea:focus {
 #chat-message-submit:hover {
   background-color: grey;
 }
+
+.messages {
+  padding: 0 .5rem;
+}
+
+@media (min-width: 768px) {
+  .messages {
+    padding: 0 1.5rem;
+  }  
+}

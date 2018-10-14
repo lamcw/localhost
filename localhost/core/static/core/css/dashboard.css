@@ -93,3 +93,43 @@ a span {
   position: absolute;
   left: 4rem;
 }
+
+#contacts {
+  position: absolute;
+  background-color: black;
+  z-index: 1000;
+}
+
+.navbar-toggler {
+  z-index: 3000;
+}
+
+.btn-home {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  #settings,
+  #contacts {
+    position: static;
+    background-color: transparent;
+    flex-basis: 0;
+    flex-grow: 0;
+    display: block;
+  }
+
+  #settings {
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+
+  .btn-home {
+    margin-right: auto;
+  }
+
+  .navbar-toggler {
+    display: none;
+  }
+}

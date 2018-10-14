@@ -16,24 +16,26 @@
 
 {% block body_wrapped %}
 <div class="d-flex flex-row flex-grow-1 justify-content-center p-0 min-height-0">
-  <div class="d-flex flex-column py-3 justify-content-between min-height-0" id="v-pills-tab" role="tablist">
-    <div class="d-flex flex-column list-nav nav nav-pills">
-      <h2 class="text-center p-1">Messages</h2>
-      <span class="header-divider"></span>
-      {% for contact, conversation in conversations %}
-      <a id="contact-{{ contact.id }}" class="nav-link" data-toggle="pill" href="#messages-panel-{{ contact.id }}" role="tab">{{ contact.first_name }}</a>
-      {% endfor %}
+  <div id="contacts" class="collapse navbar-collapse">
+    <div id="v-pills-tab" class="d-flex flex-column py-3 justify-content-between min-height-0 h-100"role="tablist">
+      <div class="d-flex flex-column list-nav nav nav-pills">
+        <h2 class="text-center p-1">Messages</h2>
+        <span class="header-divider"></span>
+        {% for contact, conversation in conversations %}
+        <a id="contact-{{ contact.id }}" class="nav-link" data-toggle="pill" href="#messages-panel-{{ contact.id }}" role="tab">{{ contact.first_name }}</a>
+        {% endfor %}
+      </div>
+      <h3 class="masthead-brand"><a href="{% url 'core:home' %}">localhost</a></h3>
     </div>
-    <h3 class="masthead-brand"><a href="{% url 'core:home' %}">localhost</a></h3>
   </div>
 
   <div class="bg-light d-flex flex-column flex-grow-1 text-dark min-height-0">
-  {% include "core/include/header.html" %}
+  {% include "core/include/dashboard_header.html" %}
     <div class="tab-content d-flex flex-grow-1 min-height-0" id="v-pills-tabContent">
       {% for contact, conversation in conversations %}
       <div class="flex-column flex-grow-1 min-height-0 tab-pane fade" id="messages-panel-{{ contact.id }}" role="tabpanel">
         <div class="d-flex flex-column flex-grow-1 justify-content-end min-height-0">
-          <ul id="messages-list-{{ contact.id }}" class="messages px-4">
+          <ul id="messages-list-{{ contact.id }}" class="messages">
             {% for message in conversation %}
             {% if message.sender.id == user.id %}
             <li class="text-right p-2">
