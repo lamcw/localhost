@@ -1,0 +1,16 @@
+[Unit]
+Description=Celery Beat Scheduler
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/ubuntu/localhost
+Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"
+ExecStart=/bin/sh -c '/home/ubuntu/localhost/venv/bin/celery beat \
+ --pidfile=/var/run/celery/beat.pid \
+ --logfile=/var/log/celery/beat.log'
+
+[Install]
+WantedBy=multi-user.target
