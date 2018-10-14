@@ -12,7 +12,7 @@ function register_countdown(inject_class, datetime, finish_string) {
   var interval = setInterval(function() {
     var current_datetime = new Date().getTime();
     if (datetime < current_datetime) {
-      $('#' + inject_class).html(finish_string);
+      $('.' + inject_class).html(finish_string);
       return;
     }
 
