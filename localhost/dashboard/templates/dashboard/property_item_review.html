@@ -17,7 +17,7 @@
 <div class="container panel p-0">
   <form method="post" class="m-0">
     {% csrf_token %}
-    <img class="w-100" src="{{ property_item.images.all.0.img.url }}">
+    <img class="w-100" src="{{ property_item.images.first.img.url }}">
     <div class="p-4">
       <h4 class="mt-3">{{ property_item.title }}</h4>
       <strong class="text-success">{{ property_item.property.address }}</strong>
