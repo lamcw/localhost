@@ -16,13 +16,17 @@
               <div class="flex-row">
                 <div id="ttb-carousel-{{ item.id }}" class="carousel slide" data-ride="carousel">
                   <div class="carousel-inner">
+                    {% with "https://via.placeholder.com/600x300?text=No images" as placeholder_image %}
                     {% for image in item.images.all %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                       <img class="d-block w-100" src="{{ image.img.url }}" alt="slide-{{ forloop.counter }}">
                     </div>
                     {% empty %}
-                    No images
+                    <div class="carousel-item active">
+                      <img class="d-block w-100" src="{{ placeholder_image }}" alt="slide-1">
+                    </div>
                     {% endfor %}
+                    {% endwith %}
                   </div>
                   <a class="carousel-control-prev" href="#ttb-carousel-{{ item.id }}" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -61,7 +65,7 @@
                   <div class="d-inline float-right">
                     <div class="d-inline pr-4">
                       Rating:
-                      {% if item.reviews|length > 0 %}
+                      {% if item.reviews.exists %}
                       {% with ''|center:item.rating as range %}
                       {% for _ in range %}
                       <i class="fas fa-star"></i>
@@ -70,7 +74,7 @@
                       {% else %}
                       N/A
                       {% endif %}
-                      ({{ item.reviews|length }})
+                      ({{ item.reviews.count }})
                     </div>
                   </div>
                 </div>
