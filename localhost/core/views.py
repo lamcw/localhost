@@ -1,11 +1,10 @@
 import logging
-from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Avg, F, Q
-from django.utils import dateparse, timezone
+from django.utils import timezone
 from django.views.generic import DetailView, ListView, TemplateView
 
 from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
