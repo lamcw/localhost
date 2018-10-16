@@ -65,8 +65,27 @@ class SearchResultsView(ListView):
 
     def get_queryset(self, **kwargs):
         """
-        Parses url parameters and display a list of property as a result,
-        sorted by distance, filtered by number of guests, check-in times.
+        Parses url parameters and display a list of property as a result.
+
+        Receives arguments from GET request and processes the search based on
+        those arguments. Properties are first filtered based on their latitude
+        and longitude (basically limiting our queryset to a sqaure box). Then
+        they are sorted by distance, filtered by number of guests and check-in
+        times.
+
+        If none the parameters are provided, latitude and longitude of
+        settings.DEFAULT_SEARCH_COORD will be used.
+
+        Args (in GET request):
+            lat: latitude of the search location
+            lng: longitude of the search location
+            addr: address of the search location (optional)
+            guests: capacity of the property item
+            bidding-active: 'on' if property item has to be available for
+                            bidding, 'off' otherwise
+
+        Returns:
+            a queryset containing the search results
         """
         args = self.request.GET
         logger.debug(args)
@@ -85,6 +104,7 @@ class SearchResultsView(ListView):
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
+        # initial filtering based on lat and lng
         lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
         lat_range = (lat - lat_offset, lat + lat_offset)
         lng_range = (lng - lng_offset, lng + lng_offset)

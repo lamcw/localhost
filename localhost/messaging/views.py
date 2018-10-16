@@ -13,6 +13,11 @@ class MessagingView(LoginRequiredMixin, ListView):
     model = Message
 
     def get_context_data(self, **kwargs):
+        """
+        Pass conversations to context.
+
+        context['conversations']: [(user, [messages]), (user, [messages]), ...]
+        """
         context = super().get_context_data(**kwargs)
         try:
             recipient = User.objects.get(pk=self.request.GET.get('recipient'))
