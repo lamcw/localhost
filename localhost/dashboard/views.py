@@ -19,6 +19,7 @@ from django.views.generic.edit import ProcessFormView
 from localhost.core.models import (Bid, Booking, Property, PropertyImage,
                                    PropertyItem, PropertyItemImage,
                                    PropertyItemReview)
+from localhost.core.views import NotificationMixin
 from localhost.dashboard.forms import (ProfileForm, PropertyForm,
                                        PropertyItemFormSet,
                                        PropertyItemReviewForm, WalletForm)
@@ -295,7 +296,7 @@ class MultiFormsView(TemplateResponseMixin, BaseMultipleFormsView):
     pass
 
 
-class DashboardView(LoginRequiredMixin, MultiFormsView):
+class DashboardView(LoginRequiredMixin, NotificationMixin, MultiFormsView):
     """
     View that display user dashboard. User must be logged in to see this page.
     """
@@ -401,7 +402,7 @@ class PropertyItemReviewMixin(AccessMixin):
                 return self.handle_no_permission()
 
 
-class ListingCreate(LoginRequiredMixin, CreateView):
+class ListingCreate(LoginRequiredMixin, NotificationMixin, CreateView):
     """
     CreateView that combines both ModelForm and InlineModelFormSet.
     """
@@ -441,18 +442,18 @@ class ListingCreate(LoginRequiredMixin, CreateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class ListingUpdate(LoginRequiredMixin, UpdateView):
+class ListingUpdate(LoginRequiredMixin, NotificationMixin, UpdateView):
     model = Property
     form_class = PropertyForm
     success_url = reverse_lazy('dashboard:dashboard')
 
 
-class ListingDelete(LoginRequiredMixin, DeleteView):
+class ListingDelete(LoginRequiredMixin, NotificationMixin, DeleteView):
     success_url = reverse_lazy('dashboard:dashboard')
 
 
 class ListingReviewView(LoginRequiredMixin, PropertyItemReviewMixin,
-                        CreateView):
+                        NotificationMixin, CreateView):
     form_class = PropertyItemReviewForm
     success_url = reverse_lazy('dashboard:dashboard')
     template_name = 'dashboard/property_item_review.html'

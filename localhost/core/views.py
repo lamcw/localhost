@@ -20,6 +20,7 @@ class NotificationMixin:
     """
     Pass notifications to view.
     """
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['notifications'] = self.request.user.notification_set.all() \
