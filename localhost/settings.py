@@ -163,7 +163,7 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 CELERY_TIMEZONE = TIME_ZONE
 
 DEFAULT_LOGGING = {
-    'handlers': ['console'],
+    'handlers': ['console', 'file'],
     'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
     'propagate': True,
 }
@@ -183,16 +183,32 @@ LOGGING = {
             'style': '{',
         },
     },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
+            'filters': ['require_debug_true']
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'filters': ['require_debug_false']
         },
     },
     'loggers': {
         'localhost.core': DEFAULT_LOGGING,
         'localhost.dashboard': DEFAULT_LOGGING,
-        'localhost.authentication': DEFAULT_LOGGING
+        'localhost.authentication': DEFAULT_LOGGING,
+        'django': DEFAULT_LOGGING
     },
 }

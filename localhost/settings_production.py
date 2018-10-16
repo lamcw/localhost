@@ -2,8 +2,9 @@ import os
 
 from localhost.settings import *
 
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '54.206.61.115', 'h11a.xyz', 'websocket']
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1', '54.206.61.115', 'h11a.xyz', 'websocket'
+]
 
 # Security
 # >= 50 characters & > 5 unique characters
@@ -31,13 +32,13 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 # DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': os.getenv('DB_NAME', 'localhost_db'),
-       'USER': os.getenv('DB_USER'),
-       'PASSWORD': os.getenv('DB_PW'),
-       'HOST': '127.0.0.1',
-       'PORT': '5432',
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DB_NAME', 'localhost_db'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PW'),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
 }
 # END DATABASE CONFIGURATION

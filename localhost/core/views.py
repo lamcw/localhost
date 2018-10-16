@@ -8,15 +8,27 @@ from django.db.models import Avg, F, Q
 from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView, TemplateView
 
-from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
-                                   Property, PropertyItemReview)
+from localhost.core.models import (Bid, BiddingSession, Booking, Property,
+                                   PropertyItemReview)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-class PropertyDetailView(DetailView):
+class NotificationMixin:
+    """
+    Pass notifications to view.
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['notifications'] = self.request.user.notification_set.all() \
+            if self.request.user.is_authenticated else None
+        return context
+
+
+class PropertyDetailView(NotificationMixin, DetailView):
     """
     View that shows property and its property items.
     """
@@ -28,8 +40,6 @@ class PropertyDetailView(DetailView):
         property_item = property.property_item.all()[0]
         if property_item and property_item.current_session:
             context['session_end'] = property_item.current_session.end_time
-        if self.request.user.is_authenticated:
-            context['notifications'] = self.request.user.notification_set.all()
         return context
 
     def get_object(self, queryset=None):
@@ -56,7 +66,7 @@ class PropertyDetailView(DetailView):
         return property
 
 
-class SearchResultsView(ListView):
+class SearchResultsView(NotificationMixin, ListView):
     """
     View that display search results.
     """
@@ -129,7 +139,7 @@ class SearchResultsView(ListView):
         return properties.order_by('distance')
 
 
-class ProfileView(DetailView):
+class ProfileView(NotificationMixin, DetailView):
     """
     View that display user public profile.
     """
@@ -149,7 +159,7 @@ class ProfileView(DetailView):
         return context
 
 
-class HomeView(TemplateView):
+class HomeView(NotificationMixin, TemplateView):
     template_name = 'core/home.html'
 
     def get_context_data(self, **kwargs):
@@ -165,3 +175,7 @@ class HomeView(TemplateView):
             # user not logged in
             pass
         return context
+
+
+class PageNotFoundView(NotificationMixin, TemplateView):
+    template_name = '404.html'

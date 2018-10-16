@@ -9,8 +9,10 @@ Group=root
 WorkingDirectory=/home/ubuntu/localhost
 Environment="DJANGO_SETTINGS_MODULE=localhost.settings_production"
 ExecStart=/bin/sh -c '/home/ubuntu/localhost/venv/bin/celery beat \
+ -A localhost \
  --pidfile=/var/run/celery/beat.pid \
- --logfile=/var/log/celery/beat.log'
+ --logfile=/var/log/celery/beat.log \
+ --loglevel=INFO'
 
 [Install]
 WantedBy=multi-user.target
