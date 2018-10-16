@@ -1,6 +1,9 @@
+from datetime import datetime, time, timedelta
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.models import ModelForm, inlineformset_factory
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from localhost.core.models import Property, PropertyItem, PropertyItemReview
@@ -44,6 +47,16 @@ class PropertyItemForm(ModelForm):
 
 
 class PropertyForm(ModelForm):
+    # TIME_CHOICE in this format [(time object, time in string)]
+    TIME_CHOICE = [((datetime.combine(timezone.now(), time()) +
+                     timedelta(minutes=i * 30)).time(),
+                    (datetime.combine(timezone.now(), time()) +
+                     timedelta(minutes=i * 30)).strftime('%H:%M'))
+                   for i in range(48)]
+    earliest_checkin_time = forms.ChoiceField(
+        choices=TIME_CHOICE, help_text=_('Earliest check-in time.'))
+    latest_checkin_time = forms.ChoiceField(
+        choices=TIME_CHOICE, help_text=_('Latest check-in time.'))
     img = forms.ImageField(
         widget=forms.ClearableFileInput(attrs={'multiple': True}),
         label='Photos',

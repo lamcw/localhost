@@ -9,7 +9,7 @@
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
-<div class="container">
+<div class="container p-4">
   <div id="property-carousel" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">
       {% with "https://via.placeholder.com/600x300?text=No images" as placeholder_image %}
@@ -160,4 +160,11 @@
     $('.modal:visible').length && $(document.body).addClass('modal-open');
   });
 </script>
+<script>
+  function activateSearchCallback() {
+    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
 {% endblock %}

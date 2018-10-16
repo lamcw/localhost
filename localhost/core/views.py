@@ -1,11 +1,10 @@
 import logging
-from datetime import timedelta
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Avg, F, Q
-from django.utils import dateparse, timezone
+from django.utils import timezone
 from django.views.generic import DetailView, ListView, TemplateView
 
 from localhost.core.models import (Bid, BiddingSession, Booking, Property,
@@ -76,8 +75,27 @@ class SearchResultsView(NotificationMixin, ListView):
 
     def get_queryset(self, **kwargs):
         """
-        Parses url parameters and display a list of property as a result,
-        sorted by distance, filtered by number of guests, check-in times.
+        Parses url parameters and display a list of property as a result.
+
+        Receives arguments from GET request and processes the search based on
+        those arguments. Properties are first filtered based on their latitude
+        and longitude (basically limiting our queryset to a sqaure box). Then
+        they are sorted by distance, filtered by number of guests and check-in
+        times.
+
+        If none the parameters are provided, latitude and longitude of
+        settings.DEFAULT_SEARCH_COORD will be used.
+
+        Args (in GET request):
+            lat: latitude of the search location
+            lng: longitude of the search location
+            addr: address of the search location (optional)
+            guests: capacity of the property item
+            bidding-active: 'on' if property item has to be available for
+                            bidding, 'off' otherwise
+
+        Returns:
+            a queryset containing the search results
         """
         args = self.request.GET
         logger.debug(args)
@@ -85,58 +103,44 @@ class SearchResultsView(NotificationMixin, ListView):
         try:
             lat = Decimal(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
             lng = Decimal(args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
-        except ValueError:
-            address = args.get('address')
+        except (ValueError, InvalidOperation):
+            address = args.get('addr')
             if address:
                 lat, lng = parse_address(address)
             else:
                 # address also empty
                 lat, lng = parse_address(settings.DEFAULT_SEARCH_ADDRESS)
+            lat, lng = Decimal(lat), Decimal(lng)
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
-        # default checkin time is set half an hour from now
-        default_checkin = (
-            timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
-        checkin = dateparse.parse_time(args.get('checkin', default_checkin))
+        # initial filtering based on lat and lng
         lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
         lat_range = (lat - lat_offset, lat + lat_offset)
         lng_range = (lng - lng_offset, lng + lng_offset)
         properties = Property.objects.within(lat, lng).filter(
-            latitude__range=lat_range, longitude__range=lng_range)
+            latitude__range=lat_range,
+            longitude__range=lng_range,
+            property_item__capacity__gte=guests)
 
         if bid_now == 'on':
             now = timezone.localtime()
 
-            # filter if checkin times are on same day
-            qs1 = properties.filter(
-                Q(earliest_checkin_time__lte=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lte=checkin),
-                latest_checkin_time__gt=checkin)
+            qs1 = PropertyItem.objects.filter(
+                Q(session__start_time__lte=F('session__end_time')),
+                Q(session__start_time__lte=now),
+                session__end_time__gte=now)
 
-            # filter if checkin times cross midnight
-            qs2 = properties.filter(
-                Q(earliest_checkin_time__gt=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lte=checkin)
-                | Q(latest_checkin_time__gt=checkin))
+            qs2 = PropertyItem.objects.filter(
+                Q(session__start_time__gt=F('session__end_time')),
+                Q(session__start_time__lte=now)
+                | Q(session__end_time__gte=now))
 
-            qs3 = properties.filter(
-                Q(property_item__session__start_time__lte=F('end_time')),
-                Q(property_item__session__start_time__lte=now),
-                property_item__session__end_time__gte=now)
+            properties = properties.filter(
+                id__in=qs1.union(qs2).filter(available=True).values_list(
+                    'property_id', flat=True).distinct())
 
-            qs4 = (properties.filter(
-                Q(property_item__session__start_time__gt=F('end_time')),
-                Q(property_item__session__start_time__lte=now)
-                | Q(property_item__session__end_time__gte=now)))
-
-            properties = (qs1 | qs2) & (qs3 | qs4).filter(
-                property_item__session__end_time__gt=now,
-                property_item__session__start_time__lte=now,
-                property_item__available=True,
-                property_item__capacity__gte=guests).distinct()
-
-        return properties.order_by('distance')
+        return properties.distinct().order_by('distance')
 
 
 class ProfileView(NotificationMixin, DetailView):
@@ -174,7 +178,8 @@ class HomeView(NotificationMixin, TemplateView):
         except AttributeError:
             # user not logged in
             pass
-        return context
+        finally:
+            return context
 
 
 class PageNotFoundView(NotificationMixin, TemplateView):

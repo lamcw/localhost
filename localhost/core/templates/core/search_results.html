@@ -5,18 +5,16 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "core/css/components/search_filter.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/results.css" %}">
-{% endblock %}
-
-{% block main-container %}
-<div class="container-fluid d-flex flex-column justify-content-between">
 {% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
+{% include "core/include/search_filter.html" %}
 <main role="main" class="inner cover">
-{% if property_list %}
-  <div class="album py-5">
+{% if property_list|length > 0 %}
+  <div class="album py-4">
     <div class="container">
       <div class="row">
         {% for property in property_list %}
@@ -82,4 +80,13 @@
   {% endif %}
 </main>
 {% include "core/include/footer.html" %}
+{% endblock %}
+{% block js%}
+<script>
+  function activateSearchCallback() {
+    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'full_addr', 'form-search');
+  }
+</script>
+<script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
 {% endblock %}
