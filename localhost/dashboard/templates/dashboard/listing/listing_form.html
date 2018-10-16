@@ -30,7 +30,7 @@
 
     {% for form in property_item_formset %}
     <div id="property_item-0" class="dynamic-form mt-4 panel">
-      <h2>{% block sub_item_title %}New Bookable{% endblock %}</h2>
+      <h2>{% block sub_item_title %}New Property Item{% endblock %}</h2>
       {% include 'dashboard/listing/property_item_form.html' with form=form %}
     </div>
     {% endfor %}
