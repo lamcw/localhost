@@ -49,6 +49,7 @@
   <form id="form-search" method="get" action="{% url 'core:search-results' %}">
     <input type="hidden" id="suburb_search_lat" name="lat" value="">
     <input type="hidden" id="suburb_search_lng" name="lng" value="">
+    <input type="hidden" id="full_address" name="addr" value="">
   </form>
 </main>
 {% include "core/include/footer.html" %}
@@ -57,7 +58,7 @@
 {% block js %}
 <script>
   function activateSearchCallback() {
-    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
+    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'full_address','form-search');
   }
 </script>
 <script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>

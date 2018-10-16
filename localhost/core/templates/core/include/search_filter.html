@@ -1,0 +1,35 @@
+<div class="d-flex flex-column justify-content-center px-md-4">
+  <div class="input-group stylish-input-group">
+    <input id="suburb_search" type="text" class="form-control" placeholder="Where would you like to go?">
+    <div class="input-group-append">
+      <span class="input-group-text"><i class="fa fa-search"></i></span>
+    </div>
+  </div>
+  <form id="form-search" class="mb-0 mt-2" method="get" action="{% url 'core:search-results' %}">
+    <input type="hidden" id="suburb_search_lat" name="lat" value="">
+    <input type="hidden" id="suburb_search_lng" name="lng" value="">
+    <input type="hidden" id="full_addr" name="addr" value="">
+    <ul class="list-inline d-inline">
+      <li class="list-inline-item">
+        <select id="guests" name="guests" class="btn filter-option dropdown-toggle my-0" type="button" data-toggle="dropdown">
+          <option disabled selected><span>Guests</span></option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5+</option>
+        </select>
+      </li>
+      <li class="list-inline-item">
+        <div class="btn-group-toggle" data-toggle="buttons">
+          <label class="btn filter-option">
+            <input id="bidding-active" name="bidding-active" type="checkbox" class="d-none" autocomplete="off"> Bidding Active
+          </label>
+        </div>
+      </li>
+      <li class="list-inline-item">
+      </li>
+    </ul>
+    <button class="btn btn-raised font-weight-bold float-right text-white bg-background">Apply</button>
+  </form>
+</div> 
