@@ -86,10 +86,6 @@ class SearchResultsView(ListView):
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
-        # default checkin time is set half an hour from now
-        default_checkin = (
-            timezone.localtime() + timedelta(minutes=30)).strftime('%H:%M')
-        checkin = dateparse.parse_time(args.get('checkin', default_checkin))
         lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
         lat_range = (lat - lat_offset, lat + lat_offset)
         lng_range = (lng - lng_offset, lng + lng_offset)
@@ -112,8 +108,8 @@ class SearchResultsView(ListView):
                 | Q(session__end_time__gte=now))
 
             properties = properties.filter(
-                id__in=qs1.union(qs2).filter(available=True) \
-                    .values_list('property_id', flat=True).distinct())
+                id__in=qs1.union(qs2).filter(available=True).values_list(
+                    'property_id', flat=True).distinct())
 
         return properties.distinct().order_by('distance')
 
@@ -153,4 +149,5 @@ class HomeView(TemplateView):
         except AttributeError:
             # user not logged in
             pass
-        return context
+        finally:
+            return context
