@@ -55,3 +55,10 @@ Week 10
 Refactored repo. Mostly bug fixes in backend. Messages fetching is a bit faster
 now with native SQL queries. Performed user tests. Updated test data to match
 the current database model.
+
+Week 11
+
+Fixed celery incompatibility with Python 3.7. Optimized db queries as much as I
+can. Cusomized home page for logged in user. And bug fixes regarding messages
+time ordering, search prompts, etc. Started writing the report (on the
+dependecies section).
