@@ -8,6 +8,7 @@
   <form id="form-search" class="mb-0 mt-2" method="get" action="{% url 'core:search-results' %}">
     <input type="hidden" id="suburb_search_lat" name="lat" value="">
     <input type="hidden" id="suburb_search_lng" name="lng" value="">
+    <input type="hidden" id="full_addr" name="addr" value="">
     <ul class="list-inline d-inline">
       <li class="list-inline-item">
         <select id="guests" name="guests" class="btn filter-option dropdown-toggle my-0" type="button" data-toggle="dropdown">
@@ -29,6 +30,6 @@
       <li class="list-inline-item">
       </li>
     </ul>
-    <button class="btn btn-success font-weight-bold float-right">Apply</button>
+    <button class="btn btn-raised font-weight-bold float-right text-white bg-background">Apply</button>
   </form>
 </div> 

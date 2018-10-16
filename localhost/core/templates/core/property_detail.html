@@ -4,13 +4,11 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/header.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/components/footer.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "core/css/components/search_filter.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "core/css/property.css" %}">
 {% endblock %}
 
 {% block body_wrapped %}
 {% include "core/include/header.html" %}
-{% include "core/include/search_filter.html" %}
 <div class="container p-4">
   <div id="property-carousel" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">

@@ -1,6 +1,6 @@
 import logging
 from datetime import timedelta
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -9,7 +9,7 @@ from django.utils import dateparse, timezone
 from django.views.generic import DetailView, ListView, TemplateView
 
 from localhost.core.models import (Bid, BiddingSession, Booking, Notification,
-                                   Property, PropertyItemReview)
+                                   Property, PropertyItem, PropertyItemReview)
 from localhost.core.utils import parse_address
 
 logger = logging.getLogger(__name__)
@@ -75,58 +75,47 @@ class SearchResultsView(ListView):
         try:
             lat = Decimal(args.get('lat', settings.DEFAULT_SEARCH_COORD[0]))
             lng = Decimal(args.get('lng', settings.DEFAULT_SEARCH_COORD[1]))
-        except ValueError:
-            address = args.get('address')
+        except (ValueError, InvalidOperation):
+            address = args.get('addr')
             if address:
                 lat, lng = parse_address(address)
             else:
                 # address also empty
                 lat, lng = parse_address(settings.DEFAULT_SEARCH_ADDRESS)
+            lat, lng = Decimal(lat), Decimal(lng)
 
         guests = int(args.get('guests', 1))
         bid_now = args.get('bidding-active', 'off')
         # default checkin time is set half an hour from now
         default_checkin = (
-            timezone.now() + timedelta(minutes=30)).strftime('%H:%M')
+            timezone.localtime() + timedelta(minutes=30)).strftime('%H:%M')
         checkin = dateparse.parse_time(args.get('checkin', default_checkin))
         lat_offset, lng_offset = Decimal(0.15), Decimal(0.15)
         lat_range = (lat - lat_offset, lat + lat_offset)
         lng_range = (lng - lng_offset, lng + lng_offset)
         properties = Property.objects.within(lat, lng).filter(
-            latitude__range=lat_range, longitude__range=lng_range)
+            latitude__range=lat_range,
+            longitude__range=lng_range,
+            property_item__capacity__gte=guests)
 
         if bid_now == 'on':
             now = timezone.localtime()
 
-            # filter if checkin times are on same day
-            qs1 = properties.filter(
-                Q(earliest_checkin_time__lte=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lte=checkin),
-                latest_checkin_time__gt=checkin)
+            qs1 = PropertyItem.objects.filter(
+                Q(session__start_time__lte=F('session__end_time')),
+                Q(session__start_time__lte=now),
+                session__end_time__gte=now)
 
-            # filter if checkin times cross midnight
-            qs2 = properties.filter(
-                Q(earliest_checkin_time__gt=F('latest_checkin_time')),
-                Q(earliest_checkin_time__lte=checkin)
-                | Q(latest_checkin_time__gt=checkin))
+            qs2 = PropertyItem.objects.filter(
+                Q(session__start_time__gt=F('session__end_time')),
+                Q(session__start_time__lte=now)
+                | Q(session__end_time__gte=now))
 
-            qs3 = properties.filter(
-                Q(property_item__session__start_time__lte=F('end_time')),
-                Q(property_item__session__start_time__lte=now),
-                property_item__session__end_time__gte=now)
+            properties = properties.filter(
+                id__in=qs1.union(qs2).filter(available=True) \
+                    .values_list('property_id', flat=True).distinct())
 
-            qs4 = (properties.filter(
-                Q(property_item__session__start_time__gt=F('end_time')),
-                Q(property_item__session__start_time__lte=now)
-                | Q(property_item__session__end_time__gte=now)))
-
-            properties = (qs1 | qs2) & (qs3 | qs4).filter(
-                property_item__session__end_time__gt=now,
-                property_item__session__start_time__lte=now,
-                property_item__available=True,
-                property_item__capacity__gte=guests).distinct()
-
-        return properties.order_by('distance')
+        return properties.distinct().order_by('distance')
 
 
 class ProfileView(DetailView):
