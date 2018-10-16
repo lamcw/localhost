@@ -4,10 +4,11 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
+from localhost.core.views import NotificationMixin
 from localhost.authentication.forms import SignUpForm
 
 
-class SignUpView(UserPassesTestMixin, FormView):
+class SignUpView(UserPassesTestMixin, NotificationMixin, FormView):
     """
     Provides sign up view for user. Logs user in if registration is successful.
     """
@@ -30,7 +31,7 @@ class SignUpView(UserPassesTestMixin, FormView):
         return super().form_valid(form)
 
 
-class LoginView(UserPassesTestMixin, LoginView):
+class LoginView(UserPassesTestMixin, NotificationMixin, LoginView):
     def test_func(self):
         """
         User cannot access this page if he/she is authenticated.
