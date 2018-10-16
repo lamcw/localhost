@@ -23,13 +23,13 @@ pricing model is required, one that is regulated by the supply and demand such t
 both owners and tenants may benefit financially.
 
 \subsection{Aim}
+
 The aim of the project was to design and implement a fast-paced auction
 platform for single night stays. Compared to the static pricing
 model of existing platforms, the dynamic nature of the auction system
-optimises the occupancy rate and profitability of properties.
-The price of each property item is determined
-by market supply and demand, greatly improving profitability for hosts and
-allowing guests to find cheap accommodation on properties with low demand.
+optimises the occupancy rate of properties. The price of each property item is
+determined by market supply and demand, potentially improving profitability for
+hosts and allowing guests to find cheap accommodation on properties with low demand.
 
 \begin{figure}[!h]
   \includegraphics[width=\linewidth]{assets/fixedvsdynamic.png}
@@ -41,12 +41,21 @@ Figure~\ref{fig:fixedVsDynamic} shows theoretical earnings over the course of
 a week for a traditional fixed-price platform and our \emph{localhost} platform.
 Earnings are lower on the traditional platform as the price is deemed too steep
 on days of low demand and the property is left empty.
-By contrast, the \emph{localhost} allows income for hosts even on days of low demand, albeit
-at a low rate. On days with high demand, the price paid may exceed the price that would
-have been staticly set on traditional platforms. Guests also benefit from this model
-as they can find bargains on days of low demand.
+By contrast, the \emph{localhost} allows income for hosts even on days of low demand,
+albeit at a lower rate. On days with high demand, the price paid may exceed the
+price that would have been staticly set on traditional platforms. Guests also benefit
+from this model as they can find bargains on days of low demand.
+
+Due to the fast-paced nature of our auction system, our project focuses on
+single night stays for guests.
 
 \subsection{Concepts}
+
+\subsubsection{Properties and Property Items}
+
+As well as listing entire properties, hosts can choose to list individual rooms or
+couches within a single property. These smaller listings within a property are
+called property items, and are displayed on each property page.
 
 \subsubsection{Auction Sessions}
 
@@ -65,8 +74,9 @@ as they can find bargains on days of low demand.
   \label{tab:sessionTimes}
 \end{table}
 
+Guests can book accommodation on \emph{localhost} by winning an auction.
 Auctions on our platform run in fixed sessions ranging in time from two to six hours.
-At the end of every session the highest bidder wins the auction and a booking is made.
+At the end of every session the highest bidder wins the auction and a booking is confirmed.
 As seen in Table~\ref{tab:sessionTimes},
 auction sessions start running from midday to 3am the following day, with shorter sessions
 for stages of the day where a higher volume of bids are expected and longer sessions
@@ -86,3 +96,11 @@ A buyout option exists for guests to immediately purchase
 the item without having to wait for the auction session to end. Guests may choose to
 trade off cost for convenience and hosts receive large financial benefit from buyouts.
 Buyouts will immediately end the auction session and award the property item to the buyer.
+
+\subsubsection{Wallet}
+User must first deposit credit into their accounts before they can bid in auctions.
+Once a bid is made in
+an auction, the amount is immediately deducted from the wallet. This is to prevent
+users from bidding on multiple properties and encourages users to commit to a single
+property or room. Credits are immediately returned to the user's wallet if
+he or she was outbid or the auction was bought out.
