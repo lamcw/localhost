@@ -160,11 +160,4 @@
     $('.modal:visible').length && $(document.body).addClass('modal-open');
   });
 </script>
-<script>
-  function activateSearchCallback() {
-    activateSearch('suburb_search', 'suburb_search_lat', 'suburb_search_lng', 'form-search');
-  }
-</script>
-<script type="text/javascript" src="{% static "core/js/search_geolocation.js" %}"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GMAPS_KEY }}&libraries=places&callback=activateSearchCallback"></script>
 {% endblock %}
