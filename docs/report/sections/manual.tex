@@ -1,1 +1,214 @@
 \section{Manual}
+
+\subsection{Deployment}
+
+\emph{localhost} is deployed using Amazon Web Services on an Amazon Elastic
+Compute Cloud instance with the following specifications.
+\begin{lstlisting}
+OS: Ubuntu 18.04.1 LTS x86_64
+Host: HVM domU 4.2.amazon
+Kernel: 4.15.0-1023-aws
+CPU: Intel Xeon E5-2676 v3 (1) @ 2.4
+GPU: Cirrus Logic GD 5446
+Memory: 983MiB
+\end{lstlisting}
+
+\subsubsection{Amazon Web Services Configuration}
+
+After creating an Amazon Elastic Compute Cloud instance through the Amazon Web
+Services dashboard, the only port on the server accessible from the internet
+is \lstinline{22 (SSH)}. For the server to accept web requests, ports
+\lstinline{80 (HTTP)} and \lstinline{443 (SSL)} must be opened. This can be
+done by navigating to the dashboard, selecting the running
+\emph{Amazon Elastic Compute Cloud} instance, and selecting
+\lstinline{launch-wizard}. A tab will then appear at the bottom of the page
+and will contain a form that can open ports.
+
+\subsubsection{Software}
+
+While a number of scripts are provided to automate the installation and
+configuration of \emph{localhost}, some manual configuration is required.
+The configuration required varies between different Linux distribution so the
+following steps are only supported on Ubuntu 18.04.1.
+
+The default user account provided on an Amazon Elastic Compute Cloud instance
+running Ubuntu 18.04.1 is \lstinline{ubuntu} and the following commands rely on
+this assumption. Commands requiring sudo privileges are prepended with
+\lstinline{#} and commands executed under user permissions are prepended with
+\lstinline{$}.
+
+\paragraph{Update}
+
+The initial state of the instance is likely out of date and should be brought
+up to date by running the following command.
+\begin{lstlisting}
+# apt update && apt upgrade && apt dist-upgrade && apt autoremove
+\end{lstlisting}
+
+\paragraph{Repository}
+
+To ease updating, an SSH key will be generated to authenticate the server when
+accessing the repository.
+\begin{lstlisting}
+$ ssh-keygen -t rsa -b 4096
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+\end{lstlisting}
+After adding \lstinline{/home/ubuntu/.ssh/id_rsa.pub} to BitBucket the
+repository can be cloned.
+\begin{lstlisting}
+$ git clone git@bitbucket.org:jtalowell/localhost.git /home/ubuntu/localhost
+\end{lstlisting}
+
+\paragraph{Django \& Immediate Dependencies}
+
+To install a virtual environment and manage dependencies the following
+packages must be installed.
+\begin{lstlisting}
+# apt install python3-venv python3-pip
+\end{lstlisting}
+Django and its immediate dependencies can then be installed.
+\begin{lstlisting}
+$ cd /home/ubuntu/localhost
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ (venv) pip install -r requirements.txt
+\end{lstlisting}
+
+\paragraph{PostgreSQL}
+
+PostgreSQL must be installed and it's accompaning system service enabled.
+\begin{lstlisting}
+# apt install postgresql postgresql-contrib
+# systemctl enable postgresql.service
+# systemctl start postgresql.service
+\end{lstlisting}
+The database cluster can then be created.
+\begin{lstlisting}
+$ sudo -u postgres -i
+[postgres]$ /usr/lib/postgresql/10/bin/initdb -D '/var/lib/postgresql/data'
+\end{lstlisting}
+A user to administer the database clusted must be created for access.
+\begin{lstlisting}
+[postgres]$ createuser --interactive
+Enter name of role to add: ubuntu
+Shall the new role be a superuser? (y/n) y
+[postgres]$ exit
+\end{lstlisting}
+The database to use for the project can now be created.
+\begin{lstlisting}
+$ createdb localhost_db
+$ sudo -u postgres -i
+[postgres]$ psql
+postgres=# \password ubuntu
+Enter new password: [DB_PW]
+Enter it again: [DB_PW]
+postgres=# GRANT ALL PRIVILEGES ON DATABASE localhost_db TO ubuntu;
+postgres=# ALTER ROLE ubuntu SET client_encoding TO ``utf8'';
+postgres=# ALTER ROLE ubuntu SET default_transaction_isolation TO ``read committed'';
+postgres=# \q
+[postgres]$ exit
+\end{lstlisting}
+
+\paragraph{Redis}
+
+Ubuntu's package for Redis works without any extended configuration and its
+services are automatically started and enabled.
+\begin{lstlisting}
+# apt install redis-server
+\end{lstlisting}
+
+\paragraph{Daphne}
+
+Daphne is installed as one of Django's immediate dependencies.
+A service script is provided for installation.
+\begin{lstlisting}
+# ln -sf /home/ubuntu/localhost/deploy/systemd/daphne.service /etc/systemd/system/
+# vim /etc/systemd/system/daphne.service
+\end{lstlisting}
+The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER}, and
+\lstinline{DB_PW} must be set for Daphne to be able to operate. This
+can be done by inserting the following lines in the service script.
+\begin{lstlisting}
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+\end{lstlisting}
+
+\paragraph{Gunicorn}
+
+Gunicorn, like Daphne, is installed as one of Django's immediate dependencies.
+A service script is provided for installation.
+\begin{lstlisting}
+# ln -sf /home/ubuntu/localhost/deploy/systemd/gunicorn.service /etc/systemd/system/
+# vim /etc/systemd/system/gunicorn.service
+\end{lstlisting}
+The environment variables for \lstinline{SECRET_KEY}, \lstinline{DB_USER},
+and \lstinline{DB_PW} must be set for Gunicorn to be able to operate.
+This can be done by inserting the following lines in the service script.
+\begin{lstlisting}
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+\end{lstlisting}
+
+\paragraph{NGINX}
+
+NGINX can be installed using the following commands.
+\begin{lstlisting}
+# apt install nginx
+# systemd enable nginx
+# systemd start nginx
+\end{lstlisting}
+
+The relevant configuration files can be installed by:
+\begin{lstlisting}
+# /home/ubuntu/localhost/deploy/init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+\end{lstlisting}
+
+\emph{localhost} uses Let's Encrypt as the provider for it's SSL certificates.
+The certificates can be installed using the Certbot tool which can be
+installed and executed by the following commands. For this to work, the domain
+name registered for \emph{localhost} should direct to the IP address of the
+Amazon Elastic Compute Cloud instance.
+\begin{lstlisting}
+# apt install software-properties-common
+# add-apt-repository ppa:certbot/certbot
+# apt update
+# apt install python-certbot-nginx
+# certbot --nginx certonly
+\end{lstlisting}
+
+After installing the certificate the \lstinline{init.sh} script should be
+executed again.
+\begin{lstlisting}
+# /home/ubuntu/localhost/deploy/init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+\end{lstlisting}
+This script first ensures that the NGINX configuration script is installed
+and restarts all the services that \emph{localhost} depends on.
+
+\paragraph{Maintenance}
+
+There are two scripts that are provided to ease server upgrades and deployment
+testing. The first script is \lstinline{rebuild.sh}. This script automates the
+dropping, creation, migrations, and loading of test data for the database.
+This is useful for quickly loading a usable set of test data without manually
+creating listings and accounts. It's also extendable to restore backups.
+\begin{lstlisting}
+$ ./rebuild.sh [database name] -Mmsl [data name]
+-M is short for --Makemigrations
+-m is short for --migrate
+-s is short for --server and should only be used on the server deployment
+-l is short for --loaddata and loads both testdata and propertyimages
+\end{lstlisting}
+
+The second script has already been mentioned but remains relevent for future
+updates. \lstinline{init.sh} should be ran every time any updates or upgrades
+take place to restart the required services otherwise unexpected errors can
+occur through caching.
+\begin{lstlisting}
+# ./init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+\end{lstlisting}
