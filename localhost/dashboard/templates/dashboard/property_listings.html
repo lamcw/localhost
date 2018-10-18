@@ -8,9 +8,6 @@
             <a href="{{ property.get_absolute_url }}" class="d-inline text-left">
               <strong class="text-primary">{{ property.title }}</strong>
             </a>
-            <div class="d-inline float-right">
-              <a href="{% url 'dashboard:listing-update' property.id %}" class="btn btn-primary">Edit</a>
-            </div>
             <small class="d-block text-secondary">
               {{ property.address }}
             </small>
