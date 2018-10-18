@@ -1,134 +1,68 @@
 \section{Implementation}
+\subsection{Architecture}
+\subsection{User Interface}
+\subsection{Database Design}
+\subsection{Real Time Communication}
+\subsection{Event Scheduling}
+When an auction session ends, tasks need to be performed in order to complete
+the bidding process. There are also several places where scheduled/delayed tasks
+are needed in the application.
 
-\subsection{Dependencies}
-This project uses the following dependencies.
+Property items are said to be ``available'' if the \emph{available} option is
+turned on by user (it is ``on'' by default when created) and there are no bids
+in all the previous auction sessions in the same day. When the local time
+reaches the end time of the session, the system have to check whether there are
+bids in the session and create a booking for the winner. Property items that has
+been booked out has to be marked as ``unavailable'' so that it does not come up
+in the search results. Furthermore, property item has to be re-listed (marked
+as ``available'') at 12 noon every day.
 
-\subsubsection{Celery}
-When an auction session comes to an end, the system needs to check if there are
-any bids under property item. If there are, the system should clean up all the
-bids associated with the property item and adds a booking to the winner's
-account. \emph{localhost} solves this by using a plug-in called Celery. It
-provides a distributed task queue which delays the execution of certain jobs to
-a particular time~\cite{celery-doc}. In our use case, we set up periodic tasks for each property
-item so that it execute certain tasks when auction session is closed.
+\subsubsection{Django Signals}
+Signals are dispatched in Django when a certain action is performed within the
+framework. It helps decoupled applications to get notified when the actions are
+taken placed~\cite{django-signals}. Django provides a set of built-in signals
+that allows us to combine it with Celery to perform certain tasks when signals
+are dispatched. A list of signals we used in the project are:
 
-\subsubsection{channels-redis}
-channels-redis is a Django Channels channel layer that uses Redis as its backing
-store~\cite{channels-redis-doc}. This allows Django Channels to ``communicate''
-across different ASGI instances, which is useful if we were to scale the
-website to run on a distributed system.
+\begin{itemize}
+  \item \texttt{django.db.models.signals.m2m\_changed}
+  \item \texttt{django.db.models.signals.pre\_save}
+\end{itemize}
 
-\subsubsection{daphne}
-Daphne is a HTTP, HTTP2 and WebSocket protocol server for ASGI and ASGI-HTTP
-that was designed for Django Channels~\cite{daphne}. It mainly handles WebSocket requests in
-our website, for example, bid requests, messaging and push notifications.
+\subsubsection{Celery Beat}
+Celery beat is a scheduler in Celery that kicks off tasks at regular intervals,
+that are then executed by available worker nodes in the cluster~\cite{celery-beat}.
+The worker works asynchronously to start task execution and store results in
+a Redis instance.
 
-\subsubsection{Django}
-The main framework this project runs on is Django. It is a high-level Python Web
-framework that allows the team to quickly prototype a working product with clean
-and pragmatic design. It is extremely scalable since it supports adding ``apps''
-to a working site to extend its functionality~\cite{django}. % TODO
+By default, beat uses \texttt{PersistentScheduler} that keeps track of the last
+run in a local shelve\footnote{a persistent, dictionary-like object} database
+file. But that is not necessary since we already have a PostgreSQL database
+active in the backend. So we instead use an extension
+django-celery-beat~\ref{sec:dep-celery-beat} that allows us to store tasks in
+the Django database through a \texttt{DatabaseScheduler}. The extension also
+provides an admin interface so that tasks could be managed by the administrator.
 
-\subsubsection{Django Channels}
-Django Channels extends Django's ability beyond HTTP to handle WebSocket
-requests, chat protocols, etc. It allows communications between client and
-server using a long-running connection, while at the same time preserve Django's
-synchronous and easy-to-use nature~\cite{django-channels-doc}. All of the
-real-time components of the project are implemented within the Django Channels
-framework, including auctions, messaging and push notifications.
+\paragraph{Periodic Task}
+\texttt{PeriodicTask} is a Django model provided by
+django-celery-beat~\ref{sec:dep-celery-beat} that simulates how Celery tasks are
+represented in the database. We use this in conjunction with
+\texttt{DatabaseScheduler} to provide background services in the Django
+framework.
 
-\subsubsection{django-celery-beat}
-This extension allows us to store Celery \texttt{PeriodicTasks} in the database,
-which could then be modified during
-runtime~\cite{django-celery-beat-doc}. This is useful since we
-might have to change tasks execution interval if auction sessions are modified
-for a property item during run-time.
-
-\subsubsection{django-widget-tweaks}
-Widget-tweaks allows us to inject CSS attributes into form fields in
-templates~\cite{widget-tweaks}. This means we can separate the business logic
-in ``views'' \footnote{Django view functions or Django class-based views} and
-``templates''. For example, if we want to add \texttt{class="form-control"}
-into a form input without widget-tweaks, we would need to append the class names
-in \texttt{\_\_init\_\_()} in the form class. With widget-tweaks, we can change the
-field representation in templates with Django template syntaxes (liquid tags).
-
-\subsubsection{Factory Boy}
-To generate our test data for both unit-tests and performance benchmark, we use
-Factory Boy to create random but reasonable test data. We uses an extension
-instead of creating fixtures on our own so that it is easier to maintain and the
-data is reproducible and consistent~\cite{factory-boy-doc}.
-
-\subsubsection{googlemaps}
-This is a Python Client for Google Maps Services which creates an abstraction
-between the Google Maps raw JSON API and our Django
-application~\cite{python-google-maps}. We uses this library to access the Maps
-API in backend.
-
-\subsubsection{gunicorn}
-Gunicorn is a Python WSGI HTTP Server for UNIX~\cite{gunicorn}.
-
-\subsubsection{psycopg2-binary}
-psycopg2 is a binder/adapter between Python and PostgreSQL\@. It allows any Python
-application to connect to a PostgreSQL database instance~\cite{psycopg2}.
-
-\subsubsection{redis (Python)}
-redis is a Python client for Redis~\cite{python-redis}.
-
-\subsection{Licensing}
-Below is a list of license used by all the dependencies.
-\begin{longtable}{| p{.40\textwidth} | p{.20\textwidth} | p{.20\textwidth} |}
-\hline
-\textbf{Dependency} & \textbf{Version} & \textbf{License} \\ \hline
-\textbf{Automat} & 0.7.0 & MIT \\
-\textbf{Django} & 2.1.2 & BSD \\
-\textbf{Faker} & 0.9.1 & MIT \\
-\textbf{Pillow} & 5.3.0 & PIL \\
-\textbf{PyHamcrest} & 1.9.0 & BSD \\
-\textbf{Twisted} & 18.7.0 & MIT \\
-\textbf{aioredis} & 1.1.0 & MIT \\
-\textbf{amqp} & 2.3.2 & BSD \\
-\textbf{asgiref} & 2.3.2 & BSD \\
-\textbf{async-timeout} & 3.0.0 & Apache \\
-\textbf{attrs} & 18.2.0 & MIT \\
-\textbf{autobahn} & 18.9.2 & MIT \\
-\textbf{billiard} & 3.5.0.4 & BSD \\
-\textbf{celery} & 4.1.1 & BSD \\
-\textbf{certifi} & 2018.8.24 & MPL-2.0 \\
-\textbf{channels} & 2.1.3 & BSD \\
-\textbf{channels-redis} & 2.3.0 & BSD \\
-\textbf{chardet} & 3.0.4 & LGPL \\
-\textbf{constantly} & 15.1.0 & MIT \\
-\textbf{daphne} & 2.2.2 & BSD \\
-\textbf{django-celery-beat} & 1.1.0 & BSD \\
-\textbf{django-widget-tweaks} & 1.4.3 & MIT \\
-\textbf{ephem} & 3.7.6.0 & LGPL \\
-\textbf{factory-boy} & 2.11.1 & MIT \\
-\textbf{googlemaps} & 3.0.2 & Apache \\
-\textbf{gunicorn} & 19.9.0 & MIT \\
-\textbf{hiredis} & 0.2.0 & BSD \\
-\textbf{hyperlink} & 18.0.0 & MIT \\
-\textbf{idna} & 2.7 & BSD-like \\
-\textbf{incremental} & 17.5.0 & MIT \\
-\textbf{kombu} & 4.2.1 & BSD \\
-\textbf{msgpack} & 0.5.6 & Apache \\
-\textbf{psycopg2-binary} & 2.7.5 & LGPL \\
-\textbf{python-dateutil} & 2.7.3 & Dual \\
-\textbf{pytz} & 2018.5 & MIT \\
-\textbf{redis} & 2.10.6 & MIT \\
-\textbf{requests} & 2.19.1 & Apache \\
-\textbf{six} & 1.11.0 & MIT \\
-\textbf{text-unidecode} & 1.2 & Artistic \\
-\textbf{txaio} & 18.8.1 & MIT \\
-\textbf{urllib3} & 1.23 & MIT \\
-\textbf{vine} & 1.1.4 & BSD \\
-\textbf{zope.interface} & 4.5.0 & ZPL \\
-\hline
-\end{longtable}
-
-\subsection{Design}
-\subsubsection{Architecture}
-\subsubsection{User Interface}
-\subsubsection{Database Design}
-\subsubsection{Real Time Communication}
-\subsubsection{Event Scheduling}
+\subsubsection{Combining both signals and Celery beat}
+There are two tasks to be completed in the background:
+\begin{enumerate}
+  \item check if anyone bid on a property item; if there is, a booking is added
+    to the winner's account, and bids associated with the property item are
+    removed. Property item is marked as ``unavailable'' as well. Otherwise we do
+    nothing about that property item.
+  \item enable bidding for all property items at 12 noon
+\end{enumerate}
+As such, we define two tasks in Celery accordingly: \texttt{cleanup\_bids} and
+\texttt{enable\_bids}. Whenever an auction session is added to a property item
+(\texttt{m2m\_changed}), we add a \texttt{PeriodicTask} to the database that
+executes \texttt{cleanup\_bids}. A \texttt{PeriodicTask} that executes
+\texttt{enable\_bids} is added when a property item is
+saved (\texttt{pre\_save}). When celery is launched, the scheduler will pick up
+the tasks and triggers tasks execution when time reaches.

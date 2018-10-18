@@ -1,0 +1,125 @@
+\section{Dependencies}
+This project uses the following dependencies.
+
+\subsection{Celery}
+When an auction session comes to an end, the system needs to check if there are
+any bids under property item. If there are, the system should clean up all the
+bids associated with the property item and adds a booking to the winner's
+account. \emph{localhost} solves this by using a plug-in called Celery. It
+provides a distributed task queue which delays the execution of certain jobs to
+a particular time~\cite{celery-doc}. In our use case, we set up periodic tasks for each property
+item so that it execute certain tasks when auction session is closed.
+
+\subsection{channels-redis}
+channels-redis is a Django Channels channel layer that uses Redis as its backing
+store~\cite{channels-redis-doc}. This allows Django Channels to ``communicate''
+across different ASGI instances, which is useful if we were to scale the
+website to run on a distributed system.
+
+\subsection{daphne}
+Daphne is a HTTP, HTTP2 and WebSocket protocol server for ASGI and ASGI-HTTP
+that was designed for Django Channels~\cite{daphne}. It mainly handles WebSocket requests in
+our website, for example, bid requests, messaging and push notifications.
+
+\subsection{Django}
+The main framework this project runs on is Django. It is a high-level Python Web
+framework that allows the team to quickly prototype a working product with clean
+and pragmatic design. It is extremely scalable since it supports adding ``apps''
+to a working site to extend its functionality~\cite{django}. % TODO
+
+\subsection{Django Channels}
+Django Channels extends Django's ability beyond HTTP to handle WebSocket
+requests, chat protocols, etc. It allows communications between client and
+server using a long-running connection, while at the same time preserve Django's
+synchronous and easy-to-use nature~\cite{django-channels-doc}. All of the
+real-time components of the project are implemented within the Django Channels
+framework, including auctions, messaging and push notifications.
+
+\subsection{django-celery-beat}\label{sec:dep-celery-beat}
+This extension allows us to store Celery \texttt{PeriodicTask} in the database,
+which could then be modified during
+runtime~\cite{django-celery-beat-doc}. This is useful since we
+might have to change tasks execution interval if auction sessions are modified
+for a property item during run-time.
+
+\subsection{django-widget-tweaks}
+Widget-tweaks allows us to inject CSS attributes into form fields in
+templates~\cite{widget-tweaks}. This means we can separate the business logic
+in ``views'' \footnote{Django view functions or Django class-based views} and
+``templates''. For example, if we want to add \texttt{class="form-control"}
+into a form input without widget-tweaks, we would need to append the class names
+in \texttt{\_\_init\_\_()} in the form class. With widget-tweaks, we can change the
+field representation in templates with Django template syntaxes (liquid tags).
+
+\subsection{Factory Boy}
+To generate our test data for both unit-tests and performance benchmark, we use
+Factory Boy to create random but reasonable test data. We uses an extension
+instead of creating fixtures on our own so that it is easier to maintain and the
+data is reproducible and consistent~\cite{factory-boy-doc}.
+
+\subsection{googlemaps}
+This is a Python Client for Google Maps Services which creates an abstraction
+between the Google Maps raw JSON API and our Django
+application~\cite{python-google-maps}. We uses this library to access the Maps
+API in backend.
+
+\subsection{gunicorn}
+Gunicorn is a Python WSGI HTTP Server for UNIX~\cite{gunicorn}.
+
+\subsection{psycopg2-binary}
+psycopg2 is a binder/adapter between Python and PostgreSQL\@. It allows any Python
+application to connect to a PostgreSQL database instance~\cite{psycopg2}.
+
+\subsection{redis (Python)}
+redis is a Python client for Redis~\cite{python-redis}.
+
+\section{Licensing}
+Below is a list of license used by all the dependencies.
+\begin{longtable}{| p{.40\textwidth} | p{.20\textwidth} | p{.20\textwidth} |}
+\hline
+\textbf{Dependency} & \textbf{Version} & \textbf{License} \\ \hline
+\textbf{Automat} & 0.7.0 & MIT \\
+\textbf{Django} & 2.1.2 & BSD \\
+\textbf{Faker} & 0.9.1 & MIT \\
+\textbf{Pillow} & 5.3.0 & PIL \\
+\textbf{PyHamcrest} & 1.9.0 & BSD \\
+\textbf{Twisted} & 18.7.0 & MIT \\
+\textbf{aioredis} & 1.1.0 & MIT \\
+\textbf{amqp} & 2.3.2 & BSD \\
+\textbf{asgiref} & 2.3.2 & BSD \\
+\textbf{async-timeout} & 3.0.0 & Apache \\
+\textbf{attrs} & 18.2.0 & MIT \\
+\textbf{autobahn} & 18.9.2 & MIT \\
+\textbf{billiard} & 3.5.0.4 & BSD \\
+\textbf{celery} & 4.1.1 & BSD \\
+\textbf{certifi} & 2018.8.24 & MPL-2.0 \\
+\textbf{channels} & 2.1.3 & BSD \\
+\textbf{channels-redis} & 2.3.0 & BSD \\
+\textbf{chardet} & 3.0.4 & LGPL \\
+\textbf{constantly} & 15.1.0 & MIT \\
+\textbf{daphne} & 2.2.2 & BSD \\
+\textbf{django-celery-beat} & 1.1.0 & BSD \\
+\textbf{django-widget-tweaks} & 1.4.3 & MIT \\
+\textbf{ephem} & 3.7.6.0 & LGPL \\
+\textbf{factory-boy} & 2.11.1 & MIT \\
+\textbf{googlemaps} & 3.0.2 & Apache \\
+\textbf{gunicorn} & 19.9.0 & MIT \\
+\textbf{hiredis} & 0.2.0 & BSD \\
+\textbf{hyperlink} & 18.0.0 & MIT \\
+\textbf{idna} & 2.7 & BSD-like \\
+\textbf{incremental} & 17.5.0 & MIT \\
+\textbf{kombu} & 4.2.1 & BSD \\
+\textbf{msgpack} & 0.5.6 & Apache \\
+\textbf{psycopg2-binary} & 2.7.5 & LGPL \\
+\textbf{python-dateutil} & 2.7.3 & Dual \\
+\textbf{pytz} & 2018.5 & MIT \\
+\textbf{redis} & 2.10.6 & MIT \\
+\textbf{requests} & 2.19.1 & Apache \\
+\textbf{six} & 1.11.0 & MIT \\
+\textbf{text-unidecode} & 1.2 & Artistic \\
+\textbf{txaio} & 18.8.1 & MIT \\
+\textbf{urllib3} & 1.23 & MIT \\
+\textbf{vine} & 1.1.4 & BSD \\
+\textbf{zope.interface} & 4.5.0 & ZPL \\
+\hline
+\end{longtable}
