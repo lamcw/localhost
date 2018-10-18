@@ -12,7 +12,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic import CreateView, DeleteView
 from django.views.generic.base import ContextMixin, TemplateResponseMixin
 from django.views.generic.edit import ProcessFormView
 
@@ -440,12 +440,6 @@ class ListingCreate(LoginRequiredMixin, NotificationMixin, CreateView):
             return redirect(self.success_url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
-
-
-class ListingUpdate(LoginRequiredMixin, NotificationMixin, UpdateView):
-    model = Property
-    form_class = PropertyForm
-    success_url = reverse_lazy('dashboard:dashboard')
 
 
 class ListingDelete(LoginRequiredMixin, NotificationMixin, DeleteView):
