@@ -2,15 +2,37 @@
 \subsection{Architecture}
 
 \begin{figure}[!h]
-\includegraphics[width=\linewidth]{assets/architecture.png}
+\includegraphics[width=250px]{assets/architecture.png}
 \caption{Architecture map for \emph{localhost}}
 \label{fig:architecture_map}
 \end{figure}
 
+\subsubsection{Execution Path}
+
+When navigating to \emph{localhost}, the client is connected to the NGINX
+service. If the required page is a static file such as a CSS or JavaScript
+file then the file is immediately served by NGINX. WebSocket requests are
+forwarded to the Daphne service (see Section \ref{realtime}). All remaining
+requests are forwarded to the Gunicorn web server to then be redirected to
+Django.
+
+\subsubsection{Scalability}
+
+The architecture behind \emph{localhost} was designed with scalability as a
+priority. The core services on the server are Django and PostgreSQL.
+Having multiple other services running concurrently reduces the computation
+time available for the core services. While \emph{localhost} was deployed on
+a single server, the architecture is designed so that services like NGINX can
+be deployed on seperate servers. As NGINX handles the majority of requests
+across the web, moving NGINX to a seperate server would significantly improve
+the performance of the platform. Each non-core service can have multiple
+workers and deployed on multiple servers, ensuring that \emph{localhost} is
+scalable.
+
 \subsection{User Interface}
 \subsection{Database Design}
 
-\subsection{Real Time Communication}
+\subsection{Real Time Communication}\label{realtime}
 
 The real time communication powering platform features such as notifications,
 instant messaging, and bidding events, is provided through the use of web
