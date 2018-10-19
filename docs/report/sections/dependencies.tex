@@ -7,44 +7,44 @@ any bids under property item. If there are, the system should clean up all the
 bids associated with the property item and adds a booking to the winner's
 account. \emph{localhost} solves this by using a plug-in called Celery. It
 provides a distributed task queue which delays the execution of certain jobs to
-a particular time~\cite{celery-doc}. In our use case, we set up periodic tasks for each property
+a particular time~\parencite{celery-doc}. In our use case, we set up periodic tasks for each property
 item so that it execute certain tasks when auction session is closed.
 
 \subsection{channels-redis}
 channels-redis is a Django Channels channel layer that uses Redis as its backing
-store~\cite{channels-redis-doc}. This allows Django Channels to ``communicate''
+store~\parencite{channels-redis-doc}. This allows Django Channels to ``communicate''
 across different ASGI instances, which is useful if we were to scale the
 website to run on a distributed system.
 
 \subsection{daphne}
 Daphne is a HTTP, HTTP2 and WebSocket protocol server for ASGI and ASGI-HTTP
-that was designed for Django Channels~\cite{daphne}. It mainly handles WebSocket requests in
+that was designed for Django Channels~\parencite{daphne}. It mainly handles WebSocket requests in
 our website, for example, bid requests, messaging and push notifications.
 
 \subsection{Django}
 The main framework this project runs on is Django. It is a high-level Python Web
 framework that allows the team to quickly prototype a working product with clean
 and pragmatic design. It is extremely scalable since it supports adding ``apps''
-to a working site to extend its functionality~\cite{django}. % TODO
+to a working site to extend its functionality~\parencite{django}. % TODO
 
 \subsection{Django Channels}
 Django Channels extends Django's ability beyond HTTP to handle WebSocket
 requests, chat protocols, etc. It allows communications between client and
 server using a long-running connection, while at the same time preserve Django's
-synchronous and easy-to-use nature~\cite{django-channels-doc}. All of the
+synchronous and easy-to-use nature~\parencite{django-channels-doc}. All of the
 real-time components of the project are implemented within the Django Channels
 framework, including auctions, messaging and push notifications.
 
 \subsection{django-celery-beat}\label{sec:dep-celery-beat}
 This extension allows us to store Celery \texttt{PeriodicTask} in the database,
 which could then be modified during
-runtime~\cite{django-celery-beat-doc}. This is useful since we
+runtime~\parencite{django-celery-beat-doc}. This is useful since we
 might have to change tasks execution interval if auction sessions are modified
 for a property item during run-time.
 
 \subsection{django-widget-tweaks}
 Widget-tweaks allows us to inject CSS attributes into form fields in
-templates~\cite{widget-tweaks}. This means we can separate the business logic
+templates~\parencite{widget-tweaks}. This means we can separate the business logic
 in ``views'' \footnote{Django view functions or Django class-based views} and
 ``templates''. For example, if we want to add \texttt{class="form-control"}
 into a form input without widget-tweaks, we would need to append the class names
@@ -55,23 +55,23 @@ field representation in templates with Django template syntaxes (liquid tags).
 To generate our test data for both unit-tests and performance benchmark, we use
 Factory Boy to create random but reasonable test data. We uses an extension
 instead of creating fixtures on our own so that it is easier to maintain and the
-data is reproducible and consistent~\cite{factory-boy-doc}.
+data is reproducible and consistent~\parencite{factory-boy-doc}.
 
 \subsection{googlemaps}
 This is a Python Client for Google Maps Services which creates an abstraction
 between the Google Maps raw JSON API and our Django
-application~\cite{python-google-maps}. We uses this library to access the Maps
+application~\parencite{python-google-maps}. We uses this library to access the Maps
 API in backend.
 
 \subsection{gunicorn}
-Gunicorn is a Python WSGI HTTP Server for UNIX~\cite{gunicorn}.
+Gunicorn is a Python WSGI HTTP Server for UNIX~\parencite{gunicorn}.
 
 \subsection{psycopg2-binary}
 psycopg2 is a binder/adapter between Python and PostgreSQL\@. It allows any Python
-application to connect to a PostgreSQL database instance~\cite{psycopg2}.
+application to connect to a PostgreSQL database instance~\parencite{psycopg2}.
 
 \subsection{redis (Python)}
-redis is a Python client for Redis~\cite{python-redis}.
+redis is a Python client for Redis~\parencite{python-redis}.
 
 \section{Licensing}
 Below is a list of license used by all the dependencies.

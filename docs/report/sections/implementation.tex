@@ -2,6 +2,78 @@
 \subsection{Architecture}
 \subsection{User Interface}
 \subsection{Database Design}
+\subsubsection{Property Search}
+One of the significant feature in the application is searching property based on
+their distance. User can enter an address in the search bar and properties
+near the search location will be displayed in the results page, sorted by
+distance. There are several ways to implement this feature when the team were
+designing the back-end of this project:
+
+\begin{enumerate}
+  \item Uses GeoDjango with PostGIS, and migrate our property model to use
+    geometry field in GeoDjango
+  \item stores latitude and longitude for each property. Then use an extension
+    ``Geopy'' to approximate distances between properties in \texttt{QuerySet}
+    and the search location~\parencite{geopy-doc}
+  \item stores latitude and longitude for each property. Then annotate each item
+    in \texttt{QuerySet} with built-in SQL function expressions to calculate the
+    distance between search location and each property, then sort by that
+    distance
+\end{enumerate}
+
+Method 1 provides the most accurate distance approximations as GeoDjango supports
+querying and manipulating spatial data in database, which also accounts in the
+elevations and sea levels~\parencite{geodjango-raster-lookups}. But the effort to
+set up and migrate to a new database framework is probably too much. The
+accuracy gain we get out of using this framework is negligible as well.
+
+In the initial implementation of the search function, the team used method 2 to
+calculate distances between properties and search location. Algorithm
+\ref{alg:geopy-search} roughly shows how we implemented the search and sorting
+using GeoPy.
+
+\begin{algorithm}
+  \caption{Inefficient implementation of property search}\label{alg:geopy-search}
+  \begin{algorithmic}
+    \STATE $qs\gets Property.filter(critieria)$
+    \STATE $lat, lng\gets urlparam.get(lat), urlparam.get(lng)$
+    \STATE $properties\gets list()$
+    \FORALL{$property$ in $qs$}
+    \STATE $distance\gets geopy.distance((lat, lng), (property.lat, property.lng))$
+    \STATE $properties.append(property, distance)$
+    \ENDFOR
+    \STATE $properties\gets sorted(properties, key=\lambda x: x[1])$
+  \end{algorithmic}
+\end{algorithm}
+
+Algorithm \ref{alg:geopy-search} would work just fine but the performance drops
+as number of properties grows. It could be seen that the distances are
+calculated using Python calls which could be far slower than SQL functions,
+since most of the computations are done using GeoPy. Therefore we chose to use
+native SQL expressions to compute the distances as it could greatly improves
+performance.
+
+To approximate distances using native SQL expressions, we need a
+function/formula to translate latitudes and longitudes in the database model to
+actual distances on the Earth.
+
+\paragraph{Haversine Formula}\label{eq:haversine}
+The haversine formula is used to determine the great-circle distance between two
+points on a sphere given their longitudes and
+latitudes~\parencite{haversine-formula}.
+\[
+  d = 2r\arcsin{\sqrt{\sin^2\left(\frac{\phi_2 - \phi_1}{2}\right) +
+      \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\lambda_2 - \lambda_1}{2}\right)}}
+\]
+where,
+\begin{itemize}
+  \item $\phi_1, \phi_2$ are latitude of search location and latitude of property
+  \item $\lambda_1, \lambda_2$ are longitude of search location and longitude of
+    property.
+  \item $r$ is the radius of the Earth
+\end{itemize}
+when using this formula in our application.
+
 \subsection{Real Time Communication}
 \subsection{Event Scheduling}
 When an auction session ends, tasks need to be performed in order to complete
@@ -20,7 +92,7 @@ as ``available'') at 12 noon every day.
 \subsubsection{Django Signals}
 Signals are dispatched in Django when a certain action is performed within the
 framework. It helps decoupled applications to get notified when the actions are
-taken placed~\cite{django-signals}. Django provides a set of built-in signals
+taken placed~\parencite{django-signals}. Django provides a set of built-in signals
 that allows us to combine it with Celery to perform certain tasks when signals
 are dispatched. A list of signals we used in the project are:
 
@@ -31,14 +103,14 @@ are dispatched. A list of signals we used in the project are:
 
 \subsubsection{Celery Beat}
 Celery beat is a scheduler in Celery that kicks off tasks at regular intervals,
-that are then executed by available worker nodes in the cluster~\cite{celery-beat}.
+that are then executed by available worker nodes in the cluster~\parencite{celery-beat}.
 The worker works asynchronously to start task execution and store results in
 a Redis instance.
 
 By default, beat uses \texttt{PersistentScheduler} that keeps track of the last
 run in a local shelve\footnote{a persistent, dictionary-like object} database
 file. But that is not necessary since we already have a PostgreSQL database
-active in the backend. So we instead use an extension
+active in the back-end. So we instead use an extension
 django-celery-beat~\ref{sec:dep-celery-beat} that allows us to store tasks in
 the Django database through a \texttt{DatabaseScheduler}. The extension also
 provides an admin interface so that tasks could be managed by the administrator.
