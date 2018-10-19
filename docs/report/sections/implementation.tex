@@ -1,8 +1,87 @@
 \section{Implementation}
 \subsection{Architecture}
+
+\begin{figure}[!h]
+\includegraphics[width=\linewidth]{assets/architecture.png}
+\caption{Architecture map for \emph{localhost}}
+\label{fig:architecture_map}
+\end{figure}
+
 \subsection{User Interface}
 \subsection{Database Design}
+
 \subsection{Real Time Communication}
+
+The real time communication powering platform features such as notifications,
+instant messaging, and bidding events, is provided through the use of web
+sockets. WebSockets allow for bi-directional messages to be instantly
+communicated with minimal overhead \parencite{websocket}. While Django doesn't
+provide support for WebSockets, support can be provided through a third-party
+extension for Django called Django Channels.
+
+\subsubsection{MSocket Library \& Django Channels}
+
+Django Channels does not provide native support for multiplex sockets. When
+a client application begins listening to an event it must dedicate an entire
+socket. Consequently, a client may have multiple sockets open to send and
+recieve messages for individual events despite the fact that the traffic could
+be sent over a single socket. A server only has a limited number of sockets
+available so this reduces the scalability by a significant factor. Multiplex
+sockets are sockets that are used to transmit information of different classes
+that are then filtered by the reciever and forwarded to the correct recipient
+(See Figure \ref{fig:msocket}).
+
+To ensure that \emph{localhost} was scalable, support for multiplex sockets
+was provided with a custom client-side JavaScript library and custom Django
+class.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/msocket.png}
+  \caption{Comparison between regular sockets and multiplexed sockets}
+  \label{fig:msocket}
+\end{figure}
+The client-side library, called \emph{msocket.js}, is a cooperative multiplex
+socket libary. This means that for the socket multiplexing to work, the client
+and server must adopt a common protocol of communication. The protocol used
+in \emph{localhost} is provided below in the form of a JSON file.
+\begin{lstlisting}
+{
+  type: ,
+  data: {
+
+  }
+}
+\end{lstlisting}
+
+The type allows the multiplexer to determine how to handle the message, and
+the data is the payload for the
+message. In the case of real-time bidding, the payload would contain details
+allowing the handler to determine which property item the bid is for, and how
+much the bid is.
+
+\emph{msocket.js} is designed from scratch to provide a simple and abstracted
+interface to hide away the details and complexity behind WebSockets. A client
+can submit handlers to execute for different types (shown below) and they will
+automatically execute as messages of that type arrive.
+\begin{lstlisting}
+  /**
+   * @brief Registers a handler for a message type
+   *
+   * @param type    The type of message the handler should apply to
+   * @param handler The handler to execute on message recieve
+   *                Should take the data as an argument
+   *                See JSON specification
+   *
+   * @return On success, @c true
+   * @return On failure, @c false when a handler is already set for the type
+   * */
+  register_handler(type, handler);
+\end{lstlisting}
+
+Server-side, the Django Channels socket consumer class was modified to maintain
+a record of each of the events the socket is subscribed to and whenever a
+message is broadcasted for one of these events the consumer transmits it to
+the client with the appropriate class identifier.
+
 \subsection{Event Scheduling}
 When an auction session ends, tasks need to be performed in order to complete
 the bidding process. There are also several places where scheduled/delayed tasks
