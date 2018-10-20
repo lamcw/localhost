@@ -62,3 +62,8 @@ Fixed celery incompatibility with Python 3.7. Optimized db queries as much as I
 can. Cusomized home page for logged in user. And bug fixes regarding messages
 time ordering, search prompts, etc. Started writing the report (on the
 dependecies section).
+
+Week 12
+
+Added placeholder images for properties and property items. Updated logging
+configuration. Added dropdown menu for time input. Helped with the report.
