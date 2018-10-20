@@ -43,3 +43,7 @@ Conducted user tests with three friends
 Week 11
 Added the backend for a buyout option for users.
 Added backend for notifications. Users receive notification after buyout, auction expiry and outbidding
+
+Week 12
+Prepared the presentation after asking members what they wanted to speak about.
+Fixed minor issues with messaging timestamps.
