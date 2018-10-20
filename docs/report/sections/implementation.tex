@@ -81,12 +81,20 @@ listing pages, and many more.
 
 \subsection{Database Design}
 
-\subsubsection{Property Search}
-One of the significant feature in the application is searching property based on
+\subsubsection{Database of localhost}
+
+An ER diagram of our database can be found in Appendix.
+The database of \emph{localhost} is normalised in 3NF (third normal form) meaning it
+contains no transitive dependencies, minimising our data redundancy and
+improving data integrity. Extensibility was kept in mind when designing the
+database schema.
+
+\subsubsection{Property Search Time Optimisation}
+One of the significant features in the application is searching for properties based on
 their distance. User can enter an address in the search bar and properties
 near the search location will be displayed in the results page, sorted by
-distance. There are several ways to implement this feature when the team were
-designing the back-end of this project:
+distance. There are several ways to implement the property search and we considered
+three implementations:
 
 \begin{enumerate}
   \item Uses GeoDjango with PostGIS, and migrate our property model to use
@@ -100,15 +108,17 @@ designing the back-end of this project:
     distance
 \end{enumerate}
 
-Method 1 provides the most accurate distance approximations as GeoDjango supports
-querying and manipulating spatial data in database, which also accounts in the
-elevations and sea levels~\parencite{geodjango-raster-lookups}. But the effort to
-set up and migrate to a new database framework is probably too much. The
-accuracy gain we get out of using this framework is negligible as well.
+Implementation 1 provides the most accurate distance approximations as GeoDjango supports
+querying and manipulating spatial data in database, which takes into account
+elevations and sea level~\parencite{geodjango-raster-lookups}. However, the
+accuracy gained from this framework is negligible when compared to the accuracy
+of Implementations 2 and 3. Our final implementation was accurate to within 50m of the
+target location, which is enough accuracy for sorting properties by distance.
+The effort to set up and migrate to a new database framework was thought to be
+too much work for little gain.
 
-In the initial implementation of the search function, the team used method 2 to
-calculate distances between properties and search location. Algorithm
-\ref{alg:geopy-search} roughly shows how we implemented the search and sorting
+Implementation 2 which calculates distances using Geopy was our second consideration.
+Algorithm \ref{alg:geopy-search} roughly shows how we implemented the search and sorting
 using GeoPy.
 
 \begin{algorithm}
@@ -125,14 +135,15 @@ using GeoPy.
   \end{algorithmic}
 \end{algorithm}
 
-Algorithm \ref{alg:geopy-search} would work just fine but the performance drops
-as number of properties grows. It could be seen that the distances are
+Algorithm \ref{alg:geopy-search} works fine but the performance drops
+as number of properties grows. Distances are
 calculated using Python calls which could be far slower than SQL functions,
-since most of the computations are done using GeoPy. Therefore we chose to use
-native SQL expressions to compute the distances as it could greatly improves
-performance.
+since most of the computations are done using GeoPy. For a large dataset of properties,
+performance would be poor.
 
-To approximate distances using native SQL expressions, we need a
+Having considered these alternatives, we chose to use Implementation 3 which used
+native SQL expressions to compute the distances which would greatly improve
+performance. To approximate distances using native SQL expressions, we need a
 function/formula to translate latitudes and longitudes in the database model to
 actual distances on the Earth.
 
@@ -151,7 +162,30 @@ where,
     property.
   \item $r$ is the radius of the Earth
 \end{itemize}
-when using this formula in our application.
+
+Our search query calculates the distance from each property to the target
+destination using Haversine's Formula and then orders them by closest distance.
+Since it is costly to calculate this for every property in the database, an
+initial filter was added to narrow down the number of properties that the
+distance calculation had to be operated on.
+
+Only properties within $\pm$0.15 latitude and longitude offsets of the original
+search, which translates to around 15km have their distance approximated using
+Haversine's Formula. This greatly improves the
+search times and also removes properties that are outside a reasonable distance
+from the search. By adding the initial filter, our search time is also no longer
+restricted by the property dataset and is instead limited by suburb density.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/performancetest.png}
+  \caption{Performance of large data sets}
+  \label{fig:performancetest}
+\end{figure}
+
+As can be seen in Figure \ref{fig:performancetest}, the search time for large
+property data sets appears to increase linearly. For a database with one million
+properties, it takes only 0.04 seconds to complete the search. This can be mostly
+be attributed to the initial filter, which drastically cuts down search time.
 
 \subsection{Real Time Communication}\label{realtime}
 
