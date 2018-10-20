@@ -155,6 +155,24 @@ Environment="DB_USER=ubuntu"
 Environment="DB_PW=YOUR DB PASSWORD HERE"
 \end{lstlisting}
 
+\paragraph{Celery}
+
+Service scripts are provied for both Celery and Celery Beat.
+
+\begin{lstlisting}
+# ln -sf /home/ubuntu/localhost/deploy/systemd/celery.service /etc/systemd/system/
+# ln -sf /home/ubuntu/localhost/deploy/systemd/celery-beat.service /etc/systemd/system/
+# vim /etc/systemd/system/celery.service
+# vim /etc/systemd/system/celery-beat.service
+\end{lstlisting}
+The following must be added to both service scripts.
+\begin{lstlisting}
+Environment="SECRET_KEY=YOUR KEY HERE"
+Environment="DB_USER=ubuntu"
+Environment="DB_PW=YOUR DB PASSWORD HERE"
+\end{lstlisting}
+
+
 \paragraph{NGINX}
 
 NGINX can be installed using the following commands.
@@ -166,9 +184,8 @@ NGINX can be installed using the following commands.
 
 The relevant configuration files can be installed by:
 \begin{lstlisting}
-# /home/ubuntu/localhost/deploy/init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+# /home/ubuntu/localhost/deploy/init.sh
 \end{lstlisting}
-
 \emph{localhost} uses Let's Encrypt as the provider for it's SSL certificates.
 The certificates can be installed using the Certbot tool which can be
 installed and executed by the following commands. For this to work, the domain
@@ -181,7 +198,6 @@ Amazon Elastic Compute Cloud instance.
 # apt install python-certbot-nginx
 # certbot --nginx certonly
 \end{lstlisting}
-
 After installing the certificate the \lstinline{init.sh} script should be
 executed again.
 \begin{lstlisting}
@@ -198,7 +214,6 @@ dropping, creation, migrations, and loading of test data for the database.
 This is useful for quickly loading a usable set of test data without manually
 creating listings and accounts. It's also extendable to restore backups.
 \begin{lstlisting}
-./rebuild.sh [database name] -Mmsl [data name]
 -M is short for --Makemigrations
 -m is short for --migrate
 -s is short for --server and should only be used on the server deployment
@@ -208,7 +223,9 @@ creating listings and accounts. It's also extendable to restore backups.
 The second script has already been mentioned but remains relevent for future
 updates. \lstinline{init.sh} should be ran every time any updates or upgrades
 take place to restart the required services otherwise unexpected errors can
-occur through caching.
+occur through caching. When making changes to scheduling times, the Celery
+and Celery Beat services must be stopped prior to running the
+\lstinline{init.sh} script.
 \begin{lstlisting}
-# ./init.sh [SECRET_KEY] [DB_USER] [DB_PW]
+# /home/ubuntu/localhost/deploy/init.sh
 \end{lstlisting}
