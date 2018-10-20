@@ -212,3 +212,206 @@ occur through caching.
 \begin{lstlisting}
 # ./init.sh [SECRET_KEY] [DB_USER] [DB_PW]
 \end{lstlisting}
+
+\subsection{User Manual}
+\subsubsection{Registering for an Account}
+Register for an account by clicking on the 'Register' link in the top right 
+corner of the page and providing your email address, full name and entering
+your password. Upon success, you will be logged in and redirected to the
+homepage.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/regPg.png}
+  \caption{Registration Page}
+  \label{fig:regPg}
+\end{figure}
+
+\subsubsection{Searching for a Property Item}
+From the homepage, you can enter the location where you want to search around
+and then either select it using the arrow keys and press enter, or click on the
+search result and it will take you to the results page.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/searchOption.png}
+  \caption{Selecting one of the search options}
+  \label{fig:searchOption}
+\end{figure}
+
+Once you have reached the results page, all the properties will be ordered by
+distance from the search location. 
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/searchResults.png}
+  \caption{Information displayed on each property}
+  \label{fig:searchResults}
+\end{figure}
+
+From here, you can click on and apply filters to the results such as specifying
+the number of guests and/or toggling the results so that only properties with a 
+property item which is currently in an active bidding session will be displayed.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/searchFilters.png}
+  \caption{Search filters}
+  \label{fig:searchFilters}
+\end{figure}
+
+Upon choosing a property to view, you will be greeted by a carousel of images of
+the property itself, information about the property including a map of it's
+location, a picture of the host and methods to contact them, and the listings
+currently available in that property.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/propertyPg.png}
+  \caption{Property images and details}
+  \label{fig:propertyPg}
+\end{figure}
+
+To view a property item, click on the 'View' button to the far right of the row
+of the row of the property item and a modal of the property will pop up.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/propertyModal.png}
+  \caption{Property item modal with more information}
+  \label{fig:propertyModal}
+\end{figure}
+
+\subsubsection{Bidding on a Property Item}
+To bid on a property item, you must be logged in, and viewing the relevant
+property item's modal popup. Type a value which is greater than the current
+highest bid and click on 'Place'. If someone bids higher than you, a
+a notification will be sent to you.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/biddingModule.png}
+  \caption{Placing a bid on a property item}
+  \label{fig:biddingModule}
+\end{figure}
+
+If there are any errors, there will be an alert pop up at the top of the
+bidding module. Upon the end of a bidding session, all participants will receive
+a notification indicating whether they have won or lost the auction.
+
+\subsubsection{Using the 'Buyout' Feature}
+If you choose to buyout an auction, clicking on the 'Buyout' button will open
+a confirmation dialog. 
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/buyoutConfirm.png}
+  \caption{Confirmation pop up}
+  \label{fig:buyoutConfirm}
+\end{figure}
+
+If the the buyout is confirmed, a notification will be
+sent to all users who have placed a bid on this property item and the auction
+will immediately close.
+
+\subsubsection{Contacting the Host}
+From the property page, you can view the host's public profile by clicking on
+the 'Contact' dropdown and selecting 'View host profile', or directly get in
+touch by selecting 'Send a message'.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/contactHost.png}
+  \caption{Options to contact a host}
+  \label{fig:contactHost}
+\end{figure}
+
+Choosing the message the host will redirect you to the messaging page and a new
+conversation with the host will be created. New incoming messages will move the
+chat to the top of the contact list on the left of the messaging window. All
+messages are in realtime so no refreshing of the page is required.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/messages.png}
+  \caption{Messaging page}
+  \label{fig:messages}
+\end{figure}
+
+\subsubsection{Using the Dashboard}
+\paragraph{Active Bids}
+This tab on the dashboard displays all of the properties that you have currently
+placed a bid on. The price updates in real time, and you can navigate back to
+the property by clicking on the property name.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/activeBids.png}
+  \caption{Active bids panel}
+  \label{fig:activeBids}
+\end{figure}
+
+\paragraph{User Profile}
+Update your personal description, date of birth and gender on this tab. Your
+date of birth remains private, but your age will be displayed on your Public
+Profile.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/profile.png}
+  \caption{Profile settings}
+  \label{fig:userProfile}
+\end{figure}
+
+\paragraph{Booking History}
+The booking history tab displays all of the previous places that you have stayed
+at before. If the property is still being hosted, you can visit the property by
+clicking on the name.
+You can leave a review on the property once it is 24 hours past the checkin time.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/bookingHistory.png}
+  \caption{List of all previous bookings}
+  \label{fig:bookingHistory}
+\end{figure}
+
+\paragraph{Listings}
+On the listings tab you can view all of the properties that you are hosting.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/listings.png}
+  \caption{List of all properties the user is currently hosting}
+  \label{fig:listings}
+\end{figure}
+
+\paragraph{Guest History}
+You can view the guests who have previously stayed at your properties. Clicking
+on the user name will take you to their public profile.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/guestHistory.png}
+  \caption{List of all the guests who have stayed at the user's properties}
+  \label{fig:guestHistory}
+\end{figure}
+
+\paragraph{Security}
+Change your password in the Security tab by confirming your old and new passwords.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/security.png}
+  \caption{Account security settings}
+  \label{fig:securitySettings}
+\end{figure}
+
+\paragraph{Wallet}
+If you running low on funds, you can add more money to your wallet by entering
+an amount on this tab.
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/wallet.png}
+  \caption{Wallet page}
+  \label{fig:wallet}
+\end{figure}
+
+\subsubsection{Adding a New Property}
+To add a new property, visit the 'Listings' tab on the dashboard click on the
+'Add Property' button in the bottom right corner of the screen. This will
+redirect you to a new form to enter the property details and each property item
+inside the property.
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/newProperty.png}
+  \caption{Adding a new property}
+  \label{fig:newProperty}
+\end{figure}
+
+As seen below in the below figure, the '+Add Item' button adds another property
+item to the property, while the 'Create Property' button will finalise everything
+and create the listing. 
+
+\begin{figure}[!h]
+  \includegraphics[width=\linewidth]{assets/userManual/newPropertyItem.png}
+  \caption{Adding a new property item}
+  \label{fig:newPropertyItem}
+\end{figure}
