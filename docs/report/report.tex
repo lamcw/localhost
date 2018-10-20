@@ -1,0 +1,66 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[style=apa,backend=biber]{biblatex}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings,chngcntr}
+\numberwithin{figure}{subsection}
+\numberwithin{table}{subsection}
+
+\lstset{aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
+\usepackage{longtable}
+
+\addbibresource{report.bib}
+
+\begin{document}
+\counterwithin{lstlisting}{subsection}
+\begin{titlepage}
+  \centering \includegraphics[width=0.4\textwidth]{../unsw.png}\par\vspace{1cm}
+  {\scshape\LARGE University of New South Wales \par}
+  \vspace{0.5cm}
+  {\scshape\Large COMP3900 \par}
+  \vspace{0.5cm}
+  {\huge\bfseries Project Report: \emph{localhost} \par}
+  \vspace{1cm}
+  {\Large{} Group Name:\itshape{} Undergrads \par}
+  \vspace{2cm}
+  \begin{center}
+    \begin{tabular}{c c c c}
+      Edward Dai & \href{mailto:z3415169@unsw.edu.au}{z3415169@unsw.edu.au} &
+      z3415169 & Developer \\
+      Jasper Lowell & \href{mailto:z5180332@unsw.edu.au}{z5180332@unsw.edu.au} &
+      z5180332 & Scrum Master, Developer \\
+      Steven Tudo & \href{mailto:z3466724@unsw.edu.au}{z3466724@unsw.edu.au} &
+      z3466724 & Developer \\
+      Thomas Lam & \href{mailto:z5136612@unsw.edu.au}{z5136612@unsw.edu.au} &
+      z5136612 & Developer
+    \end{tabular}
+  \end{center}
+  \vfill
+  {\large \today\par}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\include{sections/introduction}
+\include{sections/dependencies}
+\include{sections/implementation}
+\include{sections/manual}
+
+\printbibliography[heading=bibintoc]
+
+\appendix
+\include{appendix/user_tests}
+
+\end{document}
