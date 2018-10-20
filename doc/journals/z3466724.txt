@@ -70,3 +70,13 @@ the Messages page. Resolved many small issues which impacted the rendering on
 desktop and mobile browsers.
 
 // Week 11
+Worked through user test reviews with Jasper and brainstormed ideas on how to
+improve the current design of the platform. Went over and checked the current 
+status of the platform to plan out the remaining features we needed to
+implement. Refactored the Property Listing page into individual files to be
+more modular. Reintroduced the Buyout feature into the front end.
+
+// Week 12
+Worked through all of the remaining front end issues and removed all
+placeholder elements on the webpage. Made Dashboard and Messages pages mobile
+responsive. Added modal pop up for buyout confirmation.
