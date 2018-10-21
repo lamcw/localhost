@@ -100,3 +100,14 @@ This week I migrated the deployment away from uWSGI and to Gunicorn. I
 additionally wrote service scripts for Gunicorn and Daphne to automate
 installation. I redesigned the homepage, splash page and public profile page
 according to recommendations from the user tests.
+
+# Week 11
+
+This week I worked with Tom to get Celery working. I also wrote service scripts
+and updated the server configuration files to be more modular and clean.
+The remaining time was spent working through the various open issues (bugs and
+minor enhancements) on BitBucket.
+
+# Week 12
+
+Minor refactoring and working through BitBucket issues.
