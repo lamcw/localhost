@@ -9,7 +9,7 @@
 localhost is a real-time property auction platform tailored for short stays.
 It was developed by team *Undergrads* for the capstone course [COMP3900: Computer Science Project](http://legacy.handbook.unsw.edu.au/undergraduate/courses/2018/COMP3900.html) in Semester 2 2018 at [UNSW](https://www.unsw.edu.au/).
 
-![localhost splash page](https://bitbucket.org/jtalowell/localhost/raw/7e555dacdb462856019b452029176503e004bd7e/screenshot.jpg)
+![localhost splash page](screenshot.jpg)
 
 ## Contributing
 ### Setup
@@ -59,7 +59,7 @@ localhost_db=# \q
 
 #### Clone repository and set up a Python virtual environment
 ```sh
-$ git clone git@bitbucket.org:jtalowell/localhost.git && cd localhost
+$ git clone git@github.com:lamcw/localhost.git && cd localhost
 $ python -m venv venv
 $ source venv/bin/activate
 $ (venv) pip install -r requirements.txt
@@ -158,12 +158,6 @@ Python code should follow [PEP 8](https://www.python.org/dev/peps/pep-0008/?) an
 * `dev` contains a *moderately* stable release that is being prepared for merge into `master`.
 
 All development work should be done on custom branches off `dev`. When a feature is complete,  a pull request should be made to be reviewed by other members of the development team.
-
-Who do I select for a review?
-
-* For front-end modifications either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Steven / @studoo](https://bitbucket.org/studoo/).
-* For modifications relating to the real-time component of the project either [Jasper / @jtalowell](https://bitbucket.org/jtalowell/) or [Ed / @eddai741](https://bitbucket.org/eddai741/).
-* For back-end modifications either [Tom / @lamcw](https://bitbucket.org/lamcw/) or [Ed / @eddai741](https://bitbucket.org/eddai741/).
 
 ##### Reviews
 
